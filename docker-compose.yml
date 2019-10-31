@@ -1,0 +1,155 @@
+version: '3.7'
+services:
+
+  postgres:
+    container_name: postgres
+    networks:
+      localhost.no:
+        aliases:
+          - postgres.localhost.no
+    image: "postgres:11.5"
+    volumes:
+      - "dittnav-event-cache-data:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "test-user"
+      POSTGRES_PASSWORD: "testpassword"
+      POSTGRES_DB: "dittnav-event-cache-preprod"
+
+  zookeeper:
+    container_name: zookeeper
+    networks:
+      localhost.no:
+        aliases:
+          - zookeeper.localhost.no
+    image: "confluentinc/cp-zookeeper:5.3.1"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: "2000"
+
+  kafka:
+    container_name: kafka
+    networks:
+      localhost.no:
+        aliases:
+          - kafka.localhost.no
+    image: "confluentinc/cp-kafka:5.3.1"
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      ADV_HOST: "kafka.localhost.no"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper.localhost.no:2181"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.localhost.no:9092,PLAINTEXT_HOST://localhost:29092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+    command: "sh -c '/scripts/wait-for-it.sh zookeeper.localhost.no:2181 -- /etc/confluent/docker/run'"
+    volumes:
+      - ./composescripts:/scripts
+
+  schema-registry:
+    container_name: schema-registry
+    networks:
+      localhost.no:
+        aliases:
+          - schema-registry.localhost.no
+    image: "confluentinc/cp-schema-registry:5.3.1"
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka.localhost.no:9092"
+      SCHEMA_REGISTRY_HOST_NAME: "schema-registry.localhost.no"
+      SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
+    depends_on:
+      - zookeeper
+      - kafka
+
+  oidc-provider:
+    container_name: oidc-provider
+    networks:
+      localhost.no:
+        aliases:
+          - oidc-provider.localhost.no
+    image: "navikt/pb-oidc-provider:0.5.0"
+    ports:
+      - "9000:9000"
+
+  oidc-provider-gui:
+    container_name: oidc-provider-gui
+    networks:
+      localhost.no:
+        aliases:
+          - oidc-provider-gui.localhost.no
+    image: "navikt/pb-oidc-provider-gui:0.8.0"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - oidc-provider
+
+  aggregator:
+    container_name: aggregator
+    networks:
+      localhost.no:
+        aliases:
+          - aggregator.localhost.no
+    image: "navikt/dittnav-event-aggregator:04325f31dff0076d87c6368e5bca58cd8a14e740"
+    ports:
+      - "8093:8080"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
+      DB_HOST: "postgres.localhost.no:5432"
+    depends_on:
+      - postgres
+      - kafka
+      - oidc-provider-gui
+
+  handler:
+    container_name: handler
+    networks:
+      localhost.no:
+        aliases:
+          - handler.localhost.no
+    image: "navikt/dittnav-event-handler:c3f7ba6fee9fef68f96307bbe81c7d4e4a17fe44"
+    ports:
+      - "8092:8080"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
+      DB_HOST: "postgres.localhost.no:5432"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      PORT: "8080"
+    depends_on:
+      - oidc-provider-gui
+      - postgres
+      - kafka
+#    command: "sh -c '/scripts/wait-for-it.sh oidc-provider.localhost.no:9000 -- exec java -jar app.jar'"
+#    volumes:
+#      - ./composescripts:/scripts
+
+  api:
+    container_name: api
+    networks:
+      localhost.no:
+        aliases:
+          - api.localhost.no
+    image: "navikt/dittnav-api:09097367f4425c53a17640675cf1cff477f63001"
+    ports:
+      - "8091:8080"
+    environment:
+      LEGACY-API_URL: "http://legacy.localhost.no:8090/person/dittnav-legacy-api"
+      EVENT-HANDLER_URL: "http://handler.localhost.no:8092"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+    depends_on:
+      - oidc-provider
+      - handler
+
+volumes:
+  dittnav-event-cache-data:
+
+networks:
+  localhost.no:
