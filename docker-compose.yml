@@ -105,8 +105,8 @@ services:
       DB_HOST: "postgres.localhost.no:5432"
     depends_on:
       - postgres
-      - kafka
       - oidc-provider-gui
+      - schema-registry
 
   handler:
     container_name: handler
