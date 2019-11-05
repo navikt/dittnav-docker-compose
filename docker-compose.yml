@@ -126,7 +126,7 @@ services:
     depends_on:
       - oidc-provider-gui
       - postgres
-      - kafka
+      - schema-registry
 #    command: "sh -c '/scripts/wait-for-it.sh oidc-provider.localhost.no:9000 -- exec java -jar app.jar'"
 #    volumes:
 #      - ./composescripts:/scripts
@@ -147,6 +147,25 @@ services:
     depends_on:
       - oidc-provider
       - handler
+
+  producer:
+    container_name: producer
+    networks:
+      localhost.no:
+        aliases:
+          - producer.localhost.no
+    image: "navikt/dittnav-event-test-producer:0.8.0"
+    ports:
+      - "8094:8080"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
+      DB_HOST: "postgres.localhost.no:5432"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+    depends_on:
+      - oidc-provider-gui
+      - postgres
+      - schema-registry
 
 volumes:
   dittnav-event-cache-data:
