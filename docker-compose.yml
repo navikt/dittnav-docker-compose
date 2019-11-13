@@ -127,6 +127,7 @@ services:
       - oidc-provider-gui
       - postgres
       - schema-registry
+      - aggregator
 #    command: "sh -c '/scripts/wait-for-it.sh oidc-provider.localhost.no:9000 -- exec java -jar app.jar'"
 #    volumes:
 #      - ./composescripts:/scripts
