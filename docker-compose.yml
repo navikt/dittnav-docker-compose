@@ -100,7 +100,7 @@ services:
       localhost.no:
         aliases:
           - aggregator.localhost.no
-    image: "navikt/dittnav-event-aggregator:04325f31dff0076d87c6368e5bca58cd8a14e740"
+    image: "navikt/dittnav-event-aggregator:5494f9a3086e92a1a52aeac4de4a9cfab593c571"
     ports:
       - "8093:8080"
     environment:
@@ -118,7 +118,7 @@ services:
       localhost.no:
         aliases:
           - handler.localhost.no
-    image: "navikt/dittnav-event-handler:c3f7ba6fee9fef68f96307bbe81c7d4e4a17fe44"
+    image: "navikt/dittnav-event-handler:a1c971abcc36a9dcf96adce8ccc2971b7e7a3c39"
     ports:
       - "8092:8080"
     environment:
@@ -142,7 +142,7 @@ services:
       localhost.no:
         aliases:
           - api.localhost.no
-    image: "navikt/dittnav-api:09097367f4425c53a17640675cf1cff477f63001"
+    image: "navikt/dittnav-api:96f043e49f9c61093d8cd36c021bcf498a659807"
     ports:
       - "8091:8080"
     environment:
@@ -159,7 +159,7 @@ services:
       localhost.no:
         aliases:
           - producer.localhost.no
-    image: "navikt/dittnav-event-test-producer:0.8.0"
+    image: "navikt/dittnav-event-test-producer@sha256:03fd4ccd6d973f47badd443d7446ac9d14553275657eb41035aecb56979684e2"
     ports:
       - "8094:8080"
     environment:
