@@ -142,7 +142,7 @@ services:
       localhost.no:
         aliases:
           - api.localhost.no
-    image: "navikt/dittnav-api:96f043e49f9c61093d8cd36c021bcf498a659807"
+    image: "navikt/dittnav-api:db357bd4c8e3f73296656fa2a1acd2a4718010f0"
     ports:
       - "8091:8080"
     environment:
