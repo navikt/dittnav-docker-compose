@@ -132,9 +132,6 @@ services:
       - postgres
       - schema-registry
       - aggregator
-#    command: "sh -c '/scripts/wait-for-it.sh oidc-provider.localhost.no:9000 -- exec java -jar app.jar'"
-#    volumes:
-#      - ./composescripts:/scripts
 
   api:
     container_name: api
@@ -152,6 +149,17 @@ services:
     depends_on:
       - oidc-provider
       - handler
+      - legacy
+
+  legacy:
+    container_name: legacy
+    networks:
+      localhost.no:
+        aliases:
+          - legacy.localhost.no
+    image: "navikt/dittnav-legacy-api-mocked-deps:latest"
+    ports:
+      - "8090:8090"
 
   producer:
     container_name: producer
