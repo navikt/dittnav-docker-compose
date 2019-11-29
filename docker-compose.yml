@@ -126,7 +126,6 @@ services:
       KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
       DB_HOST: "postgres.localhost.no:5432"
       OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
-      PORT: "8080"
     depends_on:
       - oidc-provider-gui
       - postgres
@@ -144,7 +143,7 @@ services:
       - "8091:8080"
     environment:
       LEGACY_API_URL: "http://legacy.localhost.no:8090/person/dittnav-legacy-api"
-      EVENT_HANDLER_URL: "http://handler.localhost.no:8092"
+      EVENT_HANDLER_URL: "http://handler.localhost.no:8080"
       OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
     depends_on:
       - oidc-provider
