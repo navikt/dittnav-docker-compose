@@ -88,7 +88,7 @@ services:
       localhost.no:
         aliases:
           - oidc-provider-gui.localhost.no
-    image: "navikt/pb-oidc-provider-gui:0.9.0"
+    image: "navikt/pb-oidc-provider-gui:latest"
     ports:
       - "5000:5000"
     depends_on:
@@ -100,7 +100,7 @@ services:
       localhost.no:
         aliases:
           - aggregator.localhost.no
-    image: "navikt/dittnav-event-aggregator:5494f9a3086e92a1a52aeac4de4a9cfab593c571"
+    image: "navikt/dittnav-event-aggregator:latest"
     ports:
       - "8093:8080"
     environment:
@@ -118,7 +118,7 @@ services:
       localhost.no:
         aliases:
           - handler.localhost.no
-    image: "navikt/dittnav-event-handler:a1c971abcc36a9dcf96adce8ccc2971b7e7a3c39"
+    image: "navikt/dittnav-event-handler:latest"
     ports:
       - "8092:8080"
     environment:
@@ -126,15 +126,11 @@ services:
       KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
       DB_HOST: "postgres.localhost.no:5432"
       OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
-      PORT: "8080"
     depends_on:
       - oidc-provider-gui
       - postgres
       - schema-registry
       - aggregator
-#    command: "sh -c '/scripts/wait-for-it.sh oidc-provider.localhost.no:9000 -- exec java -jar app.jar'"
-#    volumes:
-#      - ./composescripts:/scripts
 
   api:
     container_name: api
@@ -142,16 +138,27 @@ services:
       localhost.no:
         aliases:
           - api.localhost.no
-    image: "navikt/dittnav-api:db357bd4c8e3f73296656fa2a1acd2a4718010f0"
+    image: "navikt/dittnav-api:latest"
     ports:
       - "8091:8080"
     environment:
-      LEGACY-API_URL: "http://legacy.localhost.no:8090/person/dittnav-legacy-api"
-      EVENT-HANDLER_URL: "http://handler.localhost.no:8092"
+      LEGACY_API_URL: "http://legacy.localhost.no:8090/person/dittnav-legacy-api"
+      EVENT_HANDLER_URL: "http://handler.localhost.no:8080"
       OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
     depends_on:
       - oidc-provider
       - handler
+      - legacy
+
+  legacy:
+    container_name: legacy
+    networks:
+      localhost.no:
+        aliases:
+          - legacy.localhost.no
+    image: "navikt/dittnav-legacy-api-mocked-deps:latest"
+    ports:
+      - "8090:8090"
 
   producer:
     container_name: producer
@@ -159,7 +166,7 @@ services:
       localhost.no:
         aliases:
           - producer.localhost.no
-    image: "navikt/dittnav-event-test-producer@sha256:03fd4ccd6d973f47badd443d7446ac9d14553275657eb41035aecb56979684e2"
+    image: "navikt/dittnav-event-test-producer:latest"
     ports:
       - "8094:8080"
     environment:
