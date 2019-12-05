@@ -142,7 +142,7 @@ services:
     ports:
       - "8091:8080"
     environment:
-      LEGACY_API_URL: "http://legacy.localhost.no:8090/person/dittnav-legacy-api"
+      LEGACY_API_URL: "http://legacy.localhost.no:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.localhost.no:8080"
       OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
     depends_on:
@@ -156,9 +156,37 @@ services:
       localhost.no:
         aliases:
           - legacy.localhost.no
-    image: "navikt/dittnav-legacy-api-mocked-deps:latest"
+    image: "navikt/dittnav-legacy-api:latest"
     ports:
-      - "8090:8090"
+      - "8090:8080"
+    environment:
+      NAIS_APP_NAME: "dittnav-legacy-api"
+      NAIS_NAMESPACE: "localhost"
+      AAD_B2C_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      AAD_B2C_CLIENTID_USERNAME: "stubOidcClient"
+      EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: "https://localhost:9000"
+      DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
+      DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_PASSWORD: "dummyApiPassword"
+      TJENESTER_URL: "https://dummyTjenester.nav.no"
+      SAKSOVERSIKT_API_URL: "http://mocks.localhost.no:8080/saksoversikt-api"
+      TPS_PROXY_API_V1_NAVN_URL: "http://mocks.localhost.no:8080/tpsproxy/"
+      MININNBOKS_API_URL: "http://mocks.localhost.no:8080/mininnboks-api"
+      MELDEKORT_API_URL: "http://mocks.localhost.no:8080/meldekort-api"
+      OPPFOLGING_URL: "http://mocks.localhost.no:8080/oppfolging"
+      CORS_ALLOWED_ORIGINS: ".nav.no,.oera-q.local"
+      # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
+      sensu_client_host: "localhost"
+      sensu_client_port: "8080"
+
+  mocks:
+    container_name: mocks
+    networks:
+      localhost.no:
+        aliases:
+          - mocks.localhost.no
+    image: "navikt/pb-nav-mocked:latest"
+    ports:
+      - "8095:8080"
 
   producer:
     container_name: producer
