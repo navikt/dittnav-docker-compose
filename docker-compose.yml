@@ -4,9 +4,9 @@ services:
   postgres:
     container_name: postgres
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - postgres.localhost.no
+          - postgres.dittnav.docker-internal
     image: "postgres:11.5"
     volumes:
       - "dittnav-event-cache-data:/var/lib/postgresql/data"
@@ -20,9 +20,9 @@ services:
   zookeeper:
     container_name: zookeeper
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - zookeeper.localhost.no
+          - zookeeper.dittnav.docker-internal
     image: "confluentinc/cp-zookeeper:5.3.1"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
@@ -31,9 +31,9 @@ services:
   kafka:
     container_name: kafka
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - kafka.localhost.no
+          - kafka.dittnav.docker-internal
     image: "confluentinc/cp-kafka:5.3.1"
     ports:
       - "9092:9092"
@@ -41,28 +41,28 @@ services:
     depends_on:
       - zookeeper
     environment:
-      ADV_HOST: "kafka.localhost.no"
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper.localhost.no:2181"
+      ADV_HOST: "kafka.dittnav.docker-internal"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper.dittnav.docker-internal:2181"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.localhost.no:9092,PLAINTEXT_HOST://localhost:29092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.dittnav.docker-internal:9092,PLAINTEXT_HOST://localhost:29092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-    command: "sh -c '/scripts/wait-for-it.sh zookeeper.localhost.no:2181 -- /etc/confluent/docker/run'"
+    command: "sh -c '/scripts/wait-for-it.sh zookeeper.dittnav.docker-internal:2181 -- /etc/confluent/docker/run'"
     volumes:
       - ./composescripts:/scripts
 
   schema-registry:
     container_name: schema-registry
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - schema-registry.localhost.no
+          - schema-registry.dittnav.docker-internal
     image: "confluentinc/cp-schema-registry:5.3.1"
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka.localhost.no:9092"
-      SCHEMA_REGISTRY_HOST_NAME: "schema-registry.localhost.no"
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka.dittnav.docker-internal:9092"
+      SCHEMA_REGISTRY_HOST_NAME: "schema-registry.dittnav.docker-internal"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
     depends_on:
       - zookeeper
@@ -71,9 +71,9 @@ services:
   oidc-provider:
     container_name: oidc-provider
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - oidc-provider.localhost.no
+          - oidc-provider.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/stub-oidc-provider/stub-oidc-provider:latest"
     ports:
       - "9000:9000"
@@ -85,9 +85,9 @@ services:
   oidc-provider-gui:
     container_name: oidc-provider-gui
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - oidc-provider-gui.localhost.no
+          - oidc-provider-gui.dittnav.docker-internal
     image: "navikt/pb-oidc-provider-gui:latest"
     ports:
       - "5000:5000"
@@ -97,16 +97,16 @@ services:
   aggregator:
     container_name: aggregator
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - aggregator.localhost.no
+          - aggregator.dittnav.docker-internal
     image: "navikt/dittnav-event-aggregator:latest"
     ports:
       - "8093:8080"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
-      DB_HOST: "postgres.localhost.no:5432"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
+      DB_HOST: "postgres.dittnav.docker-internal:5432"
     depends_on:
       - postgres
       - oidc-provider-gui
@@ -115,17 +115,17 @@ services:
   handler:
     container_name: handler
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - handler.localhost.no
+          - handler.dittnav.docker-internal
     image: "navikt/dittnav-event-handler:latest"
     ports:
       - "8092:8080"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
-      DB_HOST: "postgres.localhost.no:5432"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
+      DB_HOST: "postgres.dittnav.docker-internal:5432"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
     depends_on:
       - oidc-provider-gui
       - postgres
@@ -135,16 +135,16 @@ services:
   api:
     container_name: api
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - api.localhost.no
+          - api.dittnav.docker-internal
     image: "navikt/dittnav-api:latest"
     ports:
       - "8091:8080"
     environment:
-      LEGACY_API_URL: "http://legacy.localhost.no:8080/person/dittnav-legacy-api"
-      EVENT_HANDLER_URL: "http://handler.localhost.no:8080"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
     depends_on:
       - oidc-provider
       - handler
@@ -153,26 +153,26 @@ services:
   legacy:
     container_name: legacy
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - legacy.localhost.no
+          - legacy.dittnav.docker-internal
     image: "navikt/dittnav-legacy-api:latest"
     ports:
       - "8090:8080"
     environment:
       NAIS_APP_NAME: "dittnav-legacy-api"
       NAIS_NAMESPACE: "localhost"
-      AAD_B2C_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      AAD_B2C_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
       AAD_B2C_CLIENTID_USERNAME: "stubOidcClient"
       EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: "https://localhost:9000"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_PASSWORD: "dummyApiPassword"
       TJENESTER_URL: "https://dummyTjenester.nav.no"
-      SAKSOVERSIKT_API_URL: "http://mocks.localhost.no:8080/saksoversikt-api"
-      TPS_PROXY_API_V1_NAVN_URL: "http://mocks.localhost.no:8080/tpsproxy/"
-      MININNBOKS_API_URL: "http://mocks.localhost.no:8080/mininnboks-api"
-      MELDEKORT_API_URL: "http://mocks.localhost.no:8080/meldekort-api"
-      OPPFOLGING_URL: "http://mocks.localhost.no:8080/oppfolging"
+      SAKSOVERSIKT_API_URL: "http://mocks.dittnav.docker-internal:8080/saksoversikt-api"
+      TPS_PROXY_API_V1_NAVN_URL: "http://mocks.dittnav.docker-internal:8080/tpsproxy/"
+      MININNBOKS_API_URL: "http://mocks.dittnav.docker-internal:8080/mininnboks-api"
+      MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
+      OPPFOLGING_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
       CORS_ALLOWED_ORIGINS: ".nav.no,.oera-q.local"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
@@ -181,9 +181,9 @@ services:
   mocks:
     container_name: mocks
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - mocks.localhost.no
+          - mocks.dittnav.docker-internal
     image: "navikt/pb-nav-mocked:latest"
     ports:
       - "8095:8080"
@@ -191,17 +191,17 @@ services:
   producer:
     container_name: producer
     networks:
-      localhost.no:
+      dittnav.docker-internal:
         aliases:
-          - producer.localhost.no
+          - producer.dittnav.docker-internal
     image: "navikt/dittnav-event-test-producer:latest"
     ports:
       - "8094:8080"
     environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.localhost.no:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.localhost.no:8081"
-      DB_HOST: "postgres.localhost.no:5432"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.localhost.no:9000/.well-known/openid-configuration"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
+      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
+      DB_HOST: "postgres.dittnav.docker-internal:5432"
+      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
     depends_on:
       - oidc-provider-gui
       - postgres
@@ -211,4 +211,4 @@ volumes:
   dittnav-event-cache-data:
 
 networks:
-  localhost.no:
+  dittnav.docker-internal:
