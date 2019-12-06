@@ -191,6 +191,8 @@ services:
       OIDC_ISSUER: "https://localhost:9000"
       OIDC_ACCEPTED_AUDIENCE: "stubOidcClient"
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
+    depends_on:
+      - oidc-provider
 
   producer:
     container_name: producer
