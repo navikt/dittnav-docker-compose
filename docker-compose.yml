@@ -187,6 +187,10 @@ services:
     image: "navikt/pb-nav-mocked:latest"
     ports:
       - "8095:8080"
+    environment:
+      OIDC_ISSUER: "https://localhost:9000"
+      OIDC_ACCEPTED_AUDIENCE: "stubOidcClient"
+      OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
 
   producer:
     container_name: producer
