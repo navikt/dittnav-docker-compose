@@ -93,6 +93,9 @@ services:
       - "5000:5000"
     depends_on:
       - oidc-provider
+    environment:
+      REDIRECT_URL: "http://localhost:8100/person/nav-dekoratoren/?header-withmenu=true&styles=true&scripts=true&footer-withmenu=true&skiplinks=true&megamenu-resources=true"
+      AUTO_REDIRECT_TO_FRONTEND: "true"
 
   aggregator:
     container_name: aggregator
@@ -189,7 +192,7 @@ services:
     ports:
       - "8095:8080"
     environment:
-      CORS_ALLOWED_ORIGINS: "localhost:9002"
+      CORS_ALLOWED_ORIGINS: "*"
       OIDC_ISSUER: "https://localhost:9000"
       OIDC_ACCEPTED_AUDIENCE: "stubOidcClient"
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
@@ -215,6 +218,27 @@ services:
       - oidc-provider-gui
       - postgres
       - schema-registry
+
+  dekoratoren:
+    container_name: dekoratoren
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - dekoratoren.dittnav.docker-internal
+    image: "navikt/nav-dekoratoren:a57771d2-d804-403a-8d76-c0c350c98531-master"
+    ports:
+      - "8100:8088"
+    environment:
+      URL_APP_BASE: "http://localhost:8100/person/nav-dekoratoren"
+      baseUrl: 'http://localhost:8100'
+      baseUrlEnonic: 'https://www-x1.nav.no'
+      innloggingslinjenUrl: 'http://localhost:8095/innloggingslinje-api/auth'
+      loginUrl: 'http://localhost:5000'
+      logoutUrl: 'http://localhost:5000/?logout'
+      menypunkter: 'http://localhost:8100/person/nav-dekoratoren/api/get/menyvalg'
+      minsideArbeidsgiverUrl: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
+      sokeresultat: 'http://localhost:8100/person/nav-dekoratoren/api/get/sokeresultat'
+      varselinnboksUrl: 'https://www-q0.nav.no/person/varselinnboks'
 
 volumes:
   dittnav-event-cache-data:
