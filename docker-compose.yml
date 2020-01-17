@@ -94,7 +94,7 @@ services:
     depends_on:
       - oidc-provider
     environment:
-      REDIRECT_URL: "http://localhost:8100/person/nav-dekoratoren/?header-withmenu=true&styles=true&scripts=true&footer-withmenu=true&skiplinks=true&megamenu-resources=true"
+      REDIRECT_URL: "http://localhost:3000"
       AUTO_REDIRECT_TO_FRONTEND: "true"
 
   aggregator:
@@ -148,7 +148,7 @@ services:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
       OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
-      CORS_ALLOWED_ORIGINS: "localhost:9002"
+      CORS_ALLOWED_ORIGINS: "*"
     depends_on:
       - oidc-provider
       - handler
@@ -239,6 +239,32 @@ services:
       minsideArbeidsgiverUrl: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
       sokeresultat: 'http://localhost:8100/person/nav-dekoratoren/api/get/sokeresultat'
       varselinnboksUrl: 'https://www-q0.nav.no/person/varselinnboks'
+
+  frontend:
+    container_name: frontend
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - frontend.dittnav.docker-internal
+    image: "navikt/dittnav:latest"
+    ports:
+      - "3000:8080"
+    environment:
+      NAIS_APP_NAME: "dittnav"
+      APPRES_CMS_URL: "https://appres.nav.no"
+      NAIS_NAMESPACE: "localhost"
+      DITTNAV_LEGACY_API_URL: "http://localhost:8091/person/dittnav-api"
+      DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
+      TJENESTER_URL: "http://dummyTjenester.nav.no"
+      EVENT_TEST_PRODUCER_URL: "http://localhost:8094"
+      NAVNO_URL: "www.nav.no"
+      LOGIN_URL: "http://localhost:5000?redirect=http://localhost:3000"
+      VTA_URL: "http://dummyVeientilarbeid.nav.no"
+      INNLOGGINGSLINJE_API_URL: "http://localhost:8095/innloggingslinje-api"
+      ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
+      # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
+      sensu_client_host: "localhost"
+      sensu_client_port: "8080"
 
 volumes:
   dittnav-event-cache-data:
