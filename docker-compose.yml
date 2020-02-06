@@ -209,7 +209,7 @@ services:
     ports:
       - "8094:8080"
     environment:
-      CORS_ALLOWED_ORIGINS: "localhost:9002"
+      CORS_ALLOWED_ORIGINS: "*"
       KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
       KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
       DB_HOST: "postgres.dittnav.docker-internal:5432"
@@ -256,13 +256,13 @@ services:
       DITTNAV_LEGACY_API_URL: "http://localhost:8091/person/dittnav-api"
       DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
       TJENESTER_URL: "http://dummyTjenester.nav.no"
-      EVENT_TEST_PRODUCER_URL: "http://localhost:8094"
+      EVENT_TEST_PRODUCER_URL: "http://localhost:8094/person/dittnav-event-test-producer"
       NAVNO_URL: "www.nav.no"
       LOGIN_URL: "http://localhost:5000?redirect=http://localhost:3000"
       VTA_URL: "http://dummyVeientilarbeid.nav.no"
       INNLOGGINGSLINJE_API_URL: "http://localhost:8095/innloggingslinje-api"
       ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
-      ER_DEV: "true"
+      HENDELSER_FEATURE_TOGGLE: "true"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
