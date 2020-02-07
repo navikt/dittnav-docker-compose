@@ -225,19 +225,19 @@ services:
       dittnav.docker-internal:
         aliases:
           - dekoratoren.dittnav.docker-internal
-    image: "navikt/nav-dekoratoren:a57771d2-d804-403a-8d76-c0c350c98531-master"
+    image: "navikt/nav-dekoratoren:b782b938-03ab-4af3-8b60-19b88c31d32b-master"
     ports:
       - "8100:8088"
     environment:
-      URL_APP_BASE: "http://localhost:8100/person/nav-dekoratoren"
+      URL_APP_BASE: "http://localhost:8100/dekoratoren"
       baseUrl: 'http://localhost:8100'
       baseUrlEnonic: 'https://www-x1.nav.no'
       innloggingslinjenUrl: 'http://localhost:8095/innloggingslinje-api/auth'
       loginUrl: 'http://localhost:5000'
       logoutUrl: 'http://localhost:5000/?logout'
-      menypunkter: 'http://localhost:8100/person/nav-dekoratoren/api/get/menyvalg'
+      menypunkter: 'http://localhost:8100/dekoratoren/api/get/menyvalg'
       minsideArbeidsgiverUrl: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
-      sokeresultat: 'http://localhost:8100/person/nav-dekoratoren/api/get/sokeresultat'
+      sokeresultat: 'http://localhost:8100/dekoratoren/api/get/sokeresultat'
       varselinnboksUrl: 'https://www-q0.nav.no/person/varselinnboks'
 
   frontend:
@@ -251,7 +251,7 @@ services:
       - "3000:8080"
     environment:
       NAIS_APP_NAME: "dittnav"
-      APPRES_CMS_URL: "https://appres.nav.no"
+      NAV_DEKORATOREN_URL: "http://dekoratoren.dittnav.docker-internal:8088"
       NAIS_NAMESPACE: "localhost"
       DITTNAV_LEGACY_API_URL: "http://localhost:8091/person/dittnav-api"
       DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
