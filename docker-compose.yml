@@ -1,4 +1,4 @@
-version: '3.7'
+version: '2.4'
 services:
 
   postgres:
@@ -16,6 +16,11 @@ services:
       POSTGRES_USER: "test-user"
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   zookeeper:
     container_name: zookeeper
@@ -47,9 +52,11 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.dittnav.docker-internal:9092,PLAINTEXT_HOST://localhost:29092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
-    command: "sh -c '/scripts/wait-for-it.sh zookeeper.dittnav.docker-internal:2181 -- /etc/confluent/docker/run'"
-    volumes:
-      - ./composescripts:/scripts
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z zookeeper.dittnav.docker-internal 2181"]
+      interval: 20s
+      timeout: 5s
+      retries: 8
 
   schema-registry:
     container_name: schema-registry
@@ -60,13 +67,15 @@ services:
     image: "confluentinc/cp-schema-registry:5.3.1"
     ports:
       - "8081:8081"
+    depends_on:
+      kafka:
+        condition: service_healthy
+      zookeeper:
+        condition: service_started
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka.dittnav.docker-internal:9092"
       SCHEMA_REGISTRY_HOST_NAME: "schema-registry.dittnav.docker-internal"
       SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8081"
-    depends_on:
-      - zookeeper
-      - kafka
 
   oidc-provider:
     container_name: oidc-provider
@@ -111,9 +120,12 @@ services:
       KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
       DB_HOST: "postgres.dittnav.docker-internal:5432"
     depends_on:
-      - postgres
-      - oidc-provider-gui
-      - schema-registry
+      postgres:
+        condition: service_healthy
+      oidc-provider-gui:
+        condition: service_started
+      schema-registry:
+        condition: service_started
 
   handler:
     container_name: handler
@@ -130,10 +142,14 @@ services:
       DB_HOST: "postgres.dittnav.docker-internal:5432"
       OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
     depends_on:
-      - oidc-provider-gui
-      - postgres
-      - schema-registry
-      - aggregator
+      postgres:
+        condition: service_healthy
+      oidc-provider-gui:
+        condition: service_started
+      schema-registry:
+        condition: service_started
+      aggregator:
+        condition: service_started
 
   api:
     container_name: api
