@@ -16,11 +16,6 @@ services:
       POSTGRES_USER: "test-user"
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   zookeeper:
     container_name: zookeeper
@@ -120,12 +115,9 @@ services:
       KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
       DB_HOST: "postgres.dittnav.docker-internal:5432"
     depends_on:
-      postgres:
-        condition: service_healthy
-      oidc-provider-gui:
-        condition: service_started
-      schema-registry:
-        condition: service_started
+      - schema-registry
+      - postgres
+      - oidc-provider-gui
 
   handler:
     container_name: handler
@@ -142,14 +134,10 @@ services:
       DB_HOST: "postgres.dittnav.docker-internal:5432"
       OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
     depends_on:
-      postgres:
-        condition: service_healthy
-      oidc-provider-gui:
-        condition: service_started
-      schema-registry:
-        condition: service_started
-      aggregator:
-        condition: service_started
+      - schema-registry
+      - oidc-provider-gui
+      - postgres
+      - aggregator
 
   api:
     container_name: api
