@@ -242,7 +242,7 @@ services:
       menypunkter: 'http://localhost:8100/dekoratoren/api/get/menyvalg'
       minsideArbeidsgiverUrl: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
       sokeresultat: 'http://localhost:8100/dekoratoren/api/get/sokeresultat'
-      varselinnboksUrl: 'https://www-q0.nav.no/person/varselinnboks'
+      varselinnboksUrl: 'http://localhost:8095/person/varselinnboks'
 
   frontend:
     container_name: frontend
