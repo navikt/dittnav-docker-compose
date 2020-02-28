@@ -233,10 +233,10 @@ services:
     ports:
       - "8100:8088"
     environment:
-      NAV_BASE_URL: 'http://localhost:8100'
+      XP_BASE_URL: 'http://localhost:8100'
       APP_BASE_URL: "http://localhost:8100/dekoratoren"
-      API_ENONIC_MENY_URL: 'https://www.nav.no/_/service/no.nav.navno/menu'
-      API_ENONIC_SOK_URL: 'https://www.nav.no/_/service/navno.nav.no.search/search2/sok'
+      API_XP_MENY_URL: 'https://www.nav.no/_/service/no.nav.navno/menu'
+      API_XP_SOK_URL: 'https://www.nav.no/_/service/navno.nav.no.search/search2/sok'
       API_INNLOGGINGSLINJE_URL: 'http://mocks.dittnav.docker-internal:8080/innloggingslinje-api/auth'
       API_VARSELINNBOKS_URL: 'http://mocks.dittnav.docker-internal:8080/person/varselinnboks'
       MINSIDE_ARBEIDSGIVER_URL: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
