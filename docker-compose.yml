@@ -229,7 +229,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - dekoratoren.dittnav.docker-internal
-    image: "navikt/nav-dekoratoren:b782b938-03ab-4af3-8b60-19b88c31d32b-master"
+    image: "navikt/nav-dekoratoren:latest"
     ports:
       - "8100:8088"
     environment:
