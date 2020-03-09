@@ -125,7 +125,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "navikt/dittnav-event-handler:latest"
+    image: "navikt/dittnav-event-handler:47db781d5f7e4ced487997b1298dda97c0bd0e06"
     ports:
       - "8092:8080"
     environment:
