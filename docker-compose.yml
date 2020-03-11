@@ -13,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: "test-user"
+      POSTGRES_USER: "dittnav-event-cache-preprod-user"
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
 
@@ -84,7 +84,7 @@ services:
     environment:
       PORT: "9000"
       CALLBACK_URL: "http://localhost:5000/callback"
-      ISSUER: "https://localhost:9000"
+      ISSUER: ${OIDC_ISSUER}
 
   oidc-provider-gui:
     container_name: oidc-provider-gui
@@ -110,10 +110,7 @@ services:
     image: "navikt/dittnav-event-aggregator:latest"
     ports:
       - "8093:8080"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
-      DB_HOST: "postgres.dittnav.docker-internal:5432"
+    env_file: .env
     depends_on:
       - schema-registry
       - postgres
@@ -128,12 +125,7 @@ services:
     image: "navikt/dittnav-event-handler:latest"
     ports:
       - "8092:8080"
-    environment:
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
-      DB_HOST: "postgres.dittnav.docker-internal:5432"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
-      OIDC_CLAIM_CONTAINING_THE_IDENTITY: "pid"
+    env_file: .env
     depends_on:
       - schema-registry
       - oidc-provider-gui
@@ -149,12 +141,11 @@ services:
     image: "navikt/dittnav-api:latest"
     ports:
       - "8091:8080"
+    env_file: .env
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
       CORS_ALLOWED_ORIGINS: "*"
-      OIDC_CLAIM_CONTAINING_THE_IDENTITY: "pid"
     depends_on:
       - oidc-provider
       - handler
@@ -172,9 +163,9 @@ services:
     environment:
       NAIS_APP_NAME: "dittnav-legacy-api"
       NAIS_NAMESPACE: "localhost"
-      AAD_B2C_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
-      AAD_B2C_CLIENTID_USERNAME: "stubOidcClient"
-      EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: "https://localhost:9000"
+      AAD_B2C_DISCOVERY_URL: ${OIDC_DISCOVERY_URL}
+      AAD_B2C_CLIENTID_USERNAME: ${OIDC_ACCEPTED_AUDIENCE}
+      EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: ${OIDC_ISSUER}
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_PASSWORD: "dummyApiPassword"
       TJENESTER_URL: "https://dummyTjenester.nav.no"
@@ -199,8 +190,8 @@ services:
       - "8095:8080"
     environment:
       CORS_ALLOWED_ORIGINS: "*"
-      OIDC_ISSUER: "https://localhost:9000"
-      OIDC_ACCEPTED_AUDIENCE: "stubOidcClient"
+      OIDC_ISSUER: ${OIDC_ISSUER}
+      OIDC_ACCEPTED_AUDIENCE: ${OIDC_ACCEPTED_AUDIENCE}
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
     depends_on:
       - oidc-provider
@@ -214,13 +205,9 @@ services:
     image: "navikt/dittnav-event-test-producer:latest"
     ports:
       - "8094:8080"
+    env_file: .env
     environment:
       CORS_ALLOWED_ORIGINS: "*"
-      KAFKA_BOOTSTRAP_SERVERS: "kafka.dittnav.docker-internal:9092"
-      KAFKA_SCHEMAREGISTRY_SERVERS: "http://schema-registry.dittnav.docker-internal:8081"
-      DB_HOST: "postgres.dittnav.docker-internal:5432"
-      OIDC_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
-      OIDC_CLAIM_CONTAINING_THE_IDENTITY: "pid"
     depends_on:
       - oidc-provider-gui
       - postgres
