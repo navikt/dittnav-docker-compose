@@ -111,6 +111,13 @@ services:
     ports:
       - "8093:8080"
     env_file: .env
+    environment:
+      NAIS_APP_NAME: "aggregator"
+      NAIS_CLUSTER_NAME: "dev-sbs"
+      NAIS_NAMESPACE: "q1"
+      SENSU_HOST: "stub"
+      SENSU_PORT: ""
+      PRODUCER_ALIASES: ""
     depends_on:
       - schema-registry
       - postgres
