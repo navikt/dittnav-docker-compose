@@ -112,8 +112,7 @@ services:
       - "8093:8080"
     env_file: .env
     environment:
-      NAIS_APP_NAME: "aggregator"
-      NAIS_CLUSTER_NAME: "dev-sbs"
+      NAIS_CLUSTER_NAME: "local"
       NAIS_NAMESPACE: "q1"
       SENSU_HOST: "stub"
       SENSU_PORT: ""
