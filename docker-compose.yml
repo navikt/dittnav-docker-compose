@@ -17,6 +17,18 @@ services:
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
 
+  db-datapopulator:
+    container_name: db-datapopulator
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - db-datapopulator.dittnav.docker-internal
+    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
+    env_file: .env
+    depends_on:
+      aggregator:
+        condition: service_healthy
+
   zookeeper:
     container_name: zookeeper
     networks:
@@ -123,6 +135,10 @@ services:
       - schema-registry
       - postgres
       - oidc-provider-gui
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/isAlive"]
+      interval: 2s
+      timeout: 2s
 
   handler:
     container_name: handler
