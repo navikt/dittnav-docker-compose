@@ -17,6 +17,17 @@ services:
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
 
+  db-datapopulator:
+    container_name: db-datapopulator
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - db-datapopulator.dittnav.docker-internal
+    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
+    env_file: .env
+    depends_on:
+      - aggregator
+
   zookeeper:
     container_name: zookeeper
     networks:
