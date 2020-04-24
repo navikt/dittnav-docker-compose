@@ -139,6 +139,7 @@ services:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/isAlive"]
       interval: 2s
       timeout: 2s
+      retries: 10
 
   handler:
     container_name: handler
