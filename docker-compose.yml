@@ -128,7 +128,6 @@ services:
       NAIS_NAMESPACE: "q1"
       SENSU_HOST: "stub"
       SENSU_PORT: ""
-      PRODUCER_ALIASES: ""
     volumes:
       - "./secret/serviceuser:/secret/serviceuser"
     depends_on:
