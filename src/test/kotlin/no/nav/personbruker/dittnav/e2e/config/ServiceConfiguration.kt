@@ -16,7 +16,7 @@ enum class ServiceConfiguration(
     API("api_1", "person/dittnav-api", defaultExposedPort, defaultIsAlivePath),
     LEGACY("legacy_1", "person/dittnav-legacy-api", defaultExposedPort, defaultIsAlivePath),
     HANDLER("handler_1", "", defaultExposedPort, "/isAlive"),
-    AGGREGATOR("aggregator_1", "", defaultExposedPort, "/isAlive"),
+    AGGREGATOR("aggregator_1", "", defaultExposedPort, defaultIsAlivePath),
     PRODUCER("producer_1", "person/dittnav-event-test-producer", defaultExposedPort, "/isAlive"),
     MOCKS("mocks_1", "", defaultExposedPort, "/isAlive"),
     DEKORATOREN("dekoratoren_1", "dekoratoren", 8088, "/isAlive");
