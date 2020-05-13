@@ -25,11 +25,11 @@ object DittNavDockerComposeCommonContext {
      *
      * Ref: https://github.com/testcontainers/testcontainers-java/issues/2472
      */
-    fun commentOutContainerNameFieldFromComposeFile(dockerComposeFile: String): File {
-        val original = File(dockerComposeFile)
-        val originalAsString = original.readText().replace("container_name:", "#container_name:")
+    fun commentOutContainerNameFieldFromComposeFile(dockerComposeFileName: String): File {
+        val composeConfig = File(dockerComposeFileName).readText()
+        val composeConfigWithDeactivatedContainerName = composeConfig.replace("container_name:", "#container_name:")
         val temporaryFile = createTempFile(suffix = ".yml", directory = File("."))
-        temporaryFile.bufferedWriter().use { out -> out.write(originalAsString) }
+        temporaryFile.bufferedWriter().use { out -> out.write(composeConfigWithDeactivatedContainerName) }
         temporaryFile.deleteOnExit()
         return temporaryFile
     }
