@@ -135,7 +135,7 @@ services:
       - postgres
       - oidc-provider-gui
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/isAlive"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/internal/isAlive"]
       interval: 2s
       timeout: 2s
       retries: 10
