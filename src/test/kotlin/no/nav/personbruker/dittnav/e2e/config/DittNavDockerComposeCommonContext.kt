@@ -2,6 +2,10 @@ package no.nav.personbruker.dittnav.e2e.config
 
 import java.io.File
 
+/**
+ * Singleton som sørger for at DittNAV sin docker-compose context kun startes en gang, slik at alle tester kan
+ * gjenbruke den samme context-en.
+ */
 object DittNavDockerComposeCommonContext {
 
     val instance by lazy { startDittNavDockerCompose() }

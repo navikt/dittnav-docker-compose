@@ -3,6 +3,7 @@ val kluentVersion = "1.59"
 val testContainersVersion = "1.14.1"
 val ktorVersion = "1.3.1"
 val logbackVersion = "1.2.3"
+val javaJwtVersion = "3.10.3"
 
 plugins {
     kotlin("jvm") version "1.3.72"
@@ -25,6 +26,12 @@ dependencies {
     implementation("io.ktor:ktor-client-apache:$ktorVersion") {
         exclude("org.slf4j", "slf4j-api")
     }
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+
+    implementation("com.auth0:java-jwt:$javaJwtVersion")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
