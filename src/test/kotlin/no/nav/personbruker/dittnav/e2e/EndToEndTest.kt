@@ -12,8 +12,7 @@ import org.hamcrest.core.AnyOf.anyOf
 import org.junit.jupiter.api.Test
 import java.net.URL
 
-internal class EndToEndTest :
-    UsesTheCommonDockerComposeContext() {
+internal class EndToEndTest : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `all DittNAV services should be alive`() {
