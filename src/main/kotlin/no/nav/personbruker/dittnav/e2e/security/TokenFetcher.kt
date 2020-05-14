@@ -30,25 +30,18 @@ object TokenFetcher {
         "$oidcProviderBaseUrl/auth?client_id=$audience&redirect_uri=$oidcProviderGuiUrl&response_type=code&scope=openid+profile+acr+email&nonce=123"
 
     fun fetchTokenForIdent(ident: String, sikkerhetsnivaa: Int): TokenInfo {
-        try {
-            return runBlocking {
-                val uuid = fetchLoginFormUuid(
-                    sikkerhetsnivaa
-                )
-                postLoginFormForIdent(
-                    uuid,
-                    ident
-                )
+        return try {
+            runBlocking {
+                val uuid = fetchLoginFormUuid(sikkerhetsnivaa)
+                postLoginFormForIdent(uuid, ident)
                 val code = authUuid(uuid)
-                val tokenInfo =
-                    fetchToken(code)
+                val tokenInfo = fetchToken(code)
                 tokenInfo
             }
 
         } catch (e: Exception) {
             val msg = "Uventet feil ved forsøk på å hente ut token for lokal OIDC-provider"
-            val fetcherException =
-                TokenFetcherException(msg, e)
+            val fetcherException = TokenFetcherException(msg, e)
             fetcherException.addContext("ident", ident)
             fetcherException.addContext("sikkerhetsnivaa", sikkerhetsnivaa)
             throw fetcherException
@@ -97,9 +90,7 @@ object TokenFetcher {
     private suspend fun authUuid(uuid: String): String {
         val authUrl = URL("$oidcProviderBaseUrl/auth/$uuid")
         val response = client.get<HttpResponse>(authUrl)
-        return extractAuthorizationCodeFromUrl(
-            response
-        )
+        return extractAuthorizationCodeFromUrl(response)
     }
 
     private fun extractAuthorizationCodeFromUrl(response: HttpResponse): String {
