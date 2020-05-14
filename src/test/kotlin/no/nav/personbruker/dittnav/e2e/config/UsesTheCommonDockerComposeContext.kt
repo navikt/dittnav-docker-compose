@@ -1,6 +1,4 @@
-package no.nav.personbruker.dittnav.e2e
-
-import no.nav.personbruker.dittnav.e2e.config.DittNavDockerComposeCommonContext
+package no.nav.personbruker.dittnav.e2e.config
 
 /**
  * Hjelpeklasse som tester kan arve fra for å få tilgang til den felles docker-compose-konteksten.

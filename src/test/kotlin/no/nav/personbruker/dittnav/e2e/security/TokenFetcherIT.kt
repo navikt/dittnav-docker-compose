@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.security
 
 import com.auth0.jwt.JWT
-import no.nav.personbruker.dittnav.e2e.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 

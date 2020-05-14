@@ -13,7 +13,10 @@ internal class TokenFetcherExceptionTest {
         val expetedValue2 = "value2"
 
         val msg = "Simulert feil i en test"
-        val exception = TokenFetcherException(msg, Exception("$msg, cause"))
+        val exception = TokenFetcherException(
+            msg,
+            Exception("$msg, cause")
+        )
         exception.addContext(expetedKey1, expetedValue1)
         exception.addContext(expetedKey2, expetedValue2)
 

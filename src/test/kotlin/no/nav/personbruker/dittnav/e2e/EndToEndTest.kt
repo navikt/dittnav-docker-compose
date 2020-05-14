@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
+import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.config.get
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
@@ -11,7 +12,8 @@ import org.hamcrest.core.AnyOf.anyOf
 import org.junit.jupiter.api.Test
 import java.net.URL
 
-internal class EndToEndTest :UsesTheCommonDockerComposeContext() {
+internal class EndToEndTest :
+    UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `all DittNAV services should be alive`() {
