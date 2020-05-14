@@ -32,10 +32,10 @@ object TokenFetcher {
     fun fetchTokenForIdent(ident: String, sikkerhetsnivaa: Int): TokenInfo {
         return try {
             runBlocking {
-                val uuid = fetchLoginFormUuid(sikkerhetsnivaa)
-                postLoginFormForIdent(uuid, ident)
-                val code = authUuid(uuid)
-                val tokenInfo = fetchToken(code)
+                val loginFormUuid = fetchLoginFormUuid(sikkerhetsnivaa)
+                postLoginFormForIdent(loginFormUuid, ident)
+                val authorizationCode = fetchAuthorizationCodeForUuid(loginFormUuid)
+                val tokenInfo = fetchToken(authorizationCode)
                 tokenInfo
             }
 
@@ -59,8 +59,8 @@ object TokenFetcher {
 
         } catch (re: ResponseException) {
             // Klarer ikke å gå til innloggingssiden, fisker derfor kun ut UUID for innloggings-form-en
-            val urlToCall = re.response.call.request.url
-            return extractUuidFromUrl(urlToCall.toString())
+            val urlContainingTheFormUuid = re.response.call.request.url
+            return extractUuidFromUrl(urlContainingTheFormUuid.toString())
         }
     }
 
@@ -87,7 +87,7 @@ object TokenFetcher {
         }
     }
 
-    private suspend fun authUuid(uuid: String): String {
+    private suspend fun fetchAuthorizationCodeForUuid(uuid: String): String {
         val authUrl = URL("$oidcProviderBaseUrl/auth/$uuid")
         val response = client.get<HttpResponse>(authUrl)
         return extractAuthorizationCodeFromUrl(response)
