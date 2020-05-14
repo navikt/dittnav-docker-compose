@@ -29,15 +29,12 @@ object TokenFetcher {
     private val redirectToInitTokenFlow =
         "$oidcProviderBaseUrl/auth?client_id=$audience&redirect_uri=$oidcProviderGuiUrl&response_type=code&scope=openid+profile+acr+email&nonce=123"
 
-    fun fetchTokenForIdent(ident: String, sikkerhetsnivaa: Int): TokenInfo {
-        return try {
-            runBlocking {
-                val loginFormUuid = fetchLoginFormUuid(sikkerhetsnivaa)
-                postLoginFormForIdent(loginFormUuid, ident)
-                val authorizationCode = fetchAuthorizationCodeForUuid(loginFormUuid)
-                val tokenInfo = fetchToken(authorizationCode)
-                tokenInfo
-            }
+    fun fetchTokenForIdent(ident: String, sikkerhetsnivaa: Int): TokenInfo = runBlocking {
+        try {
+            val loginFormUuid = fetchLoginFormUuid(sikkerhetsnivaa)
+            postLoginFormForIdent(loginFormUuid, ident)
+            val authorizationCode = fetchAuthorizationCodeForUuid(loginFormUuid)
+            return@runBlocking fetchToken(authorizationCode)
 
         } catch (e: Exception) {
             val msg = "Uventet feil ved forsøk på å hente ut token for lokal OIDC-provider"
