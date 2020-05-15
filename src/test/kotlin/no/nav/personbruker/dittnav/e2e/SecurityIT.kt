@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.e2e
 
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
@@ -19,45 +20,73 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Api skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
+        val api = ServiceConfiguration.API
+        val operation = ApiOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestIsDenied(ServiceConfiguration.API, ApiOperations.FETCH_BESKJED)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.API, ApiOperations.FETCH_BESKJED, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.API, ApiOperations.FETCH_BESKJED, tokenAtLevel4)
+            assertThatTheRequestIsDenied(api, operation)
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel4)
         }
     }
 
     @Test
     fun `Handler skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
+        val handler = ServiceConfiguration.HANDLER
+        val operation = HandlerOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestIsDenied(ServiceConfiguration.HANDLER, HandlerOperations.FETCH_BESKJED)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.HANDLER, HandlerOperations.FETCH_BESKJED, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.HANDLER, HandlerOperations.FETCH_BESKJED, tokenAtLevel4)
+            assertThatTheRequestIsDenied(handler, operation)
+            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel4)
         }
     }
 
     @Test
     fun `Legacy skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
+        val legacy = ServiceConfiguration.LEGACY
+        val operation = LegacyOperations.MELDEKORT_INFO
         runBlocking {
-            assertThatTheRequestIsDenied(ServiceConfiguration.LEGACY, LegacyOperations.MELDEKORT_INFO)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.LEGACY, LegacyOperations.MELDEKORT_INFO, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(ServiceConfiguration.LEGACY, LegacyOperations.MELDEKORT_INFO, tokenAtLevel4)
+            assertThatTheRequestIsDenied(legacy, operation)
+            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel4)
+        }
+    }
+
+    @Test
+    fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
+        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer", "http://dummy.link")
+        val producer = ServiceConfiguration.PRODUCER
+        val operation = ProducerOperations.PRODUCE_BESKJED
+        runBlocking {
+            val unauthResponse = client.post<HttpResponse>(producer, operation, data)
+            printServiceLogIfNotExpectedResult(producer, unauthResponse, Unauthorized)
+            unauthResponse.status `should be equal to` Unauthorized
+
+            val authResponse3 = client.postWithToken<HttpResponse>(producer, operation, data, tokenAtLevel3)
+            printServiceLogIfNotExpectedResult(producer, authResponse3, OK)
+            authResponse3.status `should be equal to` OK
+
+            val authResponse4 = client.postWithToken<HttpResponse>(producer, operation, data, tokenAtLevel4)
+            printServiceLogIfNotExpectedResult(producer, authResponse4, OK)
+            authResponse4.status `should be equal to` OK
         }
     }
 
     private suspend fun assertThatTheRequestIsDenied(service: ServiceConfiguration, operation: ServiceOperation) {
         val unauthResponse = client.get<HttpResponse>(service, operation.path)
-        if (unauthResponse.status != Unauthorized) {
-            println("Container log for the service $service:\n" + dockerComposeContext.getLogsFor(service))
-        }
+        printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
         unauthResponse.status `should be equal to` Unauthorized
     }
 
     private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration, operation: ServiceOperation, tokenInfo: TokenInfo) {
         val authResponse = client.getWithToken<HttpResponse>(service, operation.path, tokenInfo)
-        if (authResponse.status != OK) {
+        printServiceLogIfNotExpectedResult(service, authResponse, OK)
+        authResponse.status `should be equal to` OK
+    }
+
+    private fun printServiceLogIfNotExpectedResult(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: HttpStatusCode) {
+        if (actualResponse.status != expectedResponse) {
             println("Container log for the service $service:\n" + dockerComposeContext.getLogsFor(service))
         }
-        authResponse.status `should be equal to` OK
     }
 
 }
