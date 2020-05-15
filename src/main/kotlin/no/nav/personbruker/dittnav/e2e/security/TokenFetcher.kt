@@ -46,7 +46,7 @@ object TokenFetcher {
     }
 
     private suspend fun fetchLoginFormUuid(sikkerhetsnivaa: Int): String {
-        val initFlowUrl = URL("$redirectToInitTokenFlow&acr_values=$sikkerhetsnivaa")
+        val initFlowUrl = URL("$redirectToInitTokenFlow&acr_values=Level$sikkerhetsnivaa")
         try {
             client.request<String> {
                 url(initFlowUrl)
