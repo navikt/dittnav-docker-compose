@@ -33,4 +33,11 @@ class DittNavDockerComposeContainer(composeFiles: File) : DockerComposeContainer
     private fun isServiceWithoutContextPath(service: ServiceConfiguration) =
         service.contextPath.isBlank()
 
+    fun getLogsFor(service : ServiceConfiguration) : String {
+        val apiContainer = getContainerByServiceName(service.dockerComposeName).get()
+        var logs = apiContainer.logs
+        logs = logs.replace("\\n\\t","\n\t")
+        return logs
+    }
+
 }
