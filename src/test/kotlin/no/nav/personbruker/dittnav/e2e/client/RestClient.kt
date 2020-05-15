@@ -23,8 +23,8 @@ class RestClient(val httpClient: HttpClient) {
 
     val log = LoggerFactory.getLogger(RestClient::class.java)
 
-    suspend inline fun <reified T> get(service: ServiceConfiguration, pathToHit: String): T = withContext(Dispatchers.IO) {
-        val completeUrlToHit = constructPathToHit(service, pathToHit)
+    suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation): T = withContext(Dispatchers.IO) {
+        val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.get<T>(completeUrlToHit)
 
@@ -35,8 +35,8 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> getWithToken(service: ServiceConfiguration, pathToHit: String, token: TokenInfo): T = withContext(Dispatchers.IO) {
-        val completeUrlToHit = constructPathToHit(service, pathToHit)
+    suspend inline fun <reified T> get(service: ServiceConfiguration, operation: ServiceOperation, token: TokenInfo): T = withContext(Dispatchers.IO) {
+        val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
@@ -51,8 +51,8 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto): T {
-        val completeUrlToHit = constructPathToHit(service, operation.path)
+    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto): T {
+        val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post<T>() {
                 url(completeUrlToHit)
@@ -68,8 +68,8 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> postWithToken(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto, tokenInfo : TokenInfo): T {
-        val completeUrlToHit = constructPathToHit(service, operation.path)
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto, tokenInfo : TokenInfo): T {
+        val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post<T>() {
                 url(completeUrlToHit)
@@ -86,9 +86,9 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    fun constructPathToHit(service: ServiceConfiguration, pathToHit: String): URL {
+    fun constructPathToHit(service: ServiceConfiguration, operation: ServiceOperation): URL {
         val baseUrl = DittNavDockerComposeCommonContext.instance.getBaseUrl(service)
-        return URL("$baseUrl$pathToHit")
+        return URL("$baseUrl${operation.path}")
     }
 
 }

@@ -4,6 +4,7 @@ val testContainersVersion = "1.14.1"
 val ktorVersion = "1.3.1"
 val logbackVersion = "1.2.3"
 val javaJwtVersion = "3.10.3"
+val jacksonVersion = "2.10.4"
 
 plugins {
     kotlin("jvm") version "1.3.72"
@@ -30,6 +31,8 @@ dependencies {
     implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
+
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("com.auth0:java-jwt:$javaJwtVersion")
 
