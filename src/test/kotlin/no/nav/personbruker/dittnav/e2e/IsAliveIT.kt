@@ -30,7 +30,7 @@ internal class IsAliveIT : UsesTheCommonDockerComposeContext() {
     }
 
     private fun assertIsAliveForSingleService(service: ServiceConfiguration, isAlivePath: String) = runBlocking {
-        val response = client.get(service, isAlivePath)
+        val response = client.get<String>(service, isAlivePath)
         assertThat(
                 "isAlive failed for $service",
                 response,
