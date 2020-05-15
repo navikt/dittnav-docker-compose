@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.e2e
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.AnyOf.anyOf
@@ -30,7 +31,7 @@ internal class IsAliveIT : UsesTheCommonDockerComposeContext() {
     }
 
     private fun assertIsAliveForSingleService(service: ServiceConfiguration, isAlivePath: String) = runBlocking {
-        val response = client.get<String>(service, isAlivePath)
+        val response = client.getWithoutAuth<String>(service, StringToServiceOperationConverter(isAlivePath))
         assertThat(
                 "isAlive failed for $service",
                 response,
@@ -41,5 +42,7 @@ internal class IsAliveIT : UsesTheCommonDockerComposeContext() {
                 )
         )
     }
+
+    private data class StringToServiceOperationConverter(override val path: String) : ServiceOperation
 
 }

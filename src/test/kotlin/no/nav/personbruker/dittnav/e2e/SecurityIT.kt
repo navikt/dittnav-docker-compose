@@ -23,7 +23,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val api = ServiceConfiguration.API
         val operation = ApiOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestIsDenied(api, operation)
+            assertThatTheRequestWasDenied(api, operation)
             assertThatTheRequestWasAccepted(api, operation, tokenAtLevel3)
             assertThatTheRequestWasAccepted(api, operation, tokenAtLevel4)
         }
@@ -34,7 +34,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val handler = ServiceConfiguration.HANDLER
         val operation = HandlerOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestIsDenied(handler, operation)
+            assertThatTheRequestWasDenied(handler, operation)
             assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel3)
             assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel4)
         }
@@ -45,7 +45,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val legacy = ServiceConfiguration.LEGACY
         val operation = LegacyOperations.MELDEKORT_INFO
         runBlocking {
-            assertThatTheRequestIsDenied(legacy, operation)
+            assertThatTheRequestWasDenied(legacy, operation)
             assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel3)
             assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel4)
         }
@@ -53,32 +53,32 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer", "http://dummy.link")
+        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer")
         val producer = ServiceConfiguration.PRODUCER
         val operation = ProducerOperations.PRODUCE_BESKJED
         runBlocking {
-            val unauthResponse = client.post<HttpResponse>(producer, operation, data)
+            val unauthResponse = client.postWithoutAuth<HttpResponse>(producer, operation, data)
             printServiceLogIfNotExpectedResult(producer, unauthResponse, Unauthorized)
             unauthResponse.status `should be equal to` Unauthorized
 
-            val authResponse3 = client.postWithToken<HttpResponse>(producer, operation, data, tokenAtLevel3)
+            val authResponse3 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel3)
             printServiceLogIfNotExpectedResult(producer, authResponse3, OK)
             authResponse3.status `should be equal to` OK
 
-            val authResponse4 = client.postWithToken<HttpResponse>(producer, operation, data, tokenAtLevel4)
+            val authResponse4 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel4)
             printServiceLogIfNotExpectedResult(producer, authResponse4, OK)
             authResponse4.status `should be equal to` OK
         }
     }
 
-    private suspend fun assertThatTheRequestIsDenied(service: ServiceConfiguration, operation: ServiceOperation) {
-        val unauthResponse = client.get<HttpResponse>(service, operation.path)
+    private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, operation: ServiceOperation) {
+        val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation)
         printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
         unauthResponse.status `should be equal to` Unauthorized
     }
 
     private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration, operation: ServiceOperation, tokenInfo: TokenInfo) {
-        val authResponse = client.getWithToken<HttpResponse>(service, operation.path, tokenInfo)
+        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo)
         printServiceLogIfNotExpectedResult(service, authResponse, OK)
         authResponse.status `should be equal to` OK
     }

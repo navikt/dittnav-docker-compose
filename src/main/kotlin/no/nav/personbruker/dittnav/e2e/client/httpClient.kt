@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.HttpTimeout
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.features.json.JacksonSerializer
@@ -27,8 +28,9 @@ fun buildHttpClient(): HttpClient {
             level = LogLevel.NONE
         }
         install(JsonFeature) {
-            serializer = JacksonSerializer()
+            serializer = buildJsonSerializer()
         }
+        install(HttpTimeout)
     }
 }
 
