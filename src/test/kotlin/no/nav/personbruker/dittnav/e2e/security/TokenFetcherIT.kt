@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test
 internal class TokenFetcherIT : UsesTheCommonDockerComposeContext() {
 
     @Test
-    fun `fetch token at sikkerhetsnivaa 3`() {
+    fun `Skal kunne hente OIDC-token for en bruker paa sikkerhetsnivaa 3`() {
         verifyTokenIdentAndSikkerhetsnivaa("333", 3)
     }
 
     @Test
-    fun `fetch token at sikkerhetsnivaa 4`() {
+    fun `Skal kunne hente OIDC-token for en bruker paa sikkerhetsnivaa 4`() {
         verifyTokenIdentAndSikkerhetsnivaa("444", 4)
     }
 
