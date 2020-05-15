@@ -15,7 +15,7 @@ object DittNavDockerComposeCommonContext {
 
     ).apply {
         withPull(true)
-        ServiceConfiguration.personbrukerServices().forEach { service ->
+        ServiceConfiguration.values().forEach { service ->
             withExposedService(service)
         }
         start()

@@ -1,4 +1,4 @@
-package no.nav.personbruker.dittnav.e2e.config
+package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
