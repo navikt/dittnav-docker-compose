@@ -91,11 +91,11 @@ object TokenFetcher {
     }
 
     private fun extractAuthorizationCodeFromUrl(response: HttpResponse): String {
-        val requestUrlFragmentContainingTokenEtc = response.call.request.url.toString()
-        val parts = requestUrlFragmentContainingTokenEtc.split("&")
-        val idTokenWithPrefix = parts[0]
-        val codeWithPrefix = idTokenWithPrefix.replace(oidcProviderGuiUrl, "")
-        return codeWithPrefix.replace("?code=", "")
+        val requestUrlContainingAuthCode = response.call.request.url.toString()
+        val urlParts = requestUrlContainingAuthCode.split("&")
+        val authCodeWithProtocolAndPrefix = urlParts[0]
+        val authCodeWithPrefix = authCodeWithProtocolAndPrefix.replace(oidcProviderGuiUrl, "")
+        return authCodeWithPrefix.replace("?code=", "")
     }
 
     private suspend fun fetchToken(code: String): TokenInfo {
