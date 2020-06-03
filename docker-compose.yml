@@ -286,6 +286,7 @@ services:
       ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
       VARSLINGER_FEATURE_TOGGLE: "true"
       TEST_SIDE_FEATURE_TOGGLE: "true"
+      AKTIVITETSPLAN_URL: "http://dummyAktivitetsplan.nav.no"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
