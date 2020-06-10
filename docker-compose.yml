@@ -120,6 +120,8 @@ services:
         aliases:
           - aggregator.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
+    mem_limit: '1200m'
+    mem_reservation: '1024m'
     ports:
       - "8093:8080"
     env_file: .env
@@ -147,6 +149,8 @@ services:
         aliases:
           - handler.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:latest"
+    mem_limit: '768m'
+    mem_reservation: '384m'
     ports:
       - "8092:8080"
     env_file: .env
@@ -165,6 +169,8 @@ services:
         aliases:
           - api.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav-api/dittnav-api:latest"
+    mem_limit: '768m'
+    mem_reservation: '580m'
     ports:
       - "8091:8080"
     env_file: .env
@@ -184,6 +190,8 @@ services:
         aliases:
           - legacy.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav-legacy-api/dittnav-legacy-api:latest"
+    mem_limit: '2gb'
+    mem_reservation: '2gb'
     ports:
       - "8090:8080"
     environment:
@@ -229,6 +237,8 @@ services:
         aliases:
           - producer.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
+    mem_limit: '512m'
+    mem_reservation: '256m'
     ports:
       - "8094:8080"
     env_file: .env
@@ -248,6 +258,8 @@ services:
         aliases:
           - dekoratoren.dittnav.docker-internal
     image: "navikt/nav-dekoratoren:latest"
+    mem_limit: '1500m'
+    mem_reservation: '1500m'
     ports:
       - "8100:8088"
     environment:
@@ -269,6 +281,8 @@ services:
         aliases:
           - frontend.dittnav.docker-internal
     image: "docker.pkg.github.com/navikt/dittnav/dittnav:latest"
+    mem_limit: '768m'
+    mem_reservation: '512m'
     ports:
       - "3000:8080"
     environment:
