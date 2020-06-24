@@ -1,9 +1,8 @@
-package no.nav.personbruker.dittnav.e2e.beskjed
+package no.nav.personbruker.dittnav.e2e.oppgave
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.ZonedDateTime
 
-data class BeskjedDTO(
+data class OppgaveDTO(
         val uid: String?,
         val eventTidspunkt: ZonedDateTime,
         val eventId: String,

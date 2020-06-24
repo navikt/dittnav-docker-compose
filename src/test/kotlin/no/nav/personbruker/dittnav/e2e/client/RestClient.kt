@@ -37,6 +37,7 @@ class RestClient(val httpClient: HttpClient) {
 
     suspend inline fun <reified T> get(service: ServiceConfiguration, operation: ServiceOperation, token: TokenInfo): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
+        val tokenInfo = token
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
@@ -54,7 +55,7 @@ class RestClient(val httpClient: HttpClient) {
     suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
-            httpClient.post<T>() {
+            httpClient.post {
                 url(completeUrlToHit)
                 method = HttpMethod.Post
                 contentType(ContentType.Application.Json)
@@ -71,7 +72,7 @@ class RestClient(val httpClient: HttpClient) {
     suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto, tokenInfo : TokenInfo): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
-            httpClient.post<T>() {
+            httpClient.post {
                 url(completeUrlToHit)
                 method = HttpMethod.Post
                 header(HttpHeaders.Authorization, "Bearer ${tokenInfo.id_token}")
