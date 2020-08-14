@@ -1,15 +1,14 @@
-package no.nav.personbruker.dittnav.e2e
+package no.nav.personbruker.dittnav.e2e.security
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
-import no.nav.personbruker.dittnav.e2e.security.TokenFetcher
-import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
@@ -85,8 +84,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     private fun printServiceLogIfNotExpectedResult(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: HttpStatusCode) {
         if (actualResponse.status != expectedResponse) {
-            println("Container log for the service $service:\n" + dockerComposeContext.getLogsFor(service))
+            println("Container log for the service $service:\n ${dockerComposeContext.getLogsFor(service)}")
         }
     }
-
 }

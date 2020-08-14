@@ -15,8 +15,8 @@ enum class HandlerOperations(override val path : String) :ServiceOperation {
 
     PRODUCE_DONE("/produce/done"),
 
-    IS_ALIVE("/isAlive"),
-    IS_READY("/isReady"),
+    IS_ALIVE("/internal/isAlive"),
+    IS_READY("/internal/isReady"),
     SELFTEST("/internal/selftest"),
     PING("/ping"),
     METRICS("/metrics")

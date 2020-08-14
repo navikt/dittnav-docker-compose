@@ -11,7 +11,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import no.nav.personbruker.dittnav.e2e.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.DittNavDockerComposeCommonContext
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
@@ -37,7 +36,6 @@ class RestClient(val httpClient: HttpClient) {
 
     suspend inline fun <reified T> get(service: ServiceConfiguration, operation: ServiceOperation, token: TokenInfo): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
-        val tokenInfo = token
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
@@ -69,7 +67,7 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto, tokenInfo : TokenInfo): T {
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceDto, tokenInfo: TokenInfo): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
