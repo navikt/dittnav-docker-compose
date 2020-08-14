@@ -1,10 +1,9 @@
 package no.nav.personbruker.dittnav.e2e.beskjed
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.ZonedDateTime
 
 data class BeskjedDTO(
-        val uid: String?,
+        val uid: String,
         val eventTidspunkt: ZonedDateTime,
         val eventId: String,
         val tekst: String,

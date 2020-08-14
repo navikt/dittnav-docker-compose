@@ -14,7 +14,8 @@ enum class LegacyOperations(override val path : String) :ServiceOperation {
 
     AUTH_PING("/authPing"),
     IS_ALIVE("/internal/isAlive"),
-    IS_READY("/internal/isReady"),
+    IS_READY("/internal/isAlive"),
     SELFTEST("/internal/selftest"),
+    METRICS("/internal/metrics"),
     PING("/internal/ping")
 }

@@ -18,37 +18,4 @@ enum class ServiceConfiguration(
     PRODUCER("producer_1", "person/dittnav-event-test-producer", defaultExposedPort),
     MOCKS("mocks_1", "", defaultExposedPort),
     DEKORATOREN("dekoratoren_1", "dekoratoren", 8088);
-
-    companion object {
-        fun dittNavServices(): List<ServiceConfiguration> {
-            return listOf(
-                    FRONTEND,
-                    API,
-                    LEGACY,
-                    HANDLER,
-                    AGGREGATOR
-            )
-        }
-
-        fun personbrukerServices(): List<ServiceConfiguration> {
-            return dittNavServices() + listOf(
-                    DEKORATOREN
-            )
-        }
-
-        fun mockingServices(): List<ServiceConfiguration> {
-            return listOf(
-                    PRODUCER,
-                    MOCKS
-            )
-        }
-
-        fun securityServices(): List<ServiceConfiguration> {
-            return listOf(
-                    OIDC_PROVIDER,
-                    OIDC_PROVIDER_GUI
-            )
-        }
-    }
-
 }
