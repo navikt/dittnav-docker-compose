@@ -11,8 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.config.buildHttpClient
-import no.nav.personbruker.dittnav.e2e.config.get
+import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
+import no.nav.personbruker.dittnav.e2e.client.get
 import java.net.URL
 import java.util.*
 
@@ -46,7 +46,7 @@ object TokenFetcher {
     }
 
     private suspend fun fetchLoginFormUuid(sikkerhetsnivaa: Int): String {
-        val initFlowUrl = URL("$redirectToInitTokenFlow&acr_values=$sikkerhetsnivaa")
+        val initFlowUrl = URL("$redirectToInitTokenFlow&acr_values=Level$sikkerhetsnivaa")
         try {
             client.request<String> {
                 url(initFlowUrl)

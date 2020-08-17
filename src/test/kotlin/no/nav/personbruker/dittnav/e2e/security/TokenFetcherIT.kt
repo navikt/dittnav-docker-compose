@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test
 internal class TokenFetcherIT : UsesTheCommonDockerComposeContext() {
 
     @Test
-    fun `fetch token at sikkerhetsnivaa 3`() {
+    fun `Skal kunne hente OIDC-token for en bruker paa sikkerhetsnivaa 3`() {
         verifyTokenIdentAndSikkerhetsnivaa("333", 3)
     }
 
     @Test
-    fun `fetch token at sikkerhetsnivaa 4`() {
+    fun `Skal kunne hente OIDC-token for en bruker paa sikkerhetsnivaa 4`() {
         verifyTokenIdentAndSikkerhetsnivaa("444", 4)
     }
 
@@ -22,10 +22,10 @@ internal class TokenFetcherIT : UsesTheCommonDockerComposeContext() {
 
         val decodedToken = JWT.decode(tokenInfo.id_token)
         val ident = decodedToken.getClaim("pid").asString()
-        val sikkerhetsnivaa = decodedToken.getClaim("acr").asString().toInt()
+        val sikkerhetsnivaa = decodedToken.getClaim("acr").asString()
 
         ident `should be equal to` expectedIdent
-        sikkerhetsnivaa `should be equal to` expectedSikkerhetsnivaa
+        sikkerhetsnivaa `should be equal to` "Level$expectedSikkerhetsnivaa"
     }
 
 }
