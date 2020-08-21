@@ -12,6 +12,9 @@ Brukernavn og token tilhører githubkontoen din (der tokenet må ha tilgang til 
 
 Ende-til-ende-testene kjøres med `gradle clean test`
 
+Testene kan også kjøres på Github Actions, ved hjelp av repository_dispatch. D.v.s. et POST-kall med gyldig Github-token til 
+`https://api.github.com/repos/navikt/dittnav-docker-compose/dispatches`, med payload `{"event_type":"run-tests"}`. 
+
 ## Feilsøke ende-til-ende-testene
 
 Dersom en test feiler kan årsaken ofte finnes i loggene til containeren til avhengigheten der feilen oppstod. Disse kan man få tak
