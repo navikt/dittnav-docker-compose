@@ -1,3 +1,5 @@
+name: Bygg og push db-datapopulator
+
 on:
   push:
     branches:

@@ -14,9 +14,9 @@ object DittNavDockerComposeCommonContext {
         commentOutContainerNameFieldFromComposeFile("docker-compose.yml")
 
     ).apply {
-        withPull(true)
         ServiceConfiguration.values().forEach { service ->
             withExposedService(service)
+            withLocalCompose(true)
         }
         start()
     }
