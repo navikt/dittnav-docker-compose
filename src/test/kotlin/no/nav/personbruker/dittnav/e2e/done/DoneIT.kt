@@ -27,7 +27,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, "Oppgave 1", ProducerOperations.PRODUCE_OPPGAVE)
         `produser brukernotifikasjon`(tokenAt4, "Beskjed 1", ProducerOperations.PRODUCE_BESKJED)
         `produser brukernotifikasjon`(tokenAt4, "Innboks 1", ProducerOperations.PRODUCE_INNBOKS)
-        `wait for events to be processed`(1000)
+        `wait for events to be processed`(2000)
 
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
         `wait for events to be processed`()

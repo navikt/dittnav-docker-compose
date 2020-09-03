@@ -15,7 +15,7 @@ open class UsesTheCommonDockerComposeContext {
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
     val client = RestClient(buildHttpClient())
 
-    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 100) {
+    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 200) {
         runBlocking {
             delay(waittimeInMilliseconds)
         }
