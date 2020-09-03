@@ -210,6 +210,7 @@ services:
       MININNBOKS_API_URL: "http://mocks.dittnav.docker-internal:8080/mininnboks-api"
       MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
       OPPFOLGING_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
+      VARSELINNBOKS_URL: "http://mocks.dittnav.docker-internal:8080/varselinnboks"
       CORS_ALLOWED_ORIGINS: ".nav.no,.oera-q.local"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
