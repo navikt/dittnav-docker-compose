@@ -24,6 +24,7 @@ class RestClient(val httpClient: HttpClient) {
 
     suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
+        log.info("Complete URL to hit $completeUrlToHit")
         return@withContext try {
             httpClient.get<T>(completeUrlToHit)
 
