@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.security
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
@@ -10,12 +10,19 @@ import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
-    private val tokenAtLevel3 = TokenFetcher.fetchTokenForIdent("000", 3)
-    private val tokenAtLevel4 = TokenFetcher.fetchTokenForIdent("000", 4)
+    private lateinit var tokenAtLevel3: TokenInfo
+    private lateinit var tokenAtLevel4: TokenInfo
+
+    @BeforeEach
+    fun `hent token`() {
+        tokenAtLevel3 = tokenFetcher.fetchTokenForIdent("000", 3)
+        tokenAtLevel4 = tokenFetcher.fetchTokenForIdent("000", 4)
+    }
 
     @Test
     fun `Api skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {

@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.done
 
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
@@ -11,7 +11,6 @@ import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.oppgave.OppgaveDTO
-import no.nav.personbruker.dittnav.e2e.security.TokenFetcher
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should not be empty`
@@ -23,7 +22,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Skal produsere done-eventer for alle brukernotifikasjoner`() {
-        val tokenAt4 = TokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
         `produser brukernotifikasjon`(tokenAt4, "Oppgave 1", ProducerOperations.PRODUCE_OPPGAVE)
         `produser brukernotifikasjon`(tokenAt4, "Beskjed 1", ProducerOperations.PRODUCE_BESKJED)
         `produser brukernotifikasjon`(tokenAt4, "Innboks 1", ProducerOperations.PRODUCE_INNBOKS)

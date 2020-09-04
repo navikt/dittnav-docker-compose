@@ -21,7 +21,7 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Oppgave 1"
-        val tokenAt3 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt3)
@@ -34,7 +34,7 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Oppgave 2"
-        val tokenAt4 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt4)

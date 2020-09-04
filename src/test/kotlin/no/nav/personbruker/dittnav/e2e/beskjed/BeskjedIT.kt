@@ -22,7 +22,7 @@ internal class BeskjedIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere beskjeder paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Beskjed 1"
-        val tokenAt3 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt3)
@@ -35,7 +35,7 @@ internal class BeskjedIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere beskjeder paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 2"
-        val tokenAt4 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
@@ -48,7 +48,7 @@ internal class BeskjedIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere done-event for beskjed`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 3"
-        val tokenAt4 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)

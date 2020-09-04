@@ -18,7 +18,7 @@ internal class TokenFetcherIT : UsesTheCommonDockerComposeContext() {
     }
 
     private fun verifyTokenIdentAndSikkerhetsnivaa(expectedIdent: String, expectedSikkerhetsnivaa: Int) {
-        val tokenInfo = TokenFetcher.fetchTokenForIdent(expectedIdent, expectedSikkerhetsnivaa)
+        val tokenInfo = tokenFetcher.fetchTokenForIdent(expectedIdent, expectedSikkerhetsnivaa)
 
         val decodedToken = JWT.decode(tokenInfo.id_token)
         val ident = decodedToken.getClaim("pid").asString()

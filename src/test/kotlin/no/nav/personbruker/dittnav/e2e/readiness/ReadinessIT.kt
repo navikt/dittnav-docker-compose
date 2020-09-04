@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.readiness
 
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
@@ -11,11 +11,8 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.AnyOf.anyOf
 import org.junit.jupiter.api.Test
-import org.slf4j.LoggerFactory
 
 internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
-
-    private val log = LoggerFactory.getLogger(ReadinessIT::class.java)
 
     @Test
     fun `Servicer skal tilby isAlive`() {
@@ -39,17 +36,11 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Servicer skal tilby selftest`() {
-        log.info("Starter selftest-test")
         assertSelftestForSingleService(ServiceConfiguration.API, ApiOperations.SELFTEST)
-        log.info("Forbi API")
         assertSelftestForSingleService(ServiceConfiguration.LEGACY, LegacyOperations.SELFTEST)
-        log.info("Forbi legacy")
         assertSelftestForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.SELFTEST)
-        log.info("Forbi handler")
         assertSelftestForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.SELFTEST)
-        log.info("Forbi aggregator")
         assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
-        log.info("Forbi frontend")
     }
 
     @Test
