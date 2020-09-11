@@ -132,8 +132,6 @@ services:
       NAIS_NAMESPACE: "q1"
       SENSU_HOST: "stub"
       SENSU_PORT: ""
-    volumes:
-      - "./secret/serviceuser:/secret/serviceuser"
     depends_on:
       - schema-registry
       - postgres
@@ -156,8 +154,6 @@ services:
     ports:
       - "8092:8080"
     env_file: .env
-    volumes:
-      - "./secret/serviceuser:/secret/serviceuser"
     depends_on:
       - schema-registry
       - oidc-provider-gui
@@ -247,8 +243,6 @@ services:
     env_file: .env
     environment:
       CORS_ALLOWED_ORIGINS: "*"
-    volumes:
-      - "./secret/serviceuser:/secret/serviceuser"
     depends_on:
       - oidc-provider-gui
       - postgres
