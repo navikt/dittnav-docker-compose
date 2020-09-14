@@ -1,14 +1,13 @@
 package no.nav.personbruker.dittnav.e2e.innboks
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
-import no.nav.personbruker.dittnav.e2e.security.TokenFetcher
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -21,9 +20,8 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere innboks-eventer paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Innboks 1"
-        val tokenAt3 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
-
         `produce innboks-event at level`(originalInnboksEvent, tokenAt3)
         `wait for events to be processed`()
         val activeInnboksEvents = `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
@@ -34,7 +32,7 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere innboks-eventer paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Innboks 2"
-        val tokenAt4 = TokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce innboks-event at level`(originalInnboksEvent, tokenAt4)

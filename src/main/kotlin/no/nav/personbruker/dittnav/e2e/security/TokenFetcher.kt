@@ -1,29 +1,22 @@
 package no.nav.personbruker.dittnav.e2e.security
 
-import io.ktor.client.features.RedirectResponseException
-import io.ktor.client.features.ResponseException
-import io.ktor.client.request.accept
-import io.ktor.client.request.header
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
+import io.ktor.client.features.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
 import no.nav.personbruker.dittnav.e2e.client.get
 import java.net.URL
 import java.util.*
 
-object TokenFetcher {
+class TokenFetcher(private val audience: String,
+                   private val clientSecret: String,
+                   private val oidcProviderBaseUrl: String) {
+
+    private val oidcProviderGuiUrl = "http://localhost:5000/callback"
 
     private val client = buildHttpClient()
-
-    private val audience = "stubOidcClient"
-    private val clientSecret = "secretsarehardtokeep"
-    private val oidcProviderBaseUrl = "http://localhost:9000"
-    private val oidcProviderGuiUrl = "http://localhost:5000/callback"
 
     private val authenticationHeader = "$audience:$clientSecret".base64Encode()
     private val redirectToInitTokenFlow =
@@ -35,7 +28,6 @@ object TokenFetcher {
             postLoginFormForIdent(loginFormUuid, ident)
             val authorizationCode = fetchAuthorizationCodeForUuid(loginFormUuid)
             return@runBlocking fetchToken(authorizationCode)
-
         } catch (e: Exception) {
             val msg = "Uventet feil ved forsøk på å hente ut token for lokal OIDC-provider"
             val fetcherException = TokenFetcherException(msg, e)
@@ -53,7 +45,6 @@ object TokenFetcher {
                 method = HttpMethod.Get
             }
             throw Exception("Dette skal ikke skje")
-
         } catch (re: ResponseException) {
             // Klarer ikke å gå til innloggingssiden, fisker derfor kun ut UUID for innloggings-form-en
             val urlContainingTheFormUuid = re.response.call.request.url
@@ -78,7 +69,6 @@ object TokenFetcher {
                 header(HttpHeaders.Referrer, formUrl)
                 body = "uuid=$uuid&login=$ident"
             }
-
         } catch (ure: RedirectResponseException) {
             // Her er det forventet at en redirect feiler, og det er ikke noe problem.
         }
@@ -110,7 +100,6 @@ object TokenFetcher {
                 "grant_type=authorization_code&code=${code}&redirect_uri=$oidcProviderGuiUrl&client_secret=$clientSecret"
         }
     }
-
 }
 
 fun String.base64Encode(): String {

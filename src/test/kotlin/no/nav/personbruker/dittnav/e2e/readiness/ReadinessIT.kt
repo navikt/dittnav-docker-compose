@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.readiness
 
-import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration

@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.RestClient
 import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
+import no.nav.personbruker.dittnav.e2e.security.TokenFetcher
 
 /**
  * Hjelpeklasse som tester kan arve fra for å få tilgang til den felles docker-compose-konteksten.
@@ -15,10 +16,17 @@ open class UsesTheCommonDockerComposeContext {
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
     val client = RestClient(buildHttpClient())
 
-    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 100) {
+    private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
+
+    val tokenFetcher = TokenFetcher(
+            audience = "stubOidcClient",
+            clientSecret = "secretsarehardtokeep",
+            oidcProviderBaseUrl = oidcproviderURL
+    )
+
+    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 200) {
         runBlocking {
             delay(waittimeInMilliseconds)
         }
     }
-
 }
