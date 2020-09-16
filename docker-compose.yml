@@ -302,6 +302,24 @@ services:
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
 
+  varselbestiller:
+    container_name: varselbestiller
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - varselbestiller.dittnav.docker-internal
+    image: "docker.pkg.github.com/navikt/dittnav-varsel-bestiller/dittnav-varsel-bestiller:latest"
+    mem_limit: '1200m'
+    mem_reservation: '1024m'
+    ports:
+      - "8098:8080"
+    env_file: .env
+    environment:
+      NAIS_CLUSTER_NAME: "local"
+      NAIS_NAMESPACE: "localhost"
+      SENSU_HOST: "stub"
+      SENSU_PORT: ""
+
 volumes:
   dittnav-event-cache-data:
 
