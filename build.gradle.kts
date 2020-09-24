@@ -1,10 +1,4 @@
-val junitVersion = "5.6.2"
-val kluentVersion = "1.59"
 val testContainersVersion = "1.14.1"
-val ktorVersion = "1.3.1"
-val logbackVersion = "1.2.3"
-val javaJwtVersion = "3.10.3"
-val jacksonVersion = "2.10.4"
 
 plugins {
     kotlin("jvm") version "1.3.72"
@@ -19,33 +13,25 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(Auth0.javajwt)
+    implementation(Jackson.dataTypeJsr310)
+    implementation(Ktor.clientApache)
+    implementation(Ktor.clientJackson)
+    implementation(Ktor.clientJson)
+    implementation(Ktor.clientLogging)
+    implementation(Ktor.clientLoggingJvm)
+    implementation(Logback.classic)
 
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    testImplementation(Junit.api)
+    testImplementation(Junit.params)
+    testImplementation(Kluent.kluent)
 
-    implementation("io.ktor:ktor-client-apache:$ktorVersion") {
-        exclude("org.slf4j", "slf4j-api")
-    }
-    implementation("io.ktor:ktor-client-logging:$ktorVersion")
-    implementation("io.ktor:ktor-client-logging-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
-    implementation("com.auth0:java-jwt:$javaJwtVersion")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testRuntimeOnly(Junit.engine)
 
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion") {
         exclude("junit", "junit")
     }
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
-
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
 }
 
 tasks {

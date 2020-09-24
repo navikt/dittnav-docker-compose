@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
-import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should equal`
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.AnyOf.anyOf
@@ -86,12 +86,12 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
 
     private fun assertSelftestForSingleService(service: ServiceConfiguration, operation: ServiceOperation) = runBlocking {
         val response = client.getWithoutAuth<HttpResponse>(service, operation)
-        response.status `should be equal to` OK
+        response.status `should equal` OK
     }
 
     private fun assertMetricsForSingleService(service: ServiceConfiguration, operation: ServiceOperation) = runBlocking {
         val response = client.getWithoutAuth<HttpResponse>(service, operation)
-        response.status `should be equal to` OK
+        response.status `should equal` OK
     }
 
     private data class StringToServiceOperationConverter(override val path: String) : ServiceOperation
