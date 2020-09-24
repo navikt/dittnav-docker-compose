@@ -10,6 +10,7 @@ import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.Test
 
 internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
@@ -45,7 +46,7 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     private fun `produce oppgave at level`(originalOppgave: ProduceBrukernotifikasjonDto, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_OPPGAVE, originalOppgave, token)
-        }.status `should be equal to` HttpStatusCode.OK
+        }.status `should equal` HttpStatusCode.OK
     }
 
     private fun `verify oppgave`(oppgave: OppgaveDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {
