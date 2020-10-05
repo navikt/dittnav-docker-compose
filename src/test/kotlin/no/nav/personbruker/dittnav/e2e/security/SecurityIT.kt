@@ -9,7 +9,7 @@ import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
-import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should equal`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -65,28 +65,28 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         runBlocking {
             val unauthResponse = client.postWithoutAuth<HttpResponse>(producer, operation, data)
             printServiceLogIfNotExpectedResult(producer, unauthResponse, Unauthorized)
-            unauthResponse.status `should be equal to` Unauthorized
+            unauthResponse.status `should equal` Unauthorized
 
             val authResponse3 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel3)
             printServiceLogIfNotExpectedResult(producer, authResponse3, OK)
-            authResponse3.status `should be equal to` OK
+            authResponse3.status `should equal` OK
 
             val authResponse4 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel4)
             printServiceLogIfNotExpectedResult(producer, authResponse4, OK)
-            authResponse4.status `should be equal to` OK
+            authResponse4.status `should equal` OK
         }
     }
 
     private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, operation: ServiceOperation) {
         val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation)
         printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
-        unauthResponse.status `should be equal to` Unauthorized
+        unauthResponse.status `should equal` Unauthorized
     }
 
     private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration, operation: ServiceOperation, tokenInfo: TokenInfo) {
         val authResponse = client.get<HttpResponse>(service, operation, tokenInfo)
         printServiceLogIfNotExpectedResult(service, authResponse, OK)
-        authResponse.status `should be equal to` OK
+        authResponse.status `should equal` OK
     }
 
     private fun printServiceLogIfNotExpectedResult(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: HttpStatusCode) {
