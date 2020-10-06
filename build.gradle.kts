@@ -1,4 +1,4 @@
-val testContainersVersion = "1.14.1"
+val testContainersVersion = "1.15.0-rc2"
 
 plugins {
     kotlin("jvm") version "1.3.72"
