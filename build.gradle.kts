@@ -1,7 +1,5 @@
-val testContainersVersion = "1.15.0-rc2"
-
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version Kotlin.version
 }
 
 group = "no.nav.personbruker.dittnav"
@@ -28,10 +26,10 @@ dependencies {
 
     testRuntimeOnly(Junit.engine)
 
-    testImplementation("org.testcontainers:testcontainers:$testContainersVersion") {
+    testImplementation(TestContainers.testContainers) {
         exclude("junit", "junit")
     }
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation(TestContainers.junitJupiter)
 }
 
 tasks {
