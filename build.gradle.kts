@@ -14,7 +14,9 @@ dependencies {
     implementation(Auth0.javajwt)
     implementation(Jackson.dataTypeJsr310)
     implementation(Ktor.clientApache)
-    implementation(Ktor.clientJackson)
+    implementation(Ktor.clientJackson) {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+    }
     implementation(Ktor.clientJson)
     implementation(Ktor.clientLogging)
     implementation(Ktor.clientLoggingJvm)
