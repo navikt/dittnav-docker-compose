@@ -10,7 +10,7 @@ import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 class InnboksIT: UsesTheCommonDockerComposeContext() {
@@ -45,7 +45,7 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
     private fun `produce innboks-event at level`(originalInnboksEvent: ProduceBrukernotifikasjonDto, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_INNBOKS, originalInnboksEvent, token)
-        }.status `should equal` HttpStatusCode.OK
+        }.status `should be equal to` HttpStatusCode.OK
     }
 
     private fun `verify innboks-event`(innboksEvent: InnboksDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {

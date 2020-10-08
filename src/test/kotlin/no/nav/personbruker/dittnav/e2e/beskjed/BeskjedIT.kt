@@ -11,7 +11,7 @@ import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should equal`
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 internal class BeskjedIT: UsesTheCommonDockerComposeContext() {
@@ -72,13 +72,13 @@ internal class BeskjedIT: UsesTheCommonDockerComposeContext() {
     private fun `produce beskjed at level`(originalBeskjed: ProduceBrukernotifikasjonDto, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_BESKJED, originalBeskjed, token)
-        }.status `should equal` HttpStatusCode.OK
+        }.status `should be equal to` HttpStatusCode.OK
     }
 
     private fun `produce done-event for beskjed`(originalDone: ProduceDoneDto, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.API, ApiOperations.PRODUCE_DONE, originalDone, token)
-        }.status `should equal` HttpStatusCode.OK
+        }.status `should be equal to` HttpStatusCode.OK
     }
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<BeskjedDTO> {
