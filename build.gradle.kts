@@ -1,7 +1,5 @@
-val testContainersVersion = "1.15.0-rc2"
-
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version Kotlin.version
 }
 
 group = "no.nav.personbruker.dittnav"
@@ -16,7 +14,9 @@ dependencies {
     implementation(Auth0.javajwt)
     implementation(Jackson.dataTypeJsr310)
     implementation(Ktor.clientApache)
-    implementation(Ktor.clientJackson)
+    implementation(Ktor.clientJackson) {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+    }
     implementation(Ktor.clientJson)
     implementation(Ktor.clientLogging)
     implementation(Ktor.clientLoggingJvm)
@@ -28,10 +28,10 @@ dependencies {
 
     testRuntimeOnly(Junit.engine)
 
-    testImplementation("org.testcontainers:testcontainers:$testContainersVersion") {
+    testImplementation(TestContainers.testContainers) {
         exclude("junit", "junit")
     }
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation(TestContainers.junitJupiter)
 }
 
 tasks {
