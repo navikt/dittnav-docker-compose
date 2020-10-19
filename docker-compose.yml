@@ -301,7 +301,8 @@ services:
       VEILEDERARBEIDSSOKER_URL: "http://dummyVeilederArbeidssoker.nav.no"
       VARSLINGER_FEATURE_TOGGLE: "false"
       LOGIN_LEVEL_4_URL: "http://dummyloginLevel4.nav.no"
-
+      TIDSLINJE_URL: "http://dummyTidslinje.nav.no"
+      TIDSLINJE_PRODUSENT: "dummyProdusent"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
