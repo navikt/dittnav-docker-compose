@@ -59,7 +59,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer")
+        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer", "grupperingsid")
         val producer = ServiceConfiguration.PRODUCER
         val operation = ProducerOperations.PRODUCE_BESKJED
         runBlocking {

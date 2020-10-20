@@ -57,7 +57,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     }
 
     private fun `produser brukernotifikasjon`(token: TokenInfo, text: String, producerOperation: ProducerOperations) {
-        val brukernotifikasjon = ProduceBrukernotifikasjonDto(text)
+        val brukernotifikasjon = ProduceBrukernotifikasjonDto(text, "grupperingsid")
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, token)
         }
@@ -71,7 +71,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private inline fun <reified T> `get events`(token: TokenInfo, apiOperation: ApiOperations): T {
         return runBlocking {
-            var response = client.get<T>(ServiceConfiguration.API, apiOperation, token)
+            val response = client.get<T>(ServiceConfiguration.API, apiOperation, token)
             response
         }
     }

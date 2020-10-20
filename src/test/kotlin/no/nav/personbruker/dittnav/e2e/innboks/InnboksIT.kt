@@ -21,8 +21,9 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere innboks-eventer paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Innboks 1"
+        val expectedGrupperingsid = "1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
+        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
         `produce innboks-event at level`(originalInnboksEvent, tokenAt3)
         `wait for events to be processed`()
         val activeInnboksEvents = `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
@@ -33,8 +34,9 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere innboks-eventer paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Innboks 2"
+        val expectedGrupperingsid = "2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
+        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
 
         `produce innboks-event at level`(originalInnboksEvent, tokenAt4)
         `wait for events to be processed`()
@@ -57,7 +59,7 @@ class InnboksIT: UsesTheCommonDockerComposeContext() {
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<InnboksDTO> {
         return runBlocking {
-            var response = client.get<List<InnboksDTO>>(ServiceConfiguration.API, operation, token)
+            val response = client.get<List<InnboksDTO>>(ServiceConfiguration.API, operation, token)
             response
         }
     }

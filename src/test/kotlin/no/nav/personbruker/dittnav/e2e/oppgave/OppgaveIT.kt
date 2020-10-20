@@ -21,8 +21,9 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Oppgave 1"
+        val expectedGrupperingsid = "1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
 
         `produce oppgave at level`(originalOppgave, tokenAt3)
         `wait for events to be processed`()
@@ -34,8 +35,9 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Oppgave 2"
+        val expectedGrupperingsid = "2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
 
         `produce oppgave at level`(originalOppgave, tokenAt4)
         `wait for events to be processed`()
@@ -58,7 +60,7 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<OppgaveDTO> {
         return runBlocking {
-            var response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
+            val response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
             response
         }
     }
