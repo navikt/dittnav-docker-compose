@@ -1,10 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.request
-import io.ktor.client.request.url
+import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -41,6 +38,28 @@ class RestClient(val httpClient: HttpClient) {
                 url(completeUrlToHit)
                 method = HttpMethod.Get
                 header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
+            }
+
+        } catch (e: Exception) {
+            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            log.error(msg)
+            throw e
+        }
+    }
+
+    suspend inline fun <reified T> getWithParameters(service: ServiceConfiguration,
+                                                     operation: ServiceOperation,
+                                                     token: TokenInfo,
+                                                     grupperingsid: String,
+                                                     produsent: String): T = withContext(Dispatchers.IO) {
+        val completeUrlToHit = constructPathToHit(service, operation)
+        return@withContext try {
+            httpClient.request<T> {
+                url(completeUrlToHit)
+                method = HttpMethod.Get
+                header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
+                parameter("grupperingsid", grupperingsid)
+                parameter("produsent", produsent)
             }
 
         } catch (e: Exception) {

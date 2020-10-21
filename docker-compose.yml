@@ -23,7 +23,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - db-datapopulator.dittnav.docker-internal
-    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
+    image: vketest-datapopulator:00.00.01
     env_file: .env
     depends_on:
       aggregator:
@@ -148,7 +148,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:latest"
+    image: "vketest-handler:00.00.02"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
@@ -235,7 +235,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
+    image: "vketest-producer:00.00.02"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
@@ -247,6 +247,25 @@ services:
       - oidc-provider-gui
       - postgres
       - schema-registry
+
+  tidslinje:
+    container_name: tidslinje
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - tidslinje.dittnav.docker-internal
+    image: "vketest-tidslinje:00.00.01"
+    mem_limit: '768m'
+    mem_reservation: '580m'
+    ports:
+      - "8099:8080"
+    env_file: .env
+    environment:
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      CORS_ALLOWED_ORIGINS: "*"
+    depends_on:
+      - oidc-provider
+      - handler
 
   dekoratoren:
     container_name: dekoratoren

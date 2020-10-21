@@ -12,22 +12,23 @@ import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 
 internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
+    private val log = LoggerFactory.getLogger(BeskjedIT::class.java)
 
     @Test
     fun `Skal produsere beskjeder paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Beskjed 1"
-        val expectedGrupperingsid = "1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
+        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt3)
         `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt3, ApiOperations.FETCH_BESKJED)
+        val activeBeskjeder = `get events from api`(tokenAt3, ApiOperations.FETCH_BESKJED)
         `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
     }
 
@@ -35,32 +36,32 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
     fun `Skal produsere beskjeder paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 2"
-        val expectedGrupperingsid = "2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
+        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        val activeBeskjeder = `get events from api`(tokenAt4, ApiOperations.FETCH_BESKJED)
         `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
+
+        log.info("- - - - - produsent: '${activeBeskjeder[0].produsent}'.")
     }
 
     @Test
     fun `Skal produsere done-event for beskjed`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 3"
-        val expectedGrupperingsid = "3"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
+        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        val activeBeskjeder = `get events from api`(tokenAt4, ApiOperations.FETCH_BESKJED)
         `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
 
         val originalDone = ProduceDoneDto(activeBeskjeder[0].uid, activeBeskjeder[0].eventId)
         `produce done-event for beskjed`(originalDone, tokenAt4)
-        val inactiveBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)
+        val inactiveBeskjeder = `get events from api`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)
         `verify beskjed`(inactiveBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
     }
 
@@ -83,7 +84,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }.status `should be equal to` HttpStatusCode.OK
     }
 
-    private fun `get events`(token: TokenInfo, operation: ApiOperations): List<BeskjedDTO> {
+    private fun `get events from api`(token: TokenInfo, operation: ApiOperations): List<BeskjedDTO> {
         return runBlocking {
             val response = client.get<List<BeskjedDTO>>(ServiceConfiguration.API, operation, token)
             response

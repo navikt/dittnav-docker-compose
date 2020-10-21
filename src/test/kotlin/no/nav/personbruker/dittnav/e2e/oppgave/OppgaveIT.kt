@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.oppgave
 
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
@@ -10,10 +10,9 @@ import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
-internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
+internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
 
@@ -21,9 +20,8 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 3`() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Oppgave 1"
-        val expectedGrupperingsid = "1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
+        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt3)
         `wait for events to be processed`()
@@ -35,9 +33,8 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
     fun `Skal produsere oppgaver paa sikkerhetsnivaa 4`() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Oppgave 2"
-        val expectedGrupperingsid = "2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText, expectedGrupperingsid)
+        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt4)
         `wait for events to be processed`()
