@@ -43,8 +43,6 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         `wait for events to be processed`()
         val activeBeskjeder = `get events from api`(tokenAt4, ApiOperations.FETCH_BESKJED)
         `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
-
-        log.info("- - - - - produsent: '${activeBeskjeder[0].produsent}'.")
     }
 
     @Test

@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test
 class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
-    private val grupperingsid = "1"
     private val produsent = "produsent"
 
     @Test
     fun `Skal hente alle events som er gruppert sammen`() {
+        val grupperingsid = "2"
         val expectedSikkerhetsnivaa = 4
         val expectedTextBeskjed = "Beskjed 1"
         val expectedTextOppgave = "Oppgave 1"
@@ -56,20 +56,41 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     }
 
     @Test
-    fun `Skal hente beskjedevent som matcher ids`() {
+    fun `Skal kun hente eventer som matcher ids`() {
+        val grupperingsid = "3"
+        val noMatchGrupperingsid = "12345"
         val expectedSikkerhetsnivaa = 4
+
         val expectedTextBeskjed = "Beskjed 1"
-        val expectedType = "Beskjed"
+        val expectedTextOppgave = "Oppgave 1"
+        val expectedStatusInternStatusoppdatering = "Statusoppdatering 1"
+
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+
         val originalBeskjed = ProduceBrukernotifikasjonDto(expectedTextBeskjed, grupperingsid)
+        val originalOppgave = ProduceBrukernotifikasjonDto(expectedTextOppgave, noMatchGrupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDto(expectedStatusInternStatusoppdatering, grupperingsid)
 
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
         `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, grupperingsid, produsent)
-        tidslinjeEvents.size `should be equal to` 1
-        //`verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, expectedType)
+        `produce event at level`(originalOppgave, ProducerOperations.PRODUCE_OPPGAVE, tokenAt4)
+        `wait for events to be processed`()
 
+        `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
+        `wait for events to be processed`()
+
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, grupperingsid, produsent)
+        tidslinjeEvents.size `should be equal to` 2
+        `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
+        `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Beskjed")
+    }
+
+    private fun `verify event`(event: Brukernotifikasjon, expectedSikkerhetsnivaa: Int, expectedType: String) {
+        runBlocking {
+            event.type `should be equal to` expectedType
+            event.sikkerhetsnivaa `should be equal to` expectedSikkerhetsnivaa
+        }
     }
 
     private fun `produce event at level`(originalEvent: ProduceDto, operation: ServiceOperation, token: TokenInfo) {
@@ -81,22 +102,16 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     private fun `get events from tidslinje`(token: TokenInfo,
                                             operation: TidslinjeOperations,
                                             grupperingsid: String,
-                                            produsent: String): List<Any> {
+                                            produsent: String): List<Brukernotifikasjon> {
         return runBlocking {
             val response =
-                    client.getWithParameters<List<Any>>(
+                    client.getWithParameters<List<Brukernotifikasjon>>(
                             ServiceConfiguration.TIDSLINJE,
                             operation,
                             token,
                             grupperingsid,
                             produsent)
             response
-        }
-    }
-
-    private fun `verify event`(event: Brukernotifikasjon, expectedSikkerhetsnivaa: Int, expectedType: String) {
-        runBlocking {
-            event.type `should be equal to` expectedType
         }
     }
 

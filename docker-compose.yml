@@ -23,7 +23,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - db-datapopulator.dittnav.docker-internal
-    image: vketest-datapopulator:00.00.01
+    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
     env_file: .env
     depends_on:
       aggregator:
@@ -148,7 +148,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "vketest-handler:00.00.02"
+    image: "docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:latest"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
@@ -235,7 +235,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "vketest-producer:00.00.02"
+    image: "docker.pkg.github.com/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
@@ -254,7 +254,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - tidslinje.dittnav.docker-internal
-    image: "vketest-tidslinje:00.00.01"
+    image: "docker.pkg.github.com/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
