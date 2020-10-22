@@ -24,7 +24,7 @@ open class UsesTheCommonDockerComposeContext {
             oidcProviderBaseUrl = oidcproviderURL
     )
 
-    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 500) {
+    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 700) {
         runBlocking {
             delay(waittimeInMilliseconds)
         }
