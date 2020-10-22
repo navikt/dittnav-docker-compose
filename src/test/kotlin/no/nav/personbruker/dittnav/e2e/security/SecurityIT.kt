@@ -61,12 +61,11 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
     fun `Tidslinje skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
         val tidslinje = ServiceConfiguration.TIDSLINJE
         val operation = TidslinjeOperations.TIDSLINJE
-        val grupperingsid = "1234"
-        val produsent = "produsent"
+        val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
         runBlocking {
             assertThatTheRequestWasDenied(tidslinje) { client.getWithoutAuth(tidslinje, operation) }
-            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel3, grupperingsid, produsent) }
-            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel4, grupperingsid, produsent) }
+            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel3, getParameters) }
+            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel4, getParameters) }
         }
     }
 

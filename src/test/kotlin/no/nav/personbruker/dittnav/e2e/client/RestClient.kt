@@ -50,16 +50,16 @@ class RestClient(val httpClient: HttpClient) {
     suspend inline fun <reified T> getWithParameters(service: ServiceConfiguration,
                                                      operation: ServiceOperation,
                                                      token: TokenInfo,
-                                                     grupperingsid: String,
-                                                     produsent: String): T = withContext(Dispatchers.IO) {
+                                                     parameters: Map<String, String>): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
                 method = HttpMethod.Get
                 header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
-                parameter("grupperingsid", grupperingsid)
-                parameter("produsent", produsent)
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
             }
 
         } catch (e: Exception) {

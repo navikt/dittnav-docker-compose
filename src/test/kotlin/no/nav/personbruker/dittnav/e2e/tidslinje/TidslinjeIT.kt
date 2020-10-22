@@ -23,6 +23,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal hente alle eventer som er gruppert sammen og er paa sikkerhetsnivaa 4`() {
         val grupperingsid = "1"
+        val getParameters = mapOf("grupperingsid" to grupperingsid, "produsent" to produsent)
         val expectedSikkerhetsnivaa = 4
 
         val expectedTextBeskjed = "Beskjed 1"
@@ -44,7 +45,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
         `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, grupperingsid, produsent)
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
         tidslinjeEvents.size `should be equal to` 3
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Oppgave")
@@ -54,6 +55,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal hente alle eventer som er gruppert sammen og er paa sikkerhetsnivaa 3`() {
         val grupperingsid = "2"
+        val getParameters = mapOf("grupperingsid" to grupperingsid, "produsent" to produsent)
         val expectedSikkerhetsnivaa = 3
 
         val expectedTextBeskjed = "Beskjed 2"
@@ -70,7 +72,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
         `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, grupperingsid, produsent)
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
         tidslinjeEvents.size `should be equal to` 2
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Beskjed")
@@ -80,9 +82,9 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     fun `Skal hente tom liste hvis ingen eventer matcher grupperingsid`() {
         val expectedSikkerhetsnivaa = 4
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val noMatchGrupperingsid = "noMatch"
+        val getParameters = mapOf("grupperingsid" to "noMatchGrupperingsid", "produsent" to produsent)
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, noMatchGrupperingsid, produsent)
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
         tidslinjeEvents.size `should be equal to` 0
     }
 
@@ -90,10 +92,9 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
     fun `Skal hente tom liste hvis ingen eventer matcher produsent`() {
         val expectedSikkerhetsnivaa = 4
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val grupperingsid = "2"
-        val noMatchProducer = "noMatch"
+        val getParameters = mapOf("grupperingsid" to "2", "produsent" to "noMatchProducer")
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, grupperingsid, noMatchProducer)
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
         tidslinjeEvents.size `should be equal to` 0
     }
 
@@ -112,16 +113,14 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private fun `get events from tidslinje`(token: TokenInfo,
                                             operation: TidslinjeOperations,
-                                            grupperingsid: String,
-                                            produsent: String): List<Brukernotifikasjon> {
+                                            parameters: Map<String, String>): List<Brukernotifikasjon> {
         return runBlocking {
             val response =
                     client.getWithParameters<List<Brukernotifikasjon>>(
                             ServiceConfiguration.TIDSLINJE,
                             operation,
                             token,
-                            grupperingsid,
-                            produsent)
+                            parameters)
             response
         }
     }
