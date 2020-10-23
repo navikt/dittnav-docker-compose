@@ -116,7 +116,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
                                             parameters: Map<String, String>): List<Brukernotifikasjon> {
         return runBlocking {
             val response =
-                    client.getWithParameters<List<Brukernotifikasjon>>(
+                    client.get<List<Brukernotifikasjon>>(
                             ServiceConfiguration.TIDSLINJE,
                             operation,
                             token,

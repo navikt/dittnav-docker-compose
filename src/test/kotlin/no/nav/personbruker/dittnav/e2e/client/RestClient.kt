@@ -31,26 +31,10 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> get(service: ServiceConfiguration, operation: ServiceOperation, token: TokenInfo): T = withContext(Dispatchers.IO) {
-        val completeUrlToHit = constructPathToHit(service, operation)
-        return@withContext try {
-            httpClient.request<T> {
-                url(completeUrlToHit)
-                method = HttpMethod.Get
-                header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
-            }
-
-        } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
-            log.error(msg)
-            throw e
-        }
-    }
-
-    suspend inline fun <reified T> getWithParameters(service: ServiceConfiguration,
-                                                     operation: ServiceOperation,
-                                                     token: TokenInfo,
-                                                     parameters: Map<String, String>): T = withContext(Dispatchers.IO) {
+    suspend inline fun <reified T> get(service: ServiceConfiguration,
+                                       operation: ServiceOperation,
+                                       token: TokenInfo,
+                                       parameters: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {

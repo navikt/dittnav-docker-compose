@@ -29,9 +29,9 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val api = ServiceConfiguration.API
         val operation = ApiOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestWasDenied(api) { client.getWithoutAuth(api, operation) }
-            assertThatTheRequestWasAccepted(api) { client.get(api, operation, tokenAtLevel3) }
-            assertThatTheRequestWasAccepted(api) { client.get(api, operation, tokenAtLevel4) }
+            assertThatTheRequestWasDenied(api, operation)
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel4)
         }
     }
 
@@ -40,9 +40,9 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val handler = ServiceConfiguration.HANDLER
         val operation = HandlerOperations.FETCH_BESKJED
         runBlocking {
-            assertThatTheRequestWasDenied(handler) { client.getWithoutAuth(handler, operation) }
-            assertThatTheRequestWasAccepted(handler) { client.get(handler, operation, tokenAtLevel3) }
-            assertThatTheRequestWasAccepted(handler) { client.get(handler, operation, tokenAtLevel4) }
+            assertThatTheRequestWasDenied(handler, operation)
+            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel4)
         }
     }
 
@@ -51,9 +51,9 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val legacy = ServiceConfiguration.LEGACY
         val operation = LegacyOperations.MELDEKORT_INFO
         runBlocking {
-            assertThatTheRequestWasDenied(legacy) { client.getWithoutAuth(legacy, operation) }
-            assertThatTheRequestWasAccepted(legacy) { client.get(legacy, operation, tokenAtLevel3) }
-            assertThatTheRequestWasAccepted(legacy) { client.get(legacy, operation, tokenAtLevel4) }
+            assertThatTheRequestWasDenied(legacy, operation)
+            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel3)
+            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel4)
         }
     }
 
@@ -63,9 +63,9 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val operation = TidslinjeOperations.TIDSLINJE
         val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
         runBlocking {
-            assertThatTheRequestWasDenied(tidslinje) { client.getWithoutAuth(tidslinje, operation) }
-            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel3, getParameters) }
-            assertThatTheRequestWasAccepted(tidslinje) { client.getWithParameters(tidslinje, operation, tokenAtLevel4, getParameters) }
+            assertThatTheRequestWasDenied(tidslinje, operation)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters)
         }
     }
 
@@ -89,14 +89,17 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, getEvents: suspend () -> HttpResponse) {
-        val unauthResponse = getEvents()
+    private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, operation: ServiceOperation) {
+        val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation)
         printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
         unauthResponse.status `should be equal to` Unauthorized
     }
 
-    private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration, getEvents: suspend () -> HttpResponse) {
-        val authResponse = getEvents()
+    private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration,
+                                                        operation: ServiceOperation,
+                                                        tokenInfo: TokenInfo,
+                                                        parameters: Map<String, String> = emptyMap()) {
+        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
         printServiceLogIfNotExpectedResult(service, authResponse, OK)
         authResponse.status `should be equal to` OK
     }
