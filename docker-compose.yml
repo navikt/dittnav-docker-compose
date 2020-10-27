@@ -195,6 +195,9 @@ services:
     environment:
       NAIS_APP_NAME: "dittnav-legacy-api"
       NAIS_NAMESPACE: "localhost"
+      AAD_B2C_DISCOVERY_URL: ${OIDC_DISCOVERY_URL}
+      AAD_B2C_CLIENTID_USERNAME: ${OIDC_ACCEPTED_AUDIENCE}
+      EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: ${OIDC_ISSUER}
       LOGINSERVICE_IDPORTEN_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
       LOGINSERVICE_IDPORTEN_AUDIENCE: "stubOidcClient"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
