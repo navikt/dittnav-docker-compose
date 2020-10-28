@@ -3,4 +3,4 @@ CREATE TABLE IF NOT EXISTS systembrukere (
     produsentnavn character varying(100) not null
 );
 
-INSERT INTO systembrukere(systembruker, produsentnavn) VALUES ('dittnav', 'dittnav') ON CONFLICT DO NOTHING;
+INSERT INTO systembrukere(systembruker, produsentnavn) VALUES ('username', 'produsent') ON CONFLICT DO NOTHING;

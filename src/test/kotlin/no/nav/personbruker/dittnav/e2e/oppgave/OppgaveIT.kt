@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.oppgave
 
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
@@ -10,10 +10,9 @@ import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
-internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
+internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
 
@@ -58,7 +57,7 @@ internal class OppgaveIT: UsesTheCommonDockerComposeContext() {
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<OppgaveDTO> {
         return runBlocking {
-            var response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
+            val response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
             response
         }
     }
