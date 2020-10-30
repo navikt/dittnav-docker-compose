@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.security
 
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
@@ -58,8 +58,20 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
     }
 
     @Test
+    fun `Tidslinje skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
+        val tidslinje = ServiceConfiguration.TIDSLINJE
+        val operation = TidslinjeOperations.TIDSLINJE
+        val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
+        runBlocking {
+            assertThatTheRequestWasDenied(tidslinje, operation)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters)
+        }
+    }
+
+    @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer")
+        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer", "grupperingsid")
         val producer = ServiceConfiguration.PRODUCER
         val operation = ProducerOperations.PRODUCE_BESKJED
         runBlocking {
@@ -83,8 +95,11 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         unauthResponse.status `should be equal to` Unauthorized
     }
 
-    private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration, operation: ServiceOperation, tokenInfo: TokenInfo) {
-        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo)
+    private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration,
+                                                        operation: ServiceOperation,
+                                                        tokenInfo: TokenInfo,
+                                                        parameters: Map<String, String> = emptyMap()) {
+        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
         printServiceLogIfNotExpectedResult(service, authResponse, OK)
         authResponse.status `should be equal to` OK
     }

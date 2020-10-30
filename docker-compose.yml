@@ -198,6 +198,8 @@ services:
       AAD_B2C_DISCOVERY_URL: ${OIDC_DISCOVERY_URL}
       AAD_B2C_CLIENTID_USERNAME: ${OIDC_ACCEPTED_AUDIENCE}
       EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: ${OIDC_ISSUER}
+      LOGINSERVICE_IDPORTEN_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
+      LOGINSERVICE_IDPORTEN_AUDIENCE: "stubOidcClient"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
       DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_PASSWORD: "dummyApiPassword"
       TJENESTER_URL: "https://dummyTjenester.nav.no"
@@ -248,6 +250,25 @@ services:
       - postgres
       - schema-registry
 
+  tidslinje:
+    container_name: tidslinje
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - tidslinje.dittnav.docker-internal
+    image: "docker.pkg.github.com/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
+    mem_limit: '768m'
+    mem_reservation: '580m'
+    ports:
+      - "8099:8080"
+    env_file: .env
+    environment:
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      CORS_ALLOWED_ORIGINS: "*"
+    depends_on:
+      - oidc-provider
+      - handler
+
   dekoratoren:
     container_name: dekoratoren
     networks:
@@ -297,6 +318,12 @@ services:
       ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
       TEST_SIDE_FEATURE_TOGGLE: "true"
       AKTIVITETSPLAN_URL: "http://dummyAktivitetsplan.nav.no"
+      SYKDOM_I_FAMILIEN_URL: "http://dummySykdomIFamilien.nav.no"
+      VEILEDERARBEIDSSOKER_URL: "http://dummyVeilederArbeidssoker.nav.no"
+      VARSLINGER_FEATURE_TOGGLE: "false"
+      LOGIN_LEVEL_4_URL: "http://dummyloginLevel4.nav.no"
+      TIDSLINJE_URL: "http://dummyTidslinje.nav.no"
+      TIDSLINJE_PRODUSENT: "produsent"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"

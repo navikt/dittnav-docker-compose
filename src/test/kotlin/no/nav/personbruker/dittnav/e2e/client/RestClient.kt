@@ -1,10 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.request
-import io.ktor.client.request.url
+import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -34,17 +31,23 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> get(service: ServiceConfiguration, operation: ServiceOperation, token: TokenInfo): T = withContext(Dispatchers.IO) {
+    suspend inline fun <reified T> get(service: ServiceConfiguration,
+                                       operation: ServiceOperation,
+                                       token: TokenInfo,
+                                       parameters: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
                 method = HttpMethod.Get
                 header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
+                parameters.forEach { (key, value) ->
+                    parameter(key, value)
+                }
             }
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjennomføre et kall mot $completeUrlToHit"
             log.error(msg)
             throw e
         }
