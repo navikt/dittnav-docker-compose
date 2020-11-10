@@ -2,12 +2,14 @@ package no.nav.personbruker.dittnav.e2e.oppgave
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -42,6 +44,27 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         `verify oppgave`(activeOppgave[0], expectedSikkerhetsnivaa, expectedText)
     }
 
+    @Test
+    fun `Skal bestille ekstern varsling for oppgaver`() {
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val originalOppgave1 = ProduceBrukernotifikasjonDto("Oppgave med varsel 1", eksternVarsling = true)
+        val originalOppgave2 = ProduceBrukernotifikasjonDto("Oppgave med varsel 2", eksternVarsling = true)
+        val originalOppgave3 = ProduceBrukernotifikasjonDto("Oppgave uten varsel 1", eksternVarsling = false)
+        `produce oppgave at level`(originalOppgave1, tokenAt4)
+        `produce oppgave at level`(originalOppgave2, tokenAt4)
+        `produce oppgave at level`(originalOppgave3, tokenAt4)
+        var doknotifikasjonCount = 0
+        var countAttempts = 0
+        runBlocking {
+            while(doknotifikasjonCount == 0 && countAttempts < 10) {
+                doknotifikasjonCount = `get doknotifikasjon count`()
+                countAttempts++
+                delay(1000)
+            }
+        }
+        doknotifikasjonCount `should be equal to` 2
+    }
+
     private fun `produce oppgave at level`(originalOppgave: ProduceBrukernotifikasjonDto, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_OPPGAVE, originalOppgave, token)
@@ -60,5 +83,9 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
             val response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
             response
         }
+    }
+
+    private suspend fun `get doknotifikasjon count`(): Int {
+        return client.getWithoutAuth(ServiceConfiguration.MOCKS, VarselOperations.COUNT_DOKNOTIFIKASJON)
     }
 }

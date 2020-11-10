@@ -2,6 +2,7 @@ package no.nav.personbruker.dittnav.e2e.beskjed
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.client.ProduceDoneDto
@@ -9,6 +10,7 @@ import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -61,6 +63,27 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         `verify beskjed`(inactiveBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
     }
 
+    @Test
+    fun `Skal bestille ekstern varsling for beskjeder`() {
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val originalBeskjed1 = ProduceBrukernotifikasjonDto("Beskjed med varsel 1", eksternVarsling = true)
+        val originalBeskjed2 = ProduceBrukernotifikasjonDto("Beskjed med varsel 2", eksternVarsling = true)
+        val originalBeskjed3 = ProduceBrukernotifikasjonDto("Beskjed uten varsel 1", eksternVarsling = false)
+        `produce beskjed at level`(originalBeskjed1, tokenAt4)
+        `produce beskjed at level`(originalBeskjed2, tokenAt4)
+        `produce beskjed at level`(originalBeskjed3, tokenAt4)
+        var doknotifikasjonCount = 0
+        var countAttempts = 0
+        runBlocking {
+            while(doknotifikasjonCount == 0 && countAttempts < 10) {
+                doknotifikasjonCount = `get doknotifikasjon count`()
+                countAttempts++
+                delay(1000)
+            }
+        }
+        doknotifikasjonCount `should be equal to` 2
+    }
+
     private fun `verify beskjed`(beskjed: BeskjedDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {
         runBlocking {
             beskjed.sikkerhetsnivaa `should be equal to` expectedSikkerhetsnivaa
@@ -85,5 +108,9 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
             val response = client.get<List<BeskjedDTO>>(ServiceConfiguration.API, operation, token)
             response
         }
+    }
+
+    private suspend fun `get doknotifikasjon count`(): Int {
+        return client.getWithoutAuth(ServiceConfiguration.MOCKS, VarselOperations.COUNT_DOKNOTIFIKASJON)
     }
 }
