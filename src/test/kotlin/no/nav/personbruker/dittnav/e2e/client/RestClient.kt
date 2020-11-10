@@ -53,7 +53,7 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto): T {
+    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceDTO): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
@@ -70,7 +70,7 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceDto, tokenInfo: TokenInfo): T {
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceDTO, tokenInfo: TokenInfo): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {

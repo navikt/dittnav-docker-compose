@@ -3,8 +3,6 @@ package no.nav.personbruker.dittnav.e2e.done
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceDoneDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
@@ -57,7 +55,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     }
 
     private fun `produser brukernotifikasjon`(token: TokenInfo, text: String, producerOperation: ProducerOperations) {
-        val brukernotifikasjon = ProduceBrukernotifikasjonDto(text, "grupperingsid")
+        val brukernotifikasjon = ProduceDoneDTO(text, "grupperingsid")
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, token)
         }
@@ -65,7 +63,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `produser done-eventer for alle brukernotifikasjoner`(token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_DONE_ALL, ProduceDoneDto(), token)
+            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_DONE_ALL, ProduceDoneDTO(), token)
         }
     }
 

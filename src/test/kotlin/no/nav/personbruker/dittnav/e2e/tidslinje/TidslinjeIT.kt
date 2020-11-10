@@ -3,14 +3,14 @@ package no.nav.personbruker.dittnav.e2e.tidslinje
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceStatusoppdateringDto
+import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
+import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
+import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -32,9 +32,9 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedTextBeskjed, grupperingsid)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedTextOppgave, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDto(expectedStatusInternStatusoppdatering, grupperingsid)
+        val originalBeskjed = ProduceBeskjedDTO(expectedTextBeskjed, grupperingsid)
+        val originalOppgave = ProduceOppgaveDTO(expectedTextOppgave, grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(expectedStatusInternStatusoppdatering, grupperingsid)
 
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
         `wait for events to be processed`()
@@ -63,8 +63,8 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedTextBeskjed, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDto(expectedStatusInternStatusoppdatering, grupperingsid)
+        val originalBeskjed = ProduceBeskjedDTO(expectedTextBeskjed, grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(expectedStatusInternStatusoppdatering, grupperingsid)
 
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
         `wait for events to be processed`()
@@ -105,7 +105,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `produce event at level`(originalEvent: ProduceDto, operation: ServiceOperation, token: TokenInfo) {
+    private fun `produce event at level`(originalEvent: ProduceDTO, operation: ServiceOperation, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
         }.status `should be equal to` HttpStatusCode.OK

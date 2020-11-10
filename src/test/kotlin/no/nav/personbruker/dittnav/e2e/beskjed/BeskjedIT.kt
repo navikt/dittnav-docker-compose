@@ -4,8 +4,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceDoneDto
+import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
@@ -24,7 +23,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Beskjed 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt3)
         `wait for events to be processed`()
@@ -37,7 +36,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         `wait for events to be processed`()
@@ -50,14 +49,14 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 3"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         `wait for events to be processed`()
         val activeBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
         `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
 
-        val originalDone = ProduceDoneDto(activeBeskjeder[0].uid, activeBeskjeder[0].eventId)
+        val originalDone = ProduceDoneDTO(activeBeskjeder[0].uid, activeBeskjeder[0].eventId)
         `produce done-event for beskjed`(originalDone, tokenAt4)
         val inactiveBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)
         `verify beskjed`(inactiveBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
@@ -66,9 +65,9 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal bestille ekstern varsling for beskjeder`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        val originalBeskjed1 = ProduceBrukernotifikasjonDto("Beskjed med varsel 1", eksternVarsling = true)
-        val originalBeskjed2 = ProduceBrukernotifikasjonDto("Beskjed med varsel 2", eksternVarsling = true)
-        val originalBeskjed3 = ProduceBrukernotifikasjonDto("Beskjed uten varsel 1", eksternVarsling = false)
+        val originalBeskjed1 = ProduceBeskjedDTO("Beskjed med varsel 1", eksternVarsling = true)
+        val originalBeskjed2 = ProduceBeskjedDTO("Beskjed med varsel 2", eksternVarsling = true)
+        val originalBeskjed3 = ProduceBeskjedDTO("Beskjed uten varsel 1", eksternVarsling = false)
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
         `produce beskjed at level`(originalBeskjed3, tokenAt4)
@@ -91,13 +90,13 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `produce beskjed at level`(originalBeskjed: ProduceBrukernotifikasjonDto, token: TokenInfo) {
+    private fun `produce beskjed at level`(originalBeskjed: ProduceBeskjedDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_BESKJED, originalBeskjed, token)
         }.status `should be equal to` HttpStatusCode.OK
     }
 
-    private fun `produce done-event for beskjed`(originalDone: ProduceDoneDto, token: TokenInfo) {
+    private fun `produce done-event for beskjed`(originalDone: ProduceDoneDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.API, ApiOperations.PRODUCE_DONE, originalDone, token)
         }.status `should be equal to` HttpStatusCode.OK

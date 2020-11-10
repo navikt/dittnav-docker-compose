@@ -4,7 +4,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
@@ -23,7 +22,7 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Oppgave 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceOppgaveDTO(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt3)
         `wait for events to be processed`()
@@ -36,7 +35,7 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Oppgave 2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceOppgaveDTO(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt4)
         `wait for events to be processed`()
@@ -47,9 +46,9 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal bestille ekstern varsling for oppgaver`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        val originalOppgave1 = ProduceBrukernotifikasjonDto("Oppgave med varsel 1", eksternVarsling = true)
-        val originalOppgave2 = ProduceBrukernotifikasjonDto("Oppgave med varsel 2", eksternVarsling = true)
-        val originalOppgave3 = ProduceBrukernotifikasjonDto("Oppgave uten varsel 1", eksternVarsling = false)
+        val originalOppgave1 = ProduceOppgaveDTO("Oppgave med varsel 1", eksternVarsling = true)
+        val originalOppgave2 = ProduceOppgaveDTO("Oppgave med varsel 2", eksternVarsling = true)
+        val originalOppgave3 = ProduceOppgaveDTO("Oppgave uten varsel 1", eksternVarsling = false)
         `produce oppgave at level`(originalOppgave1, tokenAt4)
         `produce oppgave at level`(originalOppgave2, tokenAt4)
         `produce oppgave at level`(originalOppgave3, tokenAt4)
@@ -65,7 +64,7 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         doknotifikasjonCount `should be equal to` 2
     }
 
-    private fun `produce oppgave at level`(originalOppgave: ProduceBrukernotifikasjonDto, token: TokenInfo) {
+    private fun `produce oppgave at level`(originalOppgave: ProduceOppgaveDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_OPPGAVE, originalOppgave, token)
         }.status `should be equal to` HttpStatusCode.OK
