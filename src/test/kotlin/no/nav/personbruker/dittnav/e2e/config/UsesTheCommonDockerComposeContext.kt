@@ -1,8 +1,5 @@
 package no.nav.personbruker.dittnav.e2e.config
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
 import no.nav.personbruker.dittnav.e2e.client.RestClient
 import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
 import no.nav.personbruker.dittnav.e2e.security.TokenFetcher

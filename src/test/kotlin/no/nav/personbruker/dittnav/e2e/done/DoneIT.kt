@@ -4,7 +4,7 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
 import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
-import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
+import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
@@ -69,7 +69,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         activeInnboksEvents.`should be empty`()
     }
 
-    private fun `produser brukernotifikasjon`(token: TokenInfo, brukernotifikasjon: ProduceDTO, producerOperation: ProducerOperations) {
+    private fun `produser brukernotifikasjon`(token: TokenInfo, brukernotifikasjon: BrukernotifikasjonDTO, producerOperation: ProducerOperations) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, token)
         }

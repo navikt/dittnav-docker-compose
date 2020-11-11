@@ -3,12 +3,10 @@ package no.nav.personbruker.dittnav.e2e.tidslinje
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
 import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
-import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
+import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
-import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
@@ -101,7 +99,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `produce event at level`(originalEvent: ProduceDTO, operation: ServiceOperation, token: TokenInfo) {
+    private fun `produce event at level`(originalEvent: BrukernotifikasjonDTO, operation: ServiceOperation, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
         }.status `should be equal to` HttpStatusCode.OK

@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.tidslinje
 
-import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
+import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 
 data class ProduceStatusoppdateringDTO(
         val statusIntern: String,
@@ -8,4 +8,4 @@ data class ProduceStatusoppdateringDTO(
         val link: String = "http://dummylenke.no",
         val statusGlobal: String = "SENDT",
         val sakstema: String = "sakstema"
-) : ProduceDTO()
+) : BrukernotifikasjonDTO()

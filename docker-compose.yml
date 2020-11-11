@@ -220,7 +220,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - mocks.dittnav.docker-internal
-    image: "navikt/doknotifikasjon:mocked17"
+    image: "docker.pkg.github.com/navikt/pb-nav-mocked/pb-nav-mocked:latest"
     ports:
       - "8095:8080"
     env_file: .env
@@ -336,7 +336,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - varselbestiller.dittnav.docker-internal
-    image: "navikt/varselbestiller:debu3"
+    image: "docker.pkg.github.com/navikt/dittnav-varselbestiller/dittnav-varselbestiller:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
