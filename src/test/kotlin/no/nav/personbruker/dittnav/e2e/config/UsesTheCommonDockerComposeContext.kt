@@ -30,29 +30,24 @@ open class UsesTheCommonDockerComposeContext {
             oidcProviderBaseUrl = oidcproviderURL
     )
 
-    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 800) {
-        runBlocking {
-            delay(waittimeInMilliseconds)
-        }
-    }
-
-    fun `wait for events`(functionToReturnTheResult: () -> List<ProduceDTO>): List<ProduceDTO>? {
-        var result: List<ProduceDTO>? = emptyList()
+    fun <T> `wait for events`(functionToReturnTheResult: () -> List<T>): List<T>? {
+        var result: List<T>? = emptyList()
+        val timeToWait = Durations.TEN_SECONDS
         try {
-            result = await.atLeast(Durations.ONE_SECOND)
-                    .atMost(Durations.TEN_SECONDS)
-                    .withPollDelay(Durations.ONE_SECOND)
-                    .withPollInterval(Durations.ONE_SECOND)
-                    .untilCallTo { functionToReturnTheResult() } matches { count -> count?.isNotEmpty()!! }
+            result = await
+                        .atMost(timeToWait)
+                        .withPollDelay(Durations.ONE_SECOND)
+                        .withPollInterval(Durations.ONE_SECOND)
+                        .untilCallTo { functionToReturnTheResult() } matches { count -> count?.isNotEmpty()!! }
         }
         catch (e: ConditionTimeoutException) {
-            log.info("Fikk ikke svar fra ønsket funksjon i løpet av ${Durations.TEN_SECONDS}.")
+            log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
         } finally {
             return result
         }
     }
 
-    fun `wait for value to be returned from`(valueToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
+    fun `wait for value to be returned`(valueToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
         var result: Int? = 0
         val timeToWait = Durations.TEN_SECONDS
         try {

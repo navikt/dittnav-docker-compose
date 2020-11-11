@@ -21,10 +21,12 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         val expectedText = "Innboks 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
         val originalInnboksEvent = ProduceInnboksDTO(expectedText)
+
         `produce innboks-event at level`(originalInnboksEvent, tokenAt3)
-        `wait for events to be processed`()
-        val activeInnboksEvents = `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
-        `verify innboks-event`(activeInnboksEvents[0], expectedSikkerhetsnivaa, expectedText)
+        val activeInnboksEvents = `wait for events` {
+            `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
+        }
+        `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -35,9 +37,10 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         val originalInnboksEvent = ProduceInnboksDTO(expectedText)
 
         `produce innboks-event at level`(originalInnboksEvent, tokenAt4)
-        `wait for events to be processed`()
-        val activeInnboksEvents = `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
-        `verify innboks-event`(activeInnboksEvents[0], expectedSikkerhetsnivaa, expectedText)
+        val activeInnboksEvents = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
+        }
+        `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     private fun `produce innboks-event at level`(originalInnboksEvent: ProduceInnboksDTO, token: TokenInfo) {

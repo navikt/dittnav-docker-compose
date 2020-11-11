@@ -25,9 +25,10 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt3)
-        `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt3, ApiOperations.FETCH_BESKJED)
-        `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
+        val activeBeskjeder = `wait for events` {
+            `get events`(tokenAt3, ApiOperations.FETCH_BESKJED)
+        }
+        `verify beskjed`(activeBeskjeder!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -38,9 +39,10 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
-        `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
-        `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
+        val activeBeskjeder = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        }
+        `verify beskjed`(activeBeskjeder!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -51,14 +53,17 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
-        `wait for events to be processed`()
-        val activeBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
-        `verify beskjed`(activeBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
+        val activeBeskjeder = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        }
+        `verify beskjed`(activeBeskjeder!![0], expectedSikkerhetsnivaa, expectedText)
 
         val originalDone = ProduceDoneDTO(activeBeskjeder[0].uid, activeBeskjeder[0].eventId)
         `produce done-event for beskjed`(originalDone, tokenAt4)
-        val inactiveBeskjeder = `get events`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)
-        `verify beskjed`(inactiveBeskjeder[0], expectedSikkerhetsnivaa, expectedText)
+        val inactiveBeskjeder = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)
+        }
+        `verify beskjed`(inactiveBeskjeder!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -70,7 +75,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
         `produce beskjed at level`(originalBeskjed3, tokenAt4)
-        val doknotifikasjonCount = `wait for value to be returned from`(valueToWaitFor = 2) {
+        val doknotifikasjonCount = `wait for value to be returned`(valueToWaitFor = 2) {
             `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_BESKJED)
         }
         doknotifikasjonCount `should be equal to` 2

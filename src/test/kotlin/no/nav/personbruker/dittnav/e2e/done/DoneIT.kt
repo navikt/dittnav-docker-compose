@@ -3,12 +3,16 @@ package no.nav.personbruker.dittnav.e2e.done
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
+import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
+import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
+import no.nav.personbruker.dittnav.e2e.innboks.ProduceInnboksDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.oppgave.OppgaveDTO
+import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should not be empty`
@@ -21,41 +25,51 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal produsere done-eventer for alle brukernotifikasjoner`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        `produser brukernotifikasjon`(tokenAt4, "Oppgave 1", ProducerOperations.PRODUCE_OPPGAVE)
-        `produser brukernotifikasjon`(tokenAt4, "Beskjed 1", ProducerOperations.PRODUCE_BESKJED)
-        `produser brukernotifikasjon`(tokenAt4, "Innboks 1", ProducerOperations.PRODUCE_INNBOKS)
-        `wait for events to be processed`(2000)
+        val beskjed = ProduceBeskjedDTO(tekst = "Beskjed 1")
+        val oppgave = ProduceOppgaveDTO(tekst = "Oppgave 1")
+        val innboks = ProduceInnboksDTO(tekst = "Innboks 1")
+
+        `produser brukernotifikasjon`(tokenAt4, beskjed, ProducerOperations.PRODUCE_BESKJED)
+        `produser brukernotifikasjon`(tokenAt4, oppgave, ProducerOperations.PRODUCE_OPPGAVE)
+        `produser brukernotifikasjon`(tokenAt4, innboks, ProducerOperations.PRODUCE_INNBOKS)
+
+        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+        }
+        activeOppgaveEvents!!.`should not be empty`()
 
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
-        `wait for events to be processed`()
+
         `verify no active oppgave-events`(tokenAt4)
         `verify no active beskjed-events`(tokenAt4)
         `verify no active innboks-events`(tokenAt4)
     }
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
+        val inactiveOppgaveEvents: List<OppgaveDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE) }
+        inactiveOppgaveEvents!!.`should not be empty`()
+
         val activeOppgaveEvents: List<OppgaveDTO> = `get events`(token, ApiOperations.FETCH_OPPGAVE)
         activeOppgaveEvents.`should be empty`()
-        val inactiveOppgaveEvents: List<OppgaveDTO> = `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
-        inactiveOppgaveEvents.`should not be empty`()
     }
 
     private fun `verify no active beskjed-events`(token: TokenInfo) {
+        val inactiveBeskjedEvents: List<BeskjedDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE) }
+        inactiveBeskjedEvents!!.`should not be empty`()
+
         val activeBeskjedEvents: List<BeskjedDTO> = `get events`(token, ApiOperations.FETCH_BESKJED)
         activeBeskjedEvents.`should be empty`()
-        val inactiveBeskjedEvents: List<BeskjedDTO> = `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE)
-        inactiveBeskjedEvents.`should not be empty`()
     }
 
     private fun `verify no active innboks-events`(token: TokenInfo) {
+        val inactiveInnboksEvents: List<InnboksDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE) }
+        inactiveInnboksEvents!!.`should not be empty`()
+
         val activeInnboksEvents: List<InnboksDTO> = `get events`(token, ApiOperations.FETCH_INNBOKS)
         activeInnboksEvents.`should be empty`()
-        val inactiveInnboksEvents: List<InnboksDTO> = `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
-        inactiveInnboksEvents.`should not be empty`()
     }
 
-    private fun `produser brukernotifikasjon`(token: TokenInfo, text: String, producerOperation: ProducerOperations) {
-        val brukernotifikasjon = ProduceDoneDTO(text, "grupperingsid")
+    private fun `produser brukernotifikasjon`(token: TokenInfo, brukernotifikasjon: ProduceDTO, producerOperation: ProducerOperations) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, token)
         }

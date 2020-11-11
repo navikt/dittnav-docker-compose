@@ -3,10 +3,12 @@ package no.nav.personbruker.dittnav.e2e.tidslinje
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
+import no.nav.personbruker.dittnav.e2e.beskjed.BeskjedDTO
 import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.ProduceDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
@@ -32,21 +34,17 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBeskjedDTO(expectedTextBeskjed, grupperingsid)
-        val originalOppgave = ProduceOppgaveDTO(expectedTextOppgave, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDTO(expectedStatusInternStatusoppdatering, grupperingsid)
-
+        val originalBeskjed = ProduceBeskjedDTO(tekst = expectedTextBeskjed, grupperingsid = grupperingsid)
+        val originalOppgave = ProduceOppgaveDTO(tekst = expectedTextOppgave, grupperingsid = grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(statusIntern = expectedStatusInternStatusoppdatering, grupperingsid = grupperingsid)
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
-        `wait for events to be processed`()
-
         `produce event at level`(originalOppgave, ProducerOperations.PRODUCE_OPPGAVE, tokenAt4)
-        `wait for events to be processed`()
-
         `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
-        `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
-        tidslinjeEvents.size `should be equal to` 3
+        val tidslinjeEvents = `wait for events` {
+            `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
+        }
+        tidslinjeEvents!!.size `should be equal to` 3
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Oppgave")
         `verify event`(tidslinjeEvents[2], expectedSikkerhetsnivaa, "Beskjed")
@@ -63,20 +61,15 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBeskjedDTO(expectedTextBeskjed, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDTO(expectedStatusInternStatusoppdatering, grupperingsid)
-
+        val originalBeskjed = ProduceBeskjedDTO(tekst = expectedTextBeskjed, grupperingsid = grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(statusIntern = expectedStatusInternStatusoppdatering, grupperingsid = grupperingsid)
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt3)
-        `wait for events to be processed`()
-
-
         `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt3)
-        `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt3, TidslinjeOperations.TIDSLINJE, getParameters)
-        `wait for events to be processed`()
-        println("Container log for the service:\n ${dockerComposeContext.getLogsFor(ServiceConfiguration.HANDLER)}")
-        tidslinjeEvents.size `should be equal to` 2
+        val tidslinjeEvents = `wait for events` {
+            `get events from tidslinje`(tokenAt3, TidslinjeOperations.TIDSLINJE, getParameters)
+        }
+        tidslinjeEvents!!.size `should be equal to` 2
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Beskjed")
     }
