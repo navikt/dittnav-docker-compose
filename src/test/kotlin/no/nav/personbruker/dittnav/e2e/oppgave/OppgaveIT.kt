@@ -52,14 +52,8 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         `produce oppgave at level`(originalOppgave1, tokenAt4)
         `produce oppgave at level`(originalOppgave2, tokenAt4)
         `produce oppgave at level`(originalOppgave3, tokenAt4)
-        var doknotifikasjonCount = 0
-        var countAttempts = 0
-        runBlocking {
-            while(doknotifikasjonCount == 0 && countAttempts < 10) {
-                doknotifikasjonCount = `get doknotifikasjon count`()
-                countAttempts++
-                delay(1000)
-            }
+        val doknotifikasjonCount = `wait for value to be returned from`(valueToWaitFor = 2) {
+            `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_OPPGAVE)
         }
         doknotifikasjonCount `should be equal to` 2
     }
@@ -84,7 +78,10 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private suspend fun `get doknotifikasjon count`(): Int {
-        return client.getWithoutAuth(ServiceConfiguration.MOCKS, VarselOperations.COUNT_DOKNOTIFIKASJON)
+    private fun `get doknotifikasjon count`(operation: VarselOperations): Int {
+        return runBlocking {
+            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
+            response
+        }
     }
 }

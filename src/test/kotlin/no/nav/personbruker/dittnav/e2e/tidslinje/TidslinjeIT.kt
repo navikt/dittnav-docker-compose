@@ -61,18 +61,21 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         val expectedTextBeskjed = "Beskjed 2"
         val expectedStatusInternStatusoppdatering = "Statusoppdatering 2"
 
-        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
         val originalBeskjed = ProduceBeskjedDTO(expectedTextBeskjed, grupperingsid)
         val originalStatusoppdatering = ProduceStatusoppdateringDTO(expectedStatusInternStatusoppdatering, grupperingsid)
 
-        `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
+        `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt3)
         `wait for events to be processed`()
 
-        `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
+
+        `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt3)
         `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
+        val tidslinjeEvents = `get events from tidslinje`(tokenAt3, TidslinjeOperations.TIDSLINJE, getParameters)
+        `wait for events to be processed`()
+        println("Container log for the service:\n ${dockerComposeContext.getLogsFor(ServiceConfiguration.HANDLER)}")
         tidslinjeEvents.size `should be equal to` 2
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Beskjed")

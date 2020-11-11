@@ -25,7 +25,7 @@ class RestClient(val httpClient: HttpClient) {
             httpClient.get<T>(completeUrlToHit)
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }
@@ -64,7 +64,7 @@ class RestClient(val httpClient: HttpClient) {
             }
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }
@@ -82,7 +82,7 @@ class RestClient(val httpClient: HttpClient) {
             }
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }

@@ -2,7 +2,6 @@ package no.nav.personbruker.dittnav.e2e.beskjed
 
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
@@ -71,14 +70,8 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
         `produce beskjed at level`(originalBeskjed3, tokenAt4)
-        var doknotifikasjonCount = 0
-        var countAttempts = 0
-        runBlocking {
-            while(doknotifikasjonCount == 0 && countAttempts < 10) {
-                doknotifikasjonCount = `get doknotifikasjon count`()
-                countAttempts++
-                delay(1000)
-            }
+        val doknotifikasjonCount = `wait for value to be returned from`(valueToWaitFor = 2) {
+            `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_BESKJED)
         }
         doknotifikasjonCount `should be equal to` 2
     }
@@ -109,7 +102,10 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private suspend fun `get doknotifikasjon count`(): Int {
-        return client.getWithoutAuth(ServiceConfiguration.MOCKS, VarselOperations.COUNT_DOKNOTIFIKASJON)
+    private fun `get doknotifikasjon count`(operation: VarselOperations): Int {
+        return runBlocking {
+            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
+            response
+        }
     }
 }

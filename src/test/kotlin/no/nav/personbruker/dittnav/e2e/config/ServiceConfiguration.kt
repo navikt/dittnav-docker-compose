@@ -18,5 +18,6 @@ enum class ServiceConfiguration(
     PRODUCER("producer_1", "person/dittnav-event-test-producer", defaultExposedPort),
     MOCKS("mocks_1", "", defaultExposedPort),
     DEKORATOREN("dekoratoren_1", "dekoratoren", 8088),
-    TIDSLINJE("tidslinje_1", "person/dittnav-tidslinje-api", defaultExposedPort);
+    TIDSLINJE("tidslinje_1", "person/dittnav-tidslinje-api", defaultExposedPort),
+    VARSELBESTILLER("varselbestiller_1", "", defaultExposedPort)
 }

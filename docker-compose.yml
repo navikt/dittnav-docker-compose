@@ -220,7 +220,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - mocks.dittnav.docker-internal
-    image: "navikt/doknotifikasjon:mocked2"
+    image: "navikt/doknotifikasjon:mocked17"
     ports:
       - "8095:8080"
     env_file: .env
@@ -231,6 +231,7 @@ services:
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
     depends_on:
       - oidc-provider
+      - schema-registry
 
   producer:
     container_name: producer
@@ -335,7 +336,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - varselbestiller.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-varselbestiller/dittnav-varselbestiller:latest"
+    image: "navikt/varselbestiller:debu3"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -346,9 +347,13 @@ services:
       NAIS_NAMESPACE: "localhost"
       SENSU_HOST: "stub"
       SENSU_PORT: ""
+      GROUP_ID: "dittnav_varselbestiller"
       POLL_BESKJED_TO_DOKNOTIFIKASJON: "true"
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "false"
+    depends_on:
+      - schema-registry
+      - postgres
 
 volumes:
   dittnav-event-cache-data:

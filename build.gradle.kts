@@ -32,6 +32,7 @@ dependencies {
         exclude("junit", "junit")
     }
     testImplementation(TestContainers.junitJupiter)
+    testImplementation("org.awaitility:awaitility-kotlin:4.0.3")
 }
 
 tasks {
