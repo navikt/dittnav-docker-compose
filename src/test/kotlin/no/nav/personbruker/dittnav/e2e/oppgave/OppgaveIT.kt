@@ -53,7 +53,7 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         `produce oppgave at level`(originalOppgave1, tokenAt4)
         `produce oppgave at level`(originalOppgave2, tokenAt4)
         `produce oppgave at level`(originalOppgave3, tokenAt4)
-        val doknotifikasjonCount = `wait for value to be returned`(valueToWaitFor = 2) {
+        val doknotifikasjonCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
             `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_OPPGAVE)
         }
         doknotifikasjonCount `should be equal to` 2

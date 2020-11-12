@@ -44,7 +44,7 @@ open class UsesTheCommonDockerComposeContext {
         }
     }
 
-    fun `wait for value to be returned`(valueToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
+    fun `wait for values to be returned`(numberOfValuesToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
         var result: Int? = 0
         val timeToWait = Durations.TEN_SECONDS
         try {
@@ -52,7 +52,7 @@ open class UsesTheCommonDockerComposeContext {
                         .atMost(timeToWait)
                         .withPollDelay(Durations.ONE_SECOND)
                         .withPollInterval(Durations.ONE_SECOND)
-                        .untilCallTo { functionToReturnTheResult() } matches { count -> count == valueToWaitFor }
+                        .untilCallTo { functionToReturnTheResult() } matches { count -> count == numberOfValuesToWaitFor }
         } catch (e: ConditionTimeoutException) {
             log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
         } finally {

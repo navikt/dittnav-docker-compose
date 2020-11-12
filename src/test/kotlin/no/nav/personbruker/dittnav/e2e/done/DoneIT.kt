@@ -46,7 +46,9 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     }
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
-        val inactiveOppgaveEvents: List<OppgaveDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE) }
+        val inactiveOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
+            `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
+        }
         inactiveOppgaveEvents!!.`should not be empty`()
 
         val activeOppgaveEvents: List<OppgaveDTO> = `get events`(token, ApiOperations.FETCH_OPPGAVE)
@@ -54,7 +56,9 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     }
 
     private fun `verify no active beskjed-events`(token: TokenInfo) {
-        val inactiveBeskjedEvents: List<BeskjedDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE) }
+        val inactiveBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
+            `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE)
+        }
         inactiveBeskjedEvents!!.`should not be empty`()
 
         val activeBeskjedEvents: List<BeskjedDTO> = `get events`(token, ApiOperations.FETCH_BESKJED)
@@ -62,7 +66,9 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     }
 
     private fun `verify no active innboks-events`(token: TokenInfo) {
-        val inactiveInnboksEvents: List<InnboksDTO>? = `wait for events` { `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE) }
+        val inactiveInnboksEvents: List<InnboksDTO>? = `wait for events` {
+            `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
+        }
         inactiveInnboksEvents!!.`should not be empty`()
 
         val activeInnboksEvents: List<InnboksDTO> = `get events`(token, ApiOperations.FETCH_INNBOKS)

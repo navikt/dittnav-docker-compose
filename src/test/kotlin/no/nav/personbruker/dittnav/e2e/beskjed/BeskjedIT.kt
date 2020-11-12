@@ -75,7 +75,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
         `produce beskjed at level`(originalBeskjed3, tokenAt4)
-        val doknotifikasjonCount = `wait for value to be returned`(valueToWaitFor = 2) {
+        val doknotifikasjonCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
             `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_BESKJED)
         }
         doknotifikasjonCount `should be equal to` 2
