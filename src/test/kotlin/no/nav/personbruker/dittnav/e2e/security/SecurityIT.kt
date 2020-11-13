@@ -3,6 +3,7 @@ package no.nav.personbruker.dittnav.e2e.security
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.HttpStatusCode.Companion.OK
+import io.ktor.http.HttpStatusCode.Companion.PartialContent
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
@@ -10,6 +11,7 @@ import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be in`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -30,8 +32,8 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val operation = ApiOperations.FETCH_BESKJED
         runBlocking {
             assertThatTheRequestWasDenied(api, operation)
-            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel4)
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel3, definitionOfAccepted = listOf(OK, PartialContent))
+            assertThatTheRequestWasAccepted(api, operation, tokenAtLevel4, definitionOfAccepted = listOf(OK, PartialContent))
         }
     }
 
@@ -98,14 +100,23 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
     private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration,
                                                         operation: ServiceOperation,
                                                         tokenInfo: TokenInfo,
-                                                        parameters: Map<String, String> = emptyMap()) {
+                                                        parameters: Map<String, String> = emptyMap(),
+                                                        definitionOfAccepted: List<HttpStatusCode> = listOf(OK)) {
         val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
-        printServiceLogIfNotExpectedResult(service, authResponse, OK)
-        authResponse.status `should be equal to` OK
+
+
+        printServiceLogIfNotInExpectedResults(service, authResponse, definitionOfAccepted)
+        authResponse.status `should be in` definitionOfAccepted
     }
 
     private fun printServiceLogIfNotExpectedResult(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: HttpStatusCode) {
         if (actualResponse.status != expectedResponse) {
+            println("Container log for the service $service:\n ${dockerComposeContext.getLogsFor(service)}")
+        }
+    }
+
+    private fun printServiceLogIfNotInExpectedResults(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: List<HttpStatusCode>) {
+        if (actualResponse.status !in expectedResponse) {
             println("Container log for the service $service:\n ${dockerComposeContext.getLogsFor(service)}")
         }
     }
