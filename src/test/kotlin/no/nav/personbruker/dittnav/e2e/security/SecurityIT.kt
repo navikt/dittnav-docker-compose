@@ -6,7 +6,7 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.PartialContent
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
+import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.*
@@ -73,7 +73,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val data = ProduceBrukernotifikasjonDto("Sjekker sikkherhet for producer", "grupperingsid")
+        val data = ProduceBeskjedDTO("Sjekker sikkherhet for producer", "grupperingsid")
         val producer = ServiceConfiguration.PRODUCER
         val operation = ProducerOperations.PRODUCE_BESKJED
         runBlocking {

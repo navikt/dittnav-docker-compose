@@ -3,11 +3,11 @@ package no.nav.personbruker.dittnav.e2e.oppgave
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -21,12 +21,13 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Oppgave 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceOppgaveDTO(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt3)
-        `wait for events to be processed`()
-        val activeOppgaver = `get events`(tokenAt3, ApiOperations.FETCH_OPPGAVE)
-        `verify oppgave`(activeOppgaver[0], expectedSikkerhetsnivaa, expectedText)
+        val activeOppgaver = `wait for events` {
+            `get events`(tokenAt3, ApiOperations.FETCH_OPPGAVE)
+        }
+        `verify oppgave`(activeOppgaver!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -34,15 +35,31 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Oppgave 2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedText)
+        val originalOppgave = ProduceOppgaveDTO(expectedText)
 
         `produce oppgave at level`(originalOppgave, tokenAt4)
-        `wait for events to be processed`()
-        val activeOppgave = `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
-        `verify oppgave`(activeOppgave[0], expectedSikkerhetsnivaa, expectedText)
+        val activeOppgave = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+        }
+        `verify oppgave`(activeOppgave!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
-    private fun `produce oppgave at level`(originalOppgave: ProduceBrukernotifikasjonDto, token: TokenInfo) {
+    @Test
+    fun `Skal bestille ekstern varsling for oppgaver`() {
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val originalOppgave1 = ProduceOppgaveDTO("Oppgave med varsel 1", eksternVarsling = true)
+        val originalOppgave2 = ProduceOppgaveDTO("Oppgave med varsel 2", eksternVarsling = true)
+        val originalOppgave3 = ProduceOppgaveDTO("Oppgave uten varsel 1", eksternVarsling = false)
+        `produce oppgave at level`(originalOppgave1, tokenAt4)
+        `produce oppgave at level`(originalOppgave2, tokenAt4)
+        `produce oppgave at level`(originalOppgave3, tokenAt4)
+        val doknotifikasjonCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
+            `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_OPPGAVE)
+        }
+        doknotifikasjonCount `should be equal to` 2
+    }
+
+    private fun `produce oppgave at level`(originalOppgave: ProduceOppgaveDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_OPPGAVE, originalOppgave, token)
         }.status `should be equal to` HttpStatusCode.OK
@@ -58,6 +75,13 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<OppgaveDTO> {
         return runBlocking {
             val response = client.get<List<OppgaveDTO>>(ServiceConfiguration.API, operation, token)
+            response
+        }
+    }
+
+    private fun `get doknotifikasjon count`(operation: VarselOperations): Int {
+        return runBlocking {
+            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }

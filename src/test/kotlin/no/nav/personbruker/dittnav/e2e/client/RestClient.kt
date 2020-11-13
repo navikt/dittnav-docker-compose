@@ -25,7 +25,7 @@ class RestClient(val httpClient: HttpClient) {
             httpClient.get<T>(completeUrlToHit)
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }
@@ -53,7 +53,7 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceBrukernotifikasjonDto): T {
+    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
@@ -64,13 +64,13 @@ class RestClient(val httpClient: HttpClient) {
             }
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: ProduceDto, tokenInfo: TokenInfo): T {
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO, tokenInfo: TokenInfo): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
@@ -82,7 +82,7 @@ class RestClient(val httpClient: HttpClient) {
             }
 
         } catch (e: Exception) {
-            val msg = "Uventet feil skjedde mot $service, klate ikke å gjenomføre et kallet mot $completeUrlToHit"
+            val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
             throw e
         }

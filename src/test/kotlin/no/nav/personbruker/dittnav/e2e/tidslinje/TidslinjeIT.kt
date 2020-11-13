@@ -3,14 +3,14 @@ package no.nav.personbruker.dittnav.e2e.tidslinje
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceDto
-import no.nav.personbruker.dittnav.e2e.client.ProduceStatusoppdateringDto
+import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
+import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
+import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -32,21 +32,17 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedTextBeskjed, grupperingsid)
-        val originalOppgave = ProduceBrukernotifikasjonDto(expectedTextOppgave, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDto(expectedStatusInternStatusoppdatering, grupperingsid)
-
+        val originalBeskjed = ProduceBeskjedDTO(tekst = expectedTextBeskjed, grupperingsid = grupperingsid)
+        val originalOppgave = ProduceOppgaveDTO(tekst = expectedTextOppgave, grupperingsid = grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(statusIntern = expectedStatusInternStatusoppdatering, grupperingsid = grupperingsid)
         `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
-        `wait for events to be processed`()
-
         `produce event at level`(originalOppgave, ProducerOperations.PRODUCE_OPPGAVE, tokenAt4)
-        `wait for events to be processed`()
-
         `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
-        `wait for events to be processed`()
 
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
-        tidslinjeEvents.size `should be equal to` 3
+        val tidslinjeEvents = `wait for events` {
+            `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
+        }
+        tidslinjeEvents!!.size `should be equal to` 3
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Oppgave")
         `verify event`(tidslinjeEvents[2], expectedSikkerhetsnivaa, "Beskjed")
@@ -61,19 +57,17 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         val expectedTextBeskjed = "Beskjed 2"
         val expectedStatusInternStatusoppdatering = "Statusoppdatering 2"
 
-        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
+        val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
 
-        val originalBeskjed = ProduceBrukernotifikasjonDto(expectedTextBeskjed, grupperingsid)
-        val originalStatusoppdatering = ProduceStatusoppdateringDto(expectedStatusInternStatusoppdatering, grupperingsid)
+        val originalBeskjed = ProduceBeskjedDTO(tekst = expectedTextBeskjed, grupperingsid = grupperingsid)
+        val originalStatusoppdatering = ProduceStatusoppdateringDTO(statusIntern = expectedStatusInternStatusoppdatering, grupperingsid = grupperingsid)
+        `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt3)
+        `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt3)
 
-        `produce event at level`(originalBeskjed, ProducerOperations.PRODUCE_BESKJED, tokenAt4)
-        `wait for events to be processed`()
-
-        `produce event at level`(originalStatusoppdatering, ProducerOperations.PRODUCE_STATUSOPPDATERING, tokenAt4)
-        `wait for events to be processed`()
-
-        val tidslinjeEvents = `get events from tidslinje`(tokenAt4, TidslinjeOperations.TIDSLINJE, getParameters)
-        tidslinjeEvents.size `should be equal to` 2
+        val tidslinjeEvents = `wait for events` {
+            `get events from tidslinje`(tokenAt3, TidslinjeOperations.TIDSLINJE, getParameters)
+        }
+        tidslinjeEvents!!.size `should be equal to` 2
         `verify event`(tidslinjeEvents[0], expectedSikkerhetsnivaa, "Statusoppdatering")
         `verify event`(tidslinjeEvents[1], expectedSikkerhetsnivaa, "Beskjed")
     }
@@ -105,7 +99,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `produce event at level`(originalEvent: ProduceDto, operation: ServiceOperation, token: TokenInfo) {
+    private fun `produce event at level`(originalEvent: BrukernotifikasjonDTO, operation: ServiceOperation, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
         }.status `should be equal to` HttpStatusCode.OK

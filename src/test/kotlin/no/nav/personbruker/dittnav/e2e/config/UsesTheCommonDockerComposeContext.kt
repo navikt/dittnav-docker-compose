@@ -1,10 +1,12 @@
 package no.nav.personbruker.dittnav.e2e.config
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.RestClient
 import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
 import no.nav.personbruker.dittnav.e2e.security.TokenFetcher
+import org.awaitility.Durations
+import org.awaitility.core.ConditionTimeoutException
+import org.awaitility.kotlin.*
+import org.slf4j.LoggerFactory
 
 /**
  * Hjelpeklasse som tester kan arve fra for å få tilgang til den felles docker-compose-konteksten.
@@ -17,6 +19,7 @@ open class UsesTheCommonDockerComposeContext {
     val client = RestClient(buildHttpClient())
 
     private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
+    private val log = LoggerFactory.getLogger(UsesTheCommonDockerComposeContext::class.java)
 
     val tokenFetcher = TokenFetcher(
             audience = "stubOidcClient",
@@ -24,9 +27,36 @@ open class UsesTheCommonDockerComposeContext {
             oidcProviderBaseUrl = oidcproviderURL
     )
 
-    fun `wait for events to be processed`(waittimeInMilliseconds: Long = 800) {
-        runBlocking {
-            delay(waittimeInMilliseconds)
+    fun <T> `wait for events`(functionToReturnTheResult: () -> List<T>): List<T>? {
+        var result: List<T>? = emptyList()
+        val timeToWait = Durations.TEN_SECONDS
+        try {
+            result = await
+                        .atMost(timeToWait)
+                        .withPollDelay(Durations.ONE_SECOND)
+                        .withPollInterval(Durations.ONE_SECOND)
+                        .untilCallTo { functionToReturnTheResult() } matches { count -> count?.isNotEmpty()!! }
+        }
+        catch (e: ConditionTimeoutException) {
+            log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
+        } finally {
+            return result
+        }
+    }
+
+    fun `wait for values to be returned`(numberOfValuesToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
+        var result: Int? = 0
+        val timeToWait = Durations.TEN_SECONDS
+        try {
+            result = await
+                        .atMost(timeToWait)
+                        .withPollDelay(Durations.ONE_SECOND)
+                        .withPollInterval(Durations.ONE_SECOND)
+                        .untilCallTo { functionToReturnTheResult() } matches { count -> count == numberOfValuesToWaitFor }
+        } catch (e: ConditionTimeoutException) {
+            log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
+        } finally {
+            return result
         }
     }
 }

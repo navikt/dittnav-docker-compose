@@ -22,16 +22,16 @@ dependencies {
     implementation(Ktor.clientLoggingJvm)
     implementation(Logback.classic)
 
+    testImplementation(Awaitility.awaitilityKotlin)
     testImplementation(Junit.api)
     testImplementation(Junit.params)
     testImplementation(Kluent.kluent)
-
-    testRuntimeOnly(Junit.engine)
-
+    testImplementation(TestContainers.junitJupiter)
     testImplementation(TestContainers.testContainers) {
         exclude("junit", "junit")
     }
-    testImplementation(TestContainers.junitJupiter)
+
+    testRuntimeOnly(Junit.engine)
 }
 
 tasks {

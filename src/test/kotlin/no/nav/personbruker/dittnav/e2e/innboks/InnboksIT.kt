@@ -3,7 +3,6 @@ package no.nav.personbruker.dittnav.e2e.innboks
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.client.ProduceBrukernotifikasjonDto
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
@@ -21,11 +20,13 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Innboks 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
+        val originalInnboksEvent = ProduceInnboksDTO(expectedText)
+
         `produce innboks-event at level`(originalInnboksEvent, tokenAt3)
-        `wait for events to be processed`()
-        val activeInnboksEvents = `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
-        `verify innboks-event`(activeInnboksEvents[0], expectedSikkerhetsnivaa, expectedText)
+        val activeInnboksEvents = `wait for events` {
+            `get events`(tokenAt3, ApiOperations.FETCH_INNBOKS)
+        }
+        `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
     @Test
@@ -33,15 +34,16 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Innboks 2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalInnboksEvent = ProduceBrukernotifikasjonDto(expectedText)
+        val originalInnboksEvent = ProduceInnboksDTO(expectedText)
 
         `produce innboks-event at level`(originalInnboksEvent, tokenAt4)
-        `wait for events to be processed`()
-        val activeInnboksEvents = `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
-        `verify innboks-event`(activeInnboksEvents[0], expectedSikkerhetsnivaa, expectedText)
+        val activeInnboksEvents = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
+        }
+        `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
-    private fun `produce innboks-event at level`(originalInnboksEvent: ProduceBrukernotifikasjonDto, token: TokenInfo) {
+    private fun `produce innboks-event at level`(originalInnboksEvent: ProduceInnboksDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_INNBOKS, originalInnboksEvent, token)
         }.status `should be equal to` HttpStatusCode.OK
