@@ -11,10 +11,12 @@ import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
 import no.nav.personbruker.dittnav.e2e.innboks.ProduceInnboksDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.oppgave.OppgaveDTO
 import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be empty`
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be empty`
 import org.junit.jupiter.api.Test
 
@@ -43,6 +45,38 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `verify no active oppgave-events`(tokenAt4)
         `verify no active beskjed-events`(tokenAt4)
         `verify no active innboks-events`(tokenAt4)
+    }
+
+    @Test
+    fun `Skal avbestille ekstern varsling for brukernotifikasjon ved mottak av done-event`() {
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val beskjed1 = ProduceBeskjedDTO(tekst = "Beskjed 1", eksternVarsling = true)
+        val beskjed2 = ProduceBeskjedDTO(tekst = "Beskjed 2", eksternVarsling = true)
+        val oppgave1 = ProduceOppgaveDTO(tekst = "Oppgave 1", eksternVarsling = true)
+        val oppgave2 = ProduceOppgaveDTO(tekst = "Oppgave 2", eksternVarsling = true)
+
+        `produser brukernotifikasjon`(tokenAt4, beskjed1, ProducerOperations.PRODUCE_BESKJED)
+        `produser brukernotifikasjon`(tokenAt4, beskjed2, ProducerOperations.PRODUCE_BESKJED)
+        `produser brukernotifikasjon`(tokenAt4, oppgave1, ProducerOperations.PRODUCE_OPPGAVE)
+        `produser brukernotifikasjon`(tokenAt4, oppgave2, ProducerOperations.PRODUCE_OPPGAVE)
+
+        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+        }
+        activeOppgaveEvents!!.`should not be empty`()
+
+        `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
+
+        val doknotifikasjonStoppBeskjedCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
+            `get doknotifikasjonstopp count`(VarselOperations.COUNT_DOKNOTIFIKASJONSTOPP_BESKJED)
+        }
+
+        val doknotifikasjonStoppOppgaveCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
+            `get doknotifikasjonstopp count`(VarselOperations.COUNT_DOKNOTIFIKASJONSTOPP_OPPGAVE)
+        }
+
+        doknotifikasjonStoppBeskjedCount `should be equal to` 2
+        doknotifikasjonStoppOppgaveCount `should be equal to` 2
     }
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
@@ -90,6 +124,13 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
     private inline fun <reified T> `get events`(token: TokenInfo, apiOperation: ApiOperations): T {
         return runBlocking {
             val response = client.get<T>(ServiceConfiguration.API, apiOperation, token)
+            response
+        }
+    }
+
+    private fun `get doknotifikasjonstopp count`(operation: VarselOperations): Int {
+        return runBlocking {
+            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }

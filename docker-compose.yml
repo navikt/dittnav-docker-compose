@@ -1,12 +1,12 @@
 version: '2.4'
 services:
 
-  postgres:
-    container_name: postgres
+  postgres-event-cache:
+    container_name: postgres-event-cache
     networks:
       dittnav.docker-internal:
         aliases:
-          - postgres.dittnav.docker-internal
+          - postgres-event-cache.dittnav.docker-internal
     image: "postgres:11.5"
     volumes:
       - "dittnav-event-cache-data:/var/lib/postgresql/data"
@@ -16,6 +16,22 @@ services:
       POSTGRES_USER: "dittnav-event-cache-preprod-user"
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-event-cache-preprod"
+
+  postgres-varselbestiller:
+    container_name: postgres-varselbestiller
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - postgres-varselbestiller.dittnav.docker-internal
+    image: "postgres:11.5"
+    volumes:
+      - "dittnav-varselbestiller-data:/var/lib/postgresql/data"
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "dittnav-varselbestiller-user"
+      POSTGRES_PASSWORD: "testpassword"
+      POSTGRES_DB: "dittnav-varselbestiller"
 
   db-datapopulator:
     container_name: db-datapopulator
@@ -134,7 +150,7 @@ services:
       SENSU_PORT: ""
     depends_on:
       - schema-registry
-      - postgres
+      - postgres-event-cache
       - oidc-provider-gui
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/internal/isAlive"]
@@ -157,7 +173,7 @@ services:
     depends_on:
       - schema-registry
       - oidc-provider-gui
-      - postgres
+      - postgres-event-cache
       - aggregator
 
   api:
@@ -250,7 +266,7 @@ services:
       CORS_ALLOWED_ORIGINS: "*"
     depends_on:
       - oidc-provider-gui
-      - postgres
+      - postgres-event-cache
       - schema-registry
 
   tidslinje:
@@ -346,18 +362,21 @@ services:
     environment:
       NAIS_CLUSTER_NAME: "local"
       NAIS_NAMESPACE: "localhost"
+      DB_HOST: "postgres-varselbestiller.dittnav.docker-internal:5432"
+      DB_NAME: "dittnav-varselbestiller"
       SENSU_HOST: "stub"
       SENSU_PORT: ""
       GROUP_ID: "dittnav_varselbestiller"
       POLL_BESKJED_TO_DOKNOTIFIKASJON: "true"
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
-      POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "false"
+      POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
     depends_on:
       - schema-registry
-      - postgres
+      - postgres-varselbestiller
 
 volumes:
   dittnav-event-cache-data:
+  dittnav-varselbestiller-data:
 
 networks:
   dittnav.docker-internal:
