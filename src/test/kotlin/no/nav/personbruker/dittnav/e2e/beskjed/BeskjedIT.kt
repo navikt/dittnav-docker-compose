@@ -1,16 +1,18 @@
 package no.nav.personbruker.dittnav.e2e.beskjed
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
+import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.Test
 
 internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
@@ -71,14 +73,22 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
         val originalBeskjed1 = ProduceBeskjedDTO("Beskjed med varsel 1", eksternVarsling = true)
         val originalBeskjed2 = ProduceBeskjedDTO("Beskjed med varsel 2", eksternVarsling = true)
-        val originalBeskjed3 = ProduceBeskjedDTO("Beskjed uten varsel 1", eksternVarsling = false)
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
-        `produce beskjed at level`(originalBeskjed3, tokenAt4)
-        val doknotifikasjonCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
-            `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_BESKJED)
+        val activeBeskjed = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
         }
-        doknotifikasjonCount `should be equal to` 2
+
+        val doknotifikasjonerToMatch = listOf(
+                DoknotifikasjonDTO("B-username-${activeBeskjed!![0].eventId}"),
+                DoknotifikasjonDTO("B-username-${activeBeskjed[1].eventId}")
+        )
+
+        val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
+            `get doknotifikasjoner`(VarselOperations.GET_DOKNOTIFIKASJON_BESKJED)
+        }
+
+        doknotifikasjoner!! `should contain all` doknotifikasjonerToMatch
     }
 
     private fun `verify beskjed`(beskjed: BeskjedDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {
@@ -107,9 +117,9 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `get doknotifikasjon count`(operation: VarselOperations): Int {
+    private fun `get doknotifikasjoner`(operation: VarselOperations): List<DoknotifikasjonDTO> {
         return runBlocking {
-            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
+            val response = client.getWithoutAuth<List<DoknotifikasjonDTO>>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }

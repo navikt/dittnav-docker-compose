@@ -44,15 +44,15 @@ open class UsesTheCommonDockerComposeContext {
         }
     }
 
-    fun `wait for values to be returned`(numberOfValuesToWaitFor: Int, functionToReturnTheResult: () -> Int): Int? {
-        var result: Int? = 0
+    fun <T> `wait for values to be returned`(valuesToWaitFor: List<T>, functionToReturnTheResult: () -> List<T>): List<T>? {
+        var result: List<T>? = mutableListOf()
         val timeToWait = Durations.TEN_SECONDS
         try {
             result = await
                         .atMost(timeToWait)
                         .withPollDelay(Durations.ONE_SECOND)
                         .withPollInterval(Durations.ONE_SECOND)
-                        .untilCallTo { functionToReturnTheResult() } matches { count -> count == numberOfValuesToWaitFor }
+                        .untilCallTo { functionToReturnTheResult() } matches { it!!.containsAll(valuesToWaitFor) }
         } catch (e: ConditionTimeoutException) {
             log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
         } finally {
