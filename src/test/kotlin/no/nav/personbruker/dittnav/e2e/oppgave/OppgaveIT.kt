@@ -1,15 +1,17 @@
 package no.nav.personbruker.dittnav.e2e.oppgave
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.Test
 
 internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
@@ -49,14 +51,22 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
         val originalOppgave1 = ProduceOppgaveDTO("Oppgave med varsel 1", eksternVarsling = true)
         val originalOppgave2 = ProduceOppgaveDTO("Oppgave med varsel 2", eksternVarsling = true)
-        val originalOppgave3 = ProduceOppgaveDTO("Oppgave uten varsel 1", eksternVarsling = false)
         `produce oppgave at level`(originalOppgave1, tokenAt4)
         `produce oppgave at level`(originalOppgave2, tokenAt4)
-        `produce oppgave at level`(originalOppgave3, tokenAt4)
-        val doknotifikasjonCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
-            `get doknotifikasjon count`(VarselOperations.COUNT_DOKNOTIFIKASJON_OPPGAVE)
+        val activeOppgave = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
-        doknotifikasjonCount `should be equal to` 2
+
+        val doknotifikasjonerToMatch = listOf(
+                DoknotifikasjonDTO("O-username-${activeOppgave!![0].eventId}"),
+                DoknotifikasjonDTO("O-username-${activeOppgave[1].eventId}")
+        )
+
+        val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
+            `get doknotifikasjoner`(VarselOperations.GET_DOKNOTIFIKASJON_OPPGAVE)
+        }
+
+        doknotifikasjoner!! `should contain all` doknotifikasjonerToMatch
     }
 
     private fun `produce oppgave at level`(originalOppgave: ProduceOppgaveDTO, token: TokenInfo) {
@@ -79,9 +89,9 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `get doknotifikasjon count`(operation: VarselOperations): Int {
+    private fun `get doknotifikasjoner`(operation: VarselOperations): List<DoknotifikasjonDTO> {
         return runBlocking {
-            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
+            val response = client.getWithoutAuth<List<DoknotifikasjonDTO>>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }

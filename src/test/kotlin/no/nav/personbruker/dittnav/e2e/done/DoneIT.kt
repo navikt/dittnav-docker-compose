@@ -7,6 +7,7 @@ import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.doknotifikasjonStopp.DoknotifikasjonStoppDTO
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
 import no.nav.personbruker.dittnav.e2e.innboks.ProduceInnboksDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
@@ -16,7 +17,7 @@ import no.nav.personbruker.dittnav.e2e.oppgave.OppgaveDTO
 import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be empty`
-import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain all`
 import org.amshove.kluent.`should not be empty`
 import org.junit.jupiter.api.Test
 
@@ -65,18 +66,33 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         }
         activeOppgaveEvents!!.`should not be empty`()
 
+        val activeBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        }
+        activeBeskjedEvents!!.`should not be empty`()
+
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
 
-        val doknotifikasjonStoppBeskjedCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
-            `get doknotifikasjonstopp count`(VarselOperations.COUNT_DOKNOTIFIKASJONSTOPP_BESKJED)
+        val doknotifikasjonStoppForOppgaveToMatch = listOf(
+                DoknotifikasjonStoppDTO("O-username-${activeOppgaveEvents[0].eventId}"),
+                DoknotifikasjonStoppDTO("O-username-${activeOppgaveEvents[1].eventId}")
+        )
+
+        val doknotifikasjonStoppForBeskjedToMatch = listOf(
+                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[0].eventId}"),
+                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[1].eventId}")
+        )
+
+        val doknotifikasjonStoppForBeskjed = `wait for values to be returned`(doknotifikasjonStoppForBeskjedToMatch) {
+            `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_BESKJED)
         }
 
-        val doknotifikasjonStoppOppgaveCount = `wait for values to be returned`(numberOfValuesToWaitFor = 2) {
-            `get doknotifikasjonstopp count`(VarselOperations.COUNT_DOKNOTIFIKASJONSTOPP_OPPGAVE)
+        val doknotifikasjonStoppForOppgave = `wait for values to be returned`(doknotifikasjonStoppForOppgaveToMatch) {
+            `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_OPPGAVE)
         }
 
-        doknotifikasjonStoppBeskjedCount `should be equal to` 2
-        doknotifikasjonStoppOppgaveCount `should be equal to` 2
+        doknotifikasjonStoppForBeskjed!! `should contain all` doknotifikasjonStoppForBeskjedToMatch
+        doknotifikasjonStoppForOppgave!! `should contain all` doknotifikasjonStoppForOppgaveToMatch
     }
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
@@ -128,9 +144,9 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private fun `get doknotifikasjonstopp count`(operation: VarselOperations): Int {
+    private fun `get doknotifikasjonstopp count`(operation: VarselOperations): List<DoknotifikasjonStoppDTO> {
         return runBlocking {
-            val response = client.getWithoutAuth<Int>(ServiceConfiguration.MOCKS, operation)
+            val response = client.getWithoutAuth<List<DoknotifikasjonStoppDTO>>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }
