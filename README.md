@@ -13,7 +13,14 @@ Brukernavn og token tilhører githubkontoen din (der tokenet må ha tilgang til 
 Ende-til-ende-testene kjøres med `gradle clean test`
 
 Testene kan også kjøres på Github Actions, ved hjelp av repository_dispatch. D.v.s. et POST-kall med gyldig Github-token til 
-`https://api.github.com/repos/navikt/dittnav-docker-compose/dispatches`, med payload `{"event_type":"run-tests"}`. 
+`https://api.github.com/repos/navikt/dittnav-docker-compose/dispatches`, med payload `{"event_type":"run-tests"}`.
+
+## Legge til ny applikasjon i ende-til-ende-testene
+
+For at ny applikasjon skal kunne være med i ende-til-ende-test-oppsettet må følgende være på plass:
+1. Applikasjonen må legges inn som en service i `docker-compose.yml`
+2. Legge inn config for den nye applikasjonen, bl.a. portnummer, i `ServiceConfiguration.kt`
+3. Legge inn Github-token `DOCKER_PKG_TOKEN` som secret i applikasjonens repo. Tokenet må scopes med lesetilgang for packages. Dette er foreløpig nødvendig for at images kan hentes fra Github Packages.
 
 ## Feilsøke ende-til-ende-testene
 
