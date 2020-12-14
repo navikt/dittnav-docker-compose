@@ -23,6 +23,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsAliveForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_ALIVE)
+        assertIsAliveForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_ALIVE)
     }
 
     @Test
@@ -34,6 +35,8 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsReadyForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_READY)
+        assertIsReadyForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_READY)
+
     }
 
     @Test
@@ -44,6 +47,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertSelftestForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.SELFTEST)
+        assertSelftestForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.SELFTEST)
     }
 
     @Test
@@ -54,6 +58,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertMetricsForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.METRICS)
+        assertMetricsForSingleService(ServiceConfiguration.VARSELBESTILLER, TidslinjeOperations.SELFTEST)
     }
 
     @Test
