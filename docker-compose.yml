@@ -147,7 +147,7 @@ services:
       NAIS_CLUSTER_NAME: "local"
       NAIS_NAMESPACE: "q1"
       SENSU_HOST: "stub"
-      SENSU_PORT: ""
+      SENSU_PORT: "0"
     depends_on:
       - schema-registry
       - postgres-event-cache
@@ -366,7 +366,7 @@ services:
       DB_HOST: "postgres-varselbestiller.dittnav.docker-internal:5432"
       DB_NAME: "dittnav-varselbestiller"
       SENSU_HOST: "stub"
-      SENSU_PORT: ""
+      SENSU_PORT: "0"
       GROUP_ID: "dittnav_varselbestiller"
       POLL_BESKJED_TO_DOKNOTIFIKASJON: "true"
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
