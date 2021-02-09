@@ -339,7 +339,7 @@ services:
       ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
       TEST_SIDE_FEATURE_TOGGLE: "true"
       AKTIVITETSPLAN_URL: "http://dummyAktivitetsplan.nav.no"
-      SYKDOM_I_FAMILIEN_URL: "http://dummySykdomIFamilien.nav.no"
+      DINE_PLEIEPENGER_URL: "http://dummySykdomIFamilien.nav.no"
       VEILEDERARBEIDSSOKER_URL: "http://dummyVeilederArbeidssoker.nav.no"
       VARSLINGER_FEATURE_TOGGLE: "false"
       LOGIN_LEVEL_4_URL: "http://dummyloginLevel4.nav.no"
