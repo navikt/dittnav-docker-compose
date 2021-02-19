@@ -8,6 +8,12 @@ OBS per nå må vi autentisere oss mot githubs package registry for å hente stu
 
 Brukernavn og token tilhører githubkontoen din (der tokenet må ha tilgang til read fra package registry)
 
+## Ressursbruk i Docker
+NB! Docker må ha minimum 3GB minne tilgjengelig for å kunne håndtere docker-compose oppsettet og kjøre ende-til-ende-testene. 
+
+Dette kan endres i Docker: 
+Preferences -> Resources -> Advanced -> Memory: 3.00 GB
+
 ## Kjøre ende-til-ende-tester
 
 Ende-til-ende-testene kjøres med `gradle clean test`
