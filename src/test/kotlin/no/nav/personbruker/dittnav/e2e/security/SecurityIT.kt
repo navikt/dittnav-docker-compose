@@ -64,10 +64,11 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val tidslinje = ServiceConfiguration.TIDSLINJE
         val operation = TidslinjeOperations.TIDSLINJE
         val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
+        val systembrukerHeader = mapOf("systembruker" to "produsent")
         runBlocking {
-            assertThatTheRequestWasDenied(tidslinje, operation)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters)
+            assertThatTheRequestWasDenied(tidslinje, operation, headers = systembrukerHeader)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters, headers = systembrukerHeader)
+            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters, headers = systembrukerHeader)
         }
     }
 
@@ -91,8 +92,10 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         }
     }
 
-    private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, operation: ServiceOperation) {
-        val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation)
+    private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration,
+                                                      operation: ServiceOperation,
+                                                      headers: Map<String, String> = emptyMap()) {
+        val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation, headers)
         printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
         unauthResponse.status `should be equal to` Unauthorized
     }
@@ -101,8 +104,9 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
                                                         operation: ServiceOperation,
                                                         tokenInfo: TokenInfo,
                                                         parameters: Map<String, String> = emptyMap(),
-                                                        definitionOfAccepted: List<HttpStatusCode> = listOf(OK)) {
-        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
+                                                        definitionOfAccepted: List<HttpStatusCode> = listOf(OK),
+                                                        headers: Map<String, String> = emptyMap()) {
+        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters, headers)
 
 
         printServiceLogIfNotInExpectedResults(service, authResponse, definitionOfAccepted)

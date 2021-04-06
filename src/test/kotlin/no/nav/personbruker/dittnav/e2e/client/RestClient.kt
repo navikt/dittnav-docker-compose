@@ -19,10 +19,17 @@ class RestClient(val httpClient: HttpClient) {
 
     val log = LoggerFactory.getLogger(RestClient::class.java)
 
-    suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation): T = withContext(Dispatchers.IO) {
+    suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration,
+                                                  operation: ServiceOperation,
+                                                  headers: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
-            httpClient.get<T>(completeUrlToHit)
+            httpClient.get<T> {
+                url(completeUrlToHit)
+                headers.forEach { (key, value) ->
+                    header(key, value)
+                }
+            }
 
         } catch (e: Exception) {
             val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
@@ -34,13 +41,17 @@ class RestClient(val httpClient: HttpClient) {
     suspend inline fun <reified T> get(service: ServiceConfiguration,
                                        operation: ServiceOperation,
                                        token: TokenInfo,
-                                       parameters: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
+                                       parameters: Map<String, String> = emptyMap(),
+                                       headers: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
                 method = HttpMethod.Get
                 header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
+                headers.forEach { (key, value) ->
+                    header(key, value)
+                }
                 parameters.forEach { (key, value) ->
                     parameter(key, value)
                 }
