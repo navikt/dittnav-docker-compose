@@ -33,6 +33,22 @@ services:
       POSTGRES_PASSWORD: "testpassword"
       POSTGRES_DB: "dittnav-varselbestiller"
 
+  postgres-brukernotifikasjonbestiller:
+    container_name: postgres-brukernotifikasjonbestiller
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - postgres-brukernotifikasjonbestiller.dittnav.docker-internal
+    image: "postgres:11.5"
+    volumes:
+      - "dittnav-brukernotifikasjonbestiller-data:/var/lib/postgresql/data"
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: "dittnav-brukernotifikasjonbestiller-user"
+      POSTGRES_PASSWORD: "testpassword"
+      POSTGRES_DB: "brukernotifikasjonbestiller"
+
   db-datapopulator:
     container_name: db-datapopulator
     networks:
@@ -378,9 +394,41 @@ services:
       - schema-registry
       - postgres-varselbestiller
 
+  brukernotifikasjonbestiller:
+    container_name: brukernotifikasjonbestiller
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - brukernotifikasjonbestiller.dittnav.docker-internal
+    image: "docker.io/library/vketest-bnb:00.00.05"
+    mem_limit: '1200m'
+    mem_reservation: '1024m'
+    ports:
+      - "8011:8080"
+    env_file: .env
+    environment:
+      NAIS_CLUSTER_NAME: "local"
+      NAIS_NAMESPACE: "localhost"
+      DB_HOST: "postgres-brukernotifikasjonbestiller.dittnav.docker-internal"
+      DB_PORT: "5432"
+      DB_DATABASE: "brukernotifikasjonbestiller"
+      DB_USERNAME: "dittnav-brukernotifikasjonbestiller-user"
+      DB_PASSWORD: "testpassword"
+      SENSU_HOST: "stub"
+      SENSU_PORT: "0"
+      GROUP_ID: "dittnav_brukernotifikasjonbestiller"
+      POLL_BESKJED_TO_DOKNOTIFIKASJON: "true"
+      POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
+      POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+    depends_on:
+      - schema-registry
+      - postgres-brukernotifikasjonbestiller
+
 volumes:
   dittnav-event-cache-data:
   dittnav-varselbestiller-data:
+  dittnav-brukernotifikasjonbestiller-data:
 
 networks:
   dittnav.docker-internal:
