@@ -342,6 +342,7 @@ services:
       DINE_PLEIEPENGER_URL: "http://dummySykdomIFamilien.nav.no"
       VEILEDERARBEIDSSOKER_URL: "http://dummyVeilederArbeidssoker.nav.no"
       MIN_INNBOKS_URL: "http://dummyMinInnboks.nav.no"
+      DAGPENGER_URL: "http://dummyDagpenger.nav.no"
       VARSLINGER_FEATURE_TOGGLE: "false"
       LOGIN_LEVEL_4_URL: "http://dummyloginLevel4.nav.no"
       TIDSLINJE_URL: "http://dummyTidslinje.nav.no"
