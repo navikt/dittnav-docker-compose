@@ -194,6 +194,7 @@ services:
       CORS_ALLOWED_ORIGINS: "*"
       INNLOGGINGSSTATUS_URL: "http://dummy.io"
       UNLEASH_API_URL: "fake"
+      DIGISOS_API_URL: "https://digisos/dummy"
     depends_on:
       - oidc-provider
       - handler
