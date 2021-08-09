@@ -328,7 +328,6 @@ services:
       NAIS_APP_NAME: "dittnav"
       NAV_DEKORATOREN_URL: "http://dekoratoren.dittnav.docker-internal:8088"
       NAIS_NAMESPACE: "localhost"
-      DITTNAV_LEGACY_API_URL: "http://localhost:8091/person/dittnav-api"
       DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
       TJENESTER_URL: "http://dummyTjenester.nav.no"
       EVENT_TEST_PRODUCER_URL: "http://localhost:8094/person/dittnav-event-test-producer"
@@ -349,6 +348,7 @@ services:
       LOGIN_LEVEL_4_URL: "http://dummyloginLevel4.nav.no"
       TIDSLINJE_URL: "http://dummyTidslinje.nav.no"
       TIDSLINJE_PRODUSENT: "produsent"
+      VEIENTILARBEID_URL: "http://dummyVeientilarbeid.nav.no"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
