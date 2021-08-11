@@ -1,4 +1,4 @@
 #!/bin/sh
 
-DB_USER="${DB_NAME}-user"
-psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST/$DB_NAME -f ./testdata.sql;
+DB_USER="${DB_NAME_BRUKERNOTIFIKASJON_CACHE}-user"
+psql postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST/$DB_NAME_BRUKERNOTIFIKASJON_CACHE -f ./testdata.sql;
