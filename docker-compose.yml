@@ -1,37 +1,23 @@
 version: '2.4'
 services:
 
-  postgres-event-cache:
-    container_name: postgres-event-cache
+  postgres:
+    container_name: postgres
     networks:
       dittnav.docker-internal:
         aliases:
-          - postgres-event-cache.dittnav.docker-internal
+          - postgres.dittnav.docker-internal
     image: "postgres:11.5"
     volumes:
-      - "dittnav-event-cache-data:/var/lib/postgresql/data"
+      - "brukernotifikasjon-cache-data:/var/lib/postgresql/data"
+      - "dittnav-varselbestiller-data:/var/lib/postgresql/data"
+      - "./db-initscripts:/docker-entrypoint-initdb.d"
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: "dittnav-event-cache-preprod-user"
-      POSTGRES_PASSWORD: "testpassword"
-      POSTGRES_DB: "dittnav-event-cache-preprod"
-
-  postgres-varselbestiller:
-    container_name: postgres-varselbestiller
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - postgres-varselbestiller.dittnav.docker-internal
-    image: "postgres:11.5"
-    volumes:
-      - "dittnav-varselbestiller-data:/var/lib/postgresql/data"
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_USER: "dittnav-varselbestiller-user"
-      POSTGRES_PASSWORD: "testpassword"
-      POSTGRES_DB: "dittnav-varselbestiller"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DATABASES: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}, ${DB_NAME_VARSELBESTILLER}"
 
   db-datapopulator:
     container_name: db-datapopulator
@@ -51,7 +37,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - zookeeper.dittnav.docker-internal
-    image: "confluentinc/cp-zookeeper:5.5.0"
+    image: "confluentinc/cp-zookeeper:6.2.0"
     environment:
       ZOOKEEPER_CLIENT_PORT: "2181"
       ZOOKEEPER_TICK_TIME: "2000"
@@ -62,7 +48,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - kafka.dittnav.docker-internal
-    image: "confluentinc/cp-kafka:5.5.0"
+    image: "confluentinc/cp-kafka:6.2.0"
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -144,13 +130,12 @@ services:
       - "8093:8080"
     env_file: .env
     environment:
-      NAIS_CLUSTER_NAME: "local"
-      NAIS_NAMESPACE: "q1"
       SENSU_HOST: "stub"
       SENSU_PORT: "0"
+      DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
       - schema-registry
-      - postgres-event-cache
+      - postgres
       - oidc-provider-gui
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive"]
@@ -170,10 +155,12 @@ services:
     ports:
       - "8092:8080"
     env_file: .env
+    environment:
+      DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
       - schema-registry
       - oidc-provider-gui
-      - postgres-event-cache
+      - postgres
       - aggregator
 
   api:
@@ -266,9 +253,10 @@ services:
     env_file: .env
     environment:
       CORS_ALLOWED_ORIGINS: "*"
+      DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
       - oidc-provider-gui
-      - postgres-event-cache
+      - postgres
       - schema-registry
 
   tidslinje:
@@ -366,10 +354,8 @@ services:
       - "8098:8080"
     env_file: .env
     environment:
-      NAIS_CLUSTER_NAME: "local"
-      NAIS_NAMESPACE: "localhost"
-      DB_HOST: "postgres-varselbestiller.dittnav.docker-internal:5432"
-      DB_NAME: "dittnav-varselbestiller"
+      DB_HOST: "postgres.dittnav.docker-internal:5432"
+      DB_NAME: ${DB_NAME_VARSELBESTILLER}
       SENSU_HOST: "stub"
       SENSU_PORT: "0"
       GROUP_ID: "dittnav_varselbestiller"
@@ -379,10 +365,10 @@ services:
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
     depends_on:
       - schema-registry
-      - postgres-varselbestiller
+      - postgres
 
 volumes:
-  dittnav-event-cache-data:
+  brukernotifikasjon-cache-data:
   dittnav-varselbestiller-data:
 
 networks:
