@@ -9,8 +9,7 @@ services:
           - postgres.dittnav.docker-internal
     image: "postgres:11.5"
     volumes:
-      - "brukernotifikasjon-cache-data:/var/lib/postgresql/data"
-      - "dittnav-varselbestiller-data:/var/lib/postgresql/data"
+      - "postgres-data:/var/lib/postgresql/data"
       - "./db-initscripts:/docker-entrypoint-initdb.d"
     ports:
       - "5432:5432"
@@ -368,8 +367,7 @@ services:
       - postgres
 
 volumes:
-  brukernotifikasjon-cache-data:
-  dittnav-varselbestiller-data:
+  postgres-data:
 
 networks:
   dittnav.docker-internal:
