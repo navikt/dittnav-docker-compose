@@ -16,7 +16,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DATABASES: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}, ${DB_NAME_VARSELBESTILLER}"
+      POSTGRES_DATABASES: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}, ${DB_NAME_VARSELBESTILLER}, ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}"
 
   db-datapopulator:
     container_name: db-datapopulator
@@ -353,7 +353,6 @@ services:
       - "8098:8080"
     env_file: .env
     environment:
-      DB_HOST: "postgres.dittnav.docker-internal:5432"
       DB_NAME: ${DB_NAME_VARSELBESTILLER}
       SENSU_HOST: "stub"
       SENSU_PORT: "0"
@@ -362,6 +361,43 @@ services:
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+    depends_on:
+      - schema-registry
+      - postgres
+
+  brukernotifikasjonbestiller:
+    container_name: brukernotifikasjonbestiller
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - brukernotifikasjonbestiller.dittnav.docker-internal
+    image: "docker.pkg.github.com/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210816083630-0c7e213"
+    mem_limit: '768m'
+    mem_reservation: '580m'
+    ports:
+      - "8101:8080"
+    env_file: .env
+    environment:
+      SENSU_HOST: "stub"
+      SENSU_PORT: "0"
+      GROUP_ID: "dittnav-brukernotifikasjonbestiller"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      INFLUXDB_HOST: "stub"
+      INFLUXDB_PORT: "0"
+      INFLUXDB_DATABASE_NAME: "stub"
+      INFLUXDB_USER: "user"
+      INFLUXDB_PASSWORD: "password"
+      INFLUXDB_RETENTION_POLICY: "none"
+      KAFKA_BROKERS: ${KAFKA_BOOTSTRAP_SERVERS}
+      KAFKA_TRUSTSTORE_PATH: "notUsedOnLocalhost"
+      KAFKA_KEYSTORE_PATH: "notUsedOnLocalhost"
+      KAFKA_CREDSTORE_PASSWORD: ${SERVICEUSER_PASSWORD}
+      KAFKA_SCHEMA_REGISTRY: ${KAFKA_SCHEMAREGISTRY_SERVERS}
+      KAFKA_SCHEMA_REGISTRY_USER: ${SERVICEUSER_USERNAME}
+      KAFKA_SCHEMA_REGISTRY_PASSWORD: ${SERVICEUSER_PASSWORD}
+      DB_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}
+      DB_USERNAME: ${DB_USER}
+      DB_PORT: "5432"
     depends_on:
       - schema-registry
       - postgres
