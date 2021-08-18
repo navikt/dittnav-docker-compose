@@ -24,7 +24,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - db-datapopulator.dittnav.docker-internal
-    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
+    image: docker.io/navikt/populator:nb3
     env_file: .env
     depends_on:
       aggregator:
@@ -122,7 +122,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
+    image: "docker.io/navikt/aggregator:gcp13"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -131,7 +131,23 @@ services:
     environment:
       SENSU_HOST: "stub"
       SENSU_PORT: "0"
-      DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      INFLUXDB_HOST: "stub"
+      INFLUXDB_PORT: "0"
+      INFLUXDB_DATABASE_NAME: "stub"
+      INFLUXDB_USER: "user"
+      INFLUXDB_PASSWORD: "password"
+      INFLUXDB_RETENTION_POLICY: "none"
+      KAFKA_BROKERS: ${KAFKA_BOOTSTRAP_SERVERS}
+      KAFKA_TRUSTSTORE_PATH: "notUsedOnLocalhost"
+      KAFKA_KEYSTORE_PATH: "notUsedOnLocalhost"
+      KAFKA_CREDSTORE_PASSWORD: ${SERVICEUSER_PASSWORD}
+      KAFKA_SCHEMA_REGISTRY: ${KAFKA_SCHEMAREGISTRY_SERVERS}
+      KAFKA_SCHEMA_REGISTRY_USER: ${SERVICEUSER_USERNAME}
+      KAFKA_SCHEMA_REGISTRY_PASSWORD: ${SERVICEUSER_PASSWORD}
+      DB_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      DB_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}-user"
+      DB_PORT: "5432"
+      POLL_BESKJED: "true"
     depends_on:
       - schema-registry
       - postgres
@@ -371,7 +387,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - brukernotifikasjonbestiller.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210816083630-0c7e213"
+    image: "docker.io/navikt/bnb:polling5"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -396,8 +412,9 @@ services:
       KAFKA_SCHEMA_REGISTRY_USER: ${SERVICEUSER_USERNAME}
       KAFKA_SCHEMA_REGISTRY_PASSWORD: ${SERVICEUSER_PASSWORD}
       DB_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}
-      DB_USERNAME: ${DB_USER}
+      DB_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}-user"
       DB_PORT: "5432"
+      POLL_BESKJED: "true"
     depends_on:
       - schema-registry
       - postgres
