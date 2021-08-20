@@ -148,6 +148,10 @@ services:
       DB_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}-user"
       DB_PORT: "5432"
       POLL_BESKJED: "true"
+      POLL_OPPGAVE: "true"
+      POLL_INNBOKS: "true"
+      POLL_STATUSOPPDATERING: "true"
+      POLL_DONE: "true"
     depends_on:
       - schema-registry
       - postgres
@@ -415,6 +419,10 @@ services:
       DB_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}-user"
       DB_PORT: "5432"
       POLL_BESKJED: "true"
+      POLL_OPPGAVE: "true"
+      POLL_INNBOKS: "true"
+      POLL_STATUSOPPDATERING: "true"
+      POLL_DONE: "true"
     depends_on:
       - schema-registry
       - postgres
