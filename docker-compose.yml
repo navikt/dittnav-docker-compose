@@ -24,7 +24,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - db-datapopulator.dittnav.docker-internal
-    image: docker.io/navikt/populator:nb3
+    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
     env_file: .env
     depends_on:
       aggregator:
@@ -122,7 +122,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "docker.io/navikt/aggregator:gcp13"
+    image: "docker.pkg.github.com/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -391,7 +391,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - brukernotifikasjonbestiller.dittnav.docker-internal
-    image: "docker.io/navikt/bnb:polling5"
+    image: "docker.pkg.github.com/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210820094134-b917b3e"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
