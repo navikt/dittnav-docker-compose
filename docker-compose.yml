@@ -93,7 +93,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - oidc-provider.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/stub-oidc-provider/stub-oidc-provider:latest"
+    image: "ghcr.io/navikt/stub-oidc-provider/stub-oidc-provider:latest"
     ports:
       - "9000:9000"
     environment:
@@ -107,7 +107,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - oidc-provider-gui.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/pb-oidc-provider-gui/pb-oidc-provider-gui:latest"
+    image: "ghcr.io/navikt/pb-oidc-provider-gui/pb-oidc-provider-gui:latest"
     ports:
       - "5000:5000"
     depends_on:
@@ -122,7 +122,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
+    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -156,7 +156,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-handler/dittnav-event-handler:latest"
+    image: "ghcr.io/navikt/dittnav-event-handler/dittnav-event-handler:latest"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
@@ -182,7 +182,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - api.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-api/dittnav-api:latest"
+    image: "ghcr.io/navikt/dittnav-api/dittnav-api:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -206,7 +206,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - legacy.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-legacy-api/dittnav-legacy-api:latest"
+    image: "ghcr.io/navikt/dittnav-legacy-api/dittnav-legacy-api:latest"
     mem_limit: '2gb'
     mem_reservation: '2gb'
     ports:
@@ -239,7 +239,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - mocks.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/pb-nav-mocked/pb-nav-mocked:latest"
+    image: "ghcr.io/navikt/pb-nav-mocked/pb-nav-mocked:latest"
     ports:
       - "8095:8080"
     env_file: .env
@@ -258,7 +258,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
+    image: "ghcr.io/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
@@ -278,7 +278,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - tidslinje.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
+    image: "ghcr.io/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -297,7 +297,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - dekoratoren.dittnav.docker-internal
-    image: "navikt/nav-dekoratoren:latest"
+    image: "ghcr.io/navikt/nav-dekoratoren:latest"
     mem_limit: '1500m'
     mem_reservation: '1500m'
     ports:
@@ -320,7 +320,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - frontend.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav/dittnav:latest"
+    image: "ghcr.io/navikt/dittnav/dittnav:latest"
     mem_limit: '768m'
     mem_reservation: '512m'
     ports:
@@ -360,7 +360,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - varselbestiller.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-varselbestiller/dittnav-varselbestiller:latest"
+    image: "ghcr.io/navikt/dittnav-varselbestiller/dittnav-varselbestiller:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -385,7 +385,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - brukernotifikasjonbestiller.dittnav.docker-internal
-    image: "docker.pkg.github.com/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210823115250-9c85306"
+    image: "ghcr.io/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210823115250-9c85306"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
