@@ -24,6 +24,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsAliveForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_ALIVE)
+        assertIsAliveForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_ALIVE)
     }
 
     @Test
@@ -36,6 +37,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsReadyForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_READY)
+        assertIsReadyForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_READY)
 
     }
 
@@ -48,6 +50,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.SELFTEST)
+        assertSelftestForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.SELFTEST)
     }
 
     @Test
@@ -58,7 +61,8 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertMetricsForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.METRICS)
-        assertMetricsForSingleService(ServiceConfiguration.VARSELBESTILLER, TidslinjeOperations.SELFTEST)
+        assertMetricsForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.METRICS)
+        assertMetricsForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.METRICS)
     }
 
     @Test
