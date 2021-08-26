@@ -24,7 +24,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - db-datapopulator.dittnav.docker-internal
-    image: docker.pkg.github.com/navikt/dittnav-docker-compose/db-datapopulator:latest
+    image: "ghcr.io/navikt/dittnav-docker-compose/db-datapopulator:latest"
     env_file: .env
     depends_on:
       aggregator:
@@ -297,7 +297,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - dekoratoren.dittnav.docker-internal
-    image: "ghcr.io/navikt/nav-dekoratoren:latest"
+    image: "ghcr.io/navikt/nav-dekoratoren/nav-dekoratoren:latest"
     mem_limit: '1500m'
     mem_reservation: '1500m'
     ports:
