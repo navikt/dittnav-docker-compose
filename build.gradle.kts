@@ -26,6 +26,7 @@ dependencies {
     testImplementation(Junit.api)
     testImplementation(Junit.params)
     testImplementation(Kluent.kluent)
+    testImplementation(Mockk.mockk)
     testImplementation(TestContainers.junitJupiter)
     testImplementation(TestContainers.testContainers) {
         exclude("junit", "junit")
