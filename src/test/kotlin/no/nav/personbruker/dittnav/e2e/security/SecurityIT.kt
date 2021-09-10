@@ -9,12 +9,21 @@ import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.*
 import no.nav.personbruker.dittnav.e2e.operations.*
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be in`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    ApiContainerLogs::class,
+    HandlerContainerLogs::class,
+    LegacyContainerLogs::class,
+    ProducerContainerLogs::class,
+    TidslinjeContainerLogs::class
+)
 internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     private lateinit var tokenAtLevel3: TokenInfo

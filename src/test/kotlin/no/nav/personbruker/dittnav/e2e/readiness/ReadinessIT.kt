@@ -5,13 +5,28 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.*
 import no.nav.personbruker.dittnav.e2e.operations.*
 import org.amshove.kluent.`should be equal to`
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.AnyOf.anyOf
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    ApiContainerLogs::class,
+    LegacyContainerLogs::class,
+    HandlerContainerLogs::class,
+    AggregatorContainerLogs::class,
+    ProducerContainerLogs::class,
+    FrontendContainerLogs::class,
+    TidslinjeContainerLogs::class,
+    VarselbestillerContainerLogs::class,
+    BrukernotifikasjonbestillerContainerLogs::class,
+    DekoratorenContainerLogs::class,
+    MocksContainerLogs::class
+)
 internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
 
     @Test

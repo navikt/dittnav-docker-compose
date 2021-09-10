@@ -32,15 +32,15 @@ interface PrintContainerLogsOnErrors : TestWatcher, AfterAllCallback {
 
     override fun afterAll(context: ExtensionContext?) {
         if (faildTests.isNotEmpty()) {
-            log.debug("Følgende tester feilet:")
+            log.info("Følgende tester feilet:")
             faildTests.forEach { fT ->
-                log.debug("* $fT")
+                log.info("* $fT")
             }
-            log.debug("Relevante logger")
-            log.debug("----------------------------------------------------------------------------------------------")
-            log.debug("Container logger for $service")
-            log.debug(dockerComposeContext.getLogsFor(service))
-            log.debug("----------------------------------------------------------------------------------------------")
+            log.info("Relevante logger")
+            log.info("----------------------------------------------------------------------------------------------")
+            log.info("Container logger for $service")
+            log.info(dockerComposeContext.getLogsFor(service))
+            log.info("----------------------------------------------------------------------------------------------")
         }
     }
 

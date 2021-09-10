@@ -5,6 +5,9 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.MocksContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
 import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
@@ -13,7 +16,13 @@ import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    ApiContainerLogs::class,
+    MocksContainerLogs::class,
+    ProducerContainerLogs::class
+)
 internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
@@ -58,8 +67,8 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-                DoknotifikasjonDTO("O-username-${activeOppgave!![0].eventId}"),
-                DoknotifikasjonDTO("O-username-${activeOppgave[1].eventId}")
+            DoknotifikasjonDTO("O-username-${activeOppgave!![0].eventId}"),
+            DoknotifikasjonDTO("O-username-${activeOppgave[1].eventId}")
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
@@ -71,7 +80,12 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
 
     private fun `produce oppgave at level`(originalOppgave: ProduceOppgaveDTO, token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_OPPGAVE, originalOppgave, token)
+            client.post<HttpResponse>(
+                ServiceConfiguration.PRODUCER,
+                ProducerOperations.PRODUCE_OPPGAVE,
+                originalOppgave,
+                token
+            )
         }.status `should be equal to` HttpStatusCode.OK
     }
 
