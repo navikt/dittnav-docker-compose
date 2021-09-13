@@ -87,22 +87,18 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val operation = ProducerOperations.PRODUCE_BESKJED
         runBlocking {
             val unauthResponse = client.postWithoutAuth<HttpResponse>(producer, operation, data)
-            printServiceLogIfNotExpectedResult(producer, unauthResponse, Unauthorized)
             unauthResponse.status `should be equal to` Unauthorized
 
             val authResponse3 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel3)
-            printServiceLogIfNotExpectedResult(producer, authResponse3, OK)
             authResponse3.status `should be equal to` OK
 
             val authResponse4 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel4)
-            printServiceLogIfNotExpectedResult(producer, authResponse4, OK)
             authResponse4.status `should be equal to` OK
         }
     }
 
     private suspend fun assertThatTheRequestWasDenied(service: ServiceConfiguration, operation: ServiceOperation) {
         val unauthResponse = client.getWithoutAuth<HttpResponse>(service, operation)
-        printServiceLogIfNotExpectedResult(service, unauthResponse, Unauthorized)
         unauthResponse.status `should be equal to` Unauthorized
     }
 
@@ -114,19 +110,7 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
 
 
-        printServiceLogIfNotInExpectedResults(service, authResponse, definitionOfAccepted)
         authResponse.status `should be in` definitionOfAccepted
     }
 
-    private fun printServiceLogIfNotExpectedResult(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: HttpStatusCode) {
-        if (actualResponse.status != expectedResponse) {
-            println("Container log for the service $service:\n ${dockerComposeContext.getLogsFor(service)}")
-        }
-    }
-
-    private fun printServiceLogIfNotInExpectedResults(service: ServiceConfiguration, actualResponse: HttpResponse, expectedResponse: List<HttpStatusCode>) {
-        if (actualResponse.status !in expectedResponse) {
-            println("Container log for the service $service:\n ${dockerComposeContext.getLogsFor(service)}")
-        }
-    }
 }
