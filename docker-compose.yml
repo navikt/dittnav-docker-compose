@@ -138,6 +138,11 @@ services:
       POLL_INNBOKS: "true"
       POLL_STATUSOPPDATERING: "true"
       POLL_DONE: "true"
+      INTERN_BESKJED_TOPIC: "beskjedTopic"
+      INTERN_OPPGAVE_TOPIC: "oppgaveTopic"
+      INTERN_INNBOKS_TOPIC: "innboksTopic"
+      INTERN_STATUSOPPDATERING_TOPIC: "statusoppdateringTopic"
+      INTERN_DONE_TOPIC: "doneTopic"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -377,6 +382,11 @@ services:
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      INTERN_BESKJED_TOPIC: "beskjedTopic"
+      INTERN_OPPGAVE_TOPIC: "oppgaveTopic"
+      INTERN_DONE_TOPIC: "doneTopic"
+      DOKNOTIFIKASJON_TOPIC: "doknotifikasjonTopic"
+      DOKNOTIFIKASJON_STOP_TOPIC: "doknotifikasjonStopTopic"
     depends_on:
       - schema-registry
       - postgres
@@ -405,6 +415,17 @@ services:
       POLL_INNBOKS: "true"
       POLL_STATUSOPPDATERING: "true"
       POLL_DONE: "true"
+      INTERN_BESKJED_TOPIC: "internBeskjedTopic"
+      INTERN_OPPGAVE_TOPIC: "internOppgaveTopic"
+      INTERN_INNBOKS_TOPIC: "internInnboksTopic"
+      INTERN_STATUSOPPDATERING_TOPIC: "internStatusoppdateringTopic"
+      INTERN_DONE_TOPIC: "internDoneTopic"
+      OPEN_INPUT_BESKJED_TOPIC: "inputBeskjedTopic"
+      OPEN_INPUT_OPPGAVE_TOPIC: "inputOppgaveTopic"
+      OPEN_INPUT_INNBOKS_TOPIC: "inputInnboksTopic"
+      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "inputStatusoppdateringTopic"
+      OPEN_INPUT_DONE_TOPIC: "inputDoneTopic"
+      FEILRESPONS_TOPIC: "feilresponsTopic"
     depends_on:
       - schema-registry
       - postgres
