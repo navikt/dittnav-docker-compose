@@ -32,15 +32,20 @@ interface PrintContainerLogsOnErrors : TestWatcher, AfterAllCallback {
 
     override fun afterAll(context: ExtensionContext?) {
         if (faildTests.isNotEmpty()) {
+            val logPrefix = "${service.name}: "
+            val containerLogs = dockerComposeContext.getLogsFor(service)
+            val containerLogsWithPrefix = containerLogs.replace("\n", "\n$logPrefix")
+
+            log.info("------------------------------------------------------------------------------------------------")
             log.info("Følgende tester feilet:")
             faildTests.forEach { fT ->
                 log.info("* $fT")
             }
+
             log.info("Relevante logger")
-            log.info("----------------------------------------------------------------------------------------------")
             log.info("Container logger for $service")
-            log.info(dockerComposeContext.getLogsFor(service))
-            log.info("----------------------------------------------------------------------------------------------")
+            log.info("\n${logPrefix}${containerLogsWithPrefix}")
+            log.info("------------------------------------------------------------------------------------------------")
         }
     }
 
