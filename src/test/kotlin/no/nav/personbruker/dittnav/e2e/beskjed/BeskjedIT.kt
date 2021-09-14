@@ -5,6 +5,9 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.MocksContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
 import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
@@ -14,7 +17,13 @@ import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    MocksContainerLogs::class,
+    ApiContainerLogs::class,
+    ProducerContainerLogs::class
+)
 internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
@@ -80,8 +89,8 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-                DoknotifikasjonDTO("B-username-${activeBeskjed!![0].eventId}"),
-                DoknotifikasjonDTO("B-username-${activeBeskjed[1].eventId}")
+            DoknotifikasjonDTO("B-username-${activeBeskjed!![0].eventId}"),
+            DoknotifikasjonDTO("B-username-${activeBeskjed[1].eventId}")
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
@@ -100,7 +109,12 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
 
     private fun `produce beskjed at level`(originalBeskjed: ProduceBeskjedDTO, token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_BESKJED, originalBeskjed, token)
+            client.post<HttpResponse>(
+                ServiceConfiguration.PRODUCER,
+                ProducerOperations.PRODUCE_BESKJED,
+                originalBeskjed,
+                token
+            )
         }.status `should be equal to` HttpStatusCode.OK
     }
 

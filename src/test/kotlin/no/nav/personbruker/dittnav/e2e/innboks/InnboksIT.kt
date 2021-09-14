@@ -1,16 +1,23 @@
 package no.nav.personbruker.dittnav.e2e.innboks
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    ApiContainerLogs::class,
+    ProducerContainerLogs::class
+)
 class InnboksIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
@@ -45,7 +52,12 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
 
     private fun `produce innboks-event at level`(originalInnboksEvent: ProduceInnboksDTO, token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_INNBOKS, originalInnboksEvent, token)
+            client.post<HttpResponse>(
+                ServiceConfiguration.PRODUCER,
+                ProducerOperations.PRODUCE_INNBOKS,
+                originalInnboksEvent,
+                token
+            )
         }.status `should be equal to` HttpStatusCode.OK
     }
 

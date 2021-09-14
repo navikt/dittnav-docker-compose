@@ -7,6 +7,7 @@ import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.*
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
@@ -14,7 +15,12 @@ import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    ProducerContainerLogs::class,
+    TidslinjeContainerLogs::class
+)
 class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"

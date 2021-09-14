@@ -7,6 +7,9 @@ import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
+import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.MocksContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
 import no.nav.personbruker.dittnav.e2e.doknotifikasjonStopp.DoknotifikasjonStoppDTO
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
 import no.nav.personbruker.dittnav.e2e.innboks.ProduceInnboksDTO
@@ -20,7 +23,13 @@ import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should contain all`
 import org.amshove.kluent.`should not be empty`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(
+    MocksContainerLogs::class,
+    ApiContainerLogs::class,
+    ProducerContainerLogs::class
+)
 class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
@@ -37,7 +46,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, innboks, ProducerOperations.PRODUCE_INNBOKS)
 
         val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
-            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+            `get events`<List<OppgaveDTO>>(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
         activeOppgaveEvents!!.`should not be empty`()
 
@@ -62,12 +71,12 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, oppgave2, ProducerOperations.PRODUCE_OPPGAVE)
 
         val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
-            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+            `get events`<List<OppgaveDTO>>(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
         activeOppgaveEvents!!.`should not be empty`()
 
         val activeBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
-            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+            `get events`<List<BeskjedDTO>>(tokenAt4, ApiOperations.FETCH_BESKJED)
         }
         activeBeskjedEvents!!.`should not be empty`()
 
@@ -97,7 +106,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
         val inactiveOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
-            `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
+            `get events`<List<OppgaveDTO>>(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
         }
         inactiveOppgaveEvents!!.`should not be empty`()
 
@@ -107,7 +116,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active beskjed-events`(token: TokenInfo) {
         val inactiveBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
-            `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE)
+            `get events`<List<BeskjedDTO>>(token, ApiOperations.FETCH_BESKJED_INACTIVE)
         }
         inactiveBeskjedEvents!!.`should not be empty`()
 
@@ -117,7 +126,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active innboks-events`(token: TokenInfo) {
         val inactiveInnboksEvents: List<InnboksDTO>? = `wait for events` {
-            `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
+            `get events`<List<InnboksDTO>>(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
         }
         inactiveInnboksEvents!!.`should not be empty`()
 
