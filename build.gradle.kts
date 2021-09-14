@@ -26,6 +26,7 @@ dependencies {
     testImplementation(Junit.api)
     testImplementation(Junit.params)
     testImplementation(Kluent.kluent)
+    testImplementation(Mockk.mockk)
     testImplementation(TestContainers.junitJupiter)
     testImplementation(TestContainers.testContainers) {
         exclude("junit", "junit")
@@ -45,6 +46,7 @@ tasks {
     withType<Test> {
         useJUnitPlatform()
         testLogging {
+            showStandardStreams = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
             events("passed", "skipped", "failed")
         }
