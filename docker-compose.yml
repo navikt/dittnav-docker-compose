@@ -138,11 +138,6 @@ services:
       POLL_INNBOKS: "true"
       POLL_STATUSOPPDATERING: "true"
       POLL_DONE: "true"
-      INTERN_BESKJED_TOPIC: "beskjedTopic"
-      INTERN_OPPGAVE_TOPIC: "oppgaveTopic"
-      INTERN_INNBOKS_TOPIC: "innboksTopic"
-      INTERN_STATUSOPPDATERING_TOPIC: "statusoppdateringTopic"
-      INTERN_DONE_TOPIC: "doneTopic"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -382,11 +377,11 @@ services:
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      INTERN_BESKJED_TOPIC: "beskjedTopic"
-      INTERN_OPPGAVE_TOPIC: "oppgaveTopic"
-      INTERN_DONE_TOPIC: "doneTopic"
-      DOKNOTIFIKASJON_TOPIC: "doknotifikasjonTopic"
-      DOKNOTIFIKASJON_STOP_TOPIC: "doknotifikasjonStopTopic"
+      INTERN_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
+      INTERN_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
+      INTERN_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
+      DOKNOTIFIKASJON_TOPIC: "privat-dok-notifikasjon"
+      DOKNOTIFIKASJON_STOP_TOPIC: "privat-dok-notifikasjon-stopp"
     depends_on:
       - schema-registry
       - postgres
@@ -415,17 +410,17 @@ services:
       POLL_INNBOKS: "true"
       POLL_STATUSOPPDATERING: "true"
       POLL_DONE: "true"
-      INTERN_BESKJED_TOPIC: "internBeskjedTopic"
-      INTERN_OPPGAVE_TOPIC: "internOppgaveTopic"
-      INTERN_INNBOKS_TOPIC: "internInnboksTopic"
-      INTERN_STATUSOPPDATERING_TOPIC: "internStatusoppdateringTopic"
-      INTERN_DONE_TOPIC: "internDoneTopic"
-      OPEN_INPUT_BESKJED_TOPIC: "inputBeskjedTopic"
-      OPEN_INPUT_OPPGAVE_TOPIC: "inputOppgaveTopic"
-      OPEN_INPUT_INNBOKS_TOPIC: "inputInnboksTopic"
-      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "inputStatusoppdateringTopic"
-      OPEN_INPUT_DONE_TOPIC: "inputDoneTopic"
-      FEILRESPONS_TOPIC: "feilresponsTopic"
+      INTERN_BESKJED_TOPIC: "min-side.privat-brukernotifikasjon-beskjed-v1"
+      INTERN_OPPGAVE_TOPIC: "min-side.privat-brukernotifikasjon-oppgave-v1"
+      INTERN_INNBOKS_TOPIC: "min-side.privat-brukernotifikasjon-innboks-v1"
+      INTERN_STATUSOPPDATERING_TOPIC: "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
+      INTERN_DONE_TOPIC: "min-side.privat-brukernotifikasjon-done-v1"
+      OPEN_INPUT_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
+      OPEN_INPUT_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
+      OPEN_INPUT_INNBOKS_TOPIC: "aapen-brukernotifikasjon-nyInnboks-v1"
+      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+      OPEN_INPUT_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
+      FEILRESPONS_TOPIC: "min-side.aapen-brukernotifikasjon-feilrespons-v1"
     depends_on:
       - schema-registry
       - postgres
