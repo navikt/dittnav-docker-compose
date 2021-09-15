@@ -343,6 +343,7 @@ services:
       TEST_SIDE_FEATURE_TOGGLE: "true"
       AKTIVITETSPLAN_URL: "http://dummyAktivitetsplan.nav.no"
       DINE_PLEIEPENGER_URL: "http://dummySykdomIFamilien.nav.no"
+      DITT_SYKEFRAVAER_URL: "http://dummySykefravaer.nav.no"
       VEILEDERARBEIDSSOKER_URL: "http://dummyVeilederArbeidssoker.nav.no"
       MIN_INNBOKS_URL: "http://dummyMinInnboks.nav.no"
       DAGPENGER_URL: "http://dummyDagpenger.nav.no"
