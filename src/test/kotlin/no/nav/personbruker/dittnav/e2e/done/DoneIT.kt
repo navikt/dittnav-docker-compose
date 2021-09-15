@@ -70,12 +70,12 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, oppgave1, ProducerOperations.PRODUCE_OPPGAVE)
         `produser brukernotifikasjon`(tokenAt4, oppgave2, ProducerOperations.PRODUCE_OPPGAVE)
 
-        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
+        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for specific number of events`(numberOfEvents = 2) {
             `get events`<List<OppgaveDTO>>(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
         activeOppgaveEvents!!.`should not be empty`()
 
-        val activeBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
+        val activeBeskjedEvents: List<BeskjedDTO>? = `wait for specific number of events`(numberOfEvents = 2) {
             `get events`<List<BeskjedDTO>>(tokenAt4, ApiOperations.FETCH_BESKJED)
         }
         activeBeskjedEvents!!.`should not be empty`()

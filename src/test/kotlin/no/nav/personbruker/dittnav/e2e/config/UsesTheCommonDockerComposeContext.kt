@@ -28,35 +28,47 @@ open class UsesTheCommonDockerComposeContext {
     )
 
     fun <T> `wait for events`(functionToReturnTheResult: () -> List<T>): List<T>? {
-        var result: List<T>? = emptyList()
         val timeToWait = Durations.TEN_SECONDS
-        try {
-            result = await
-                        .atMost(timeToWait)
-                        .withPollDelay(Durations.ONE_SECOND)
-                        .withPollInterval(Durations.ONE_SECOND)
-                        .untilCallTo { functionToReturnTheResult() } matches { count -> count?.isNotEmpty()!! }
-        }
-        catch (e: ConditionTimeoutException) {
+        return try{
+            await
+                .atMost(timeToWait)
+                .withPollDelay(Durations.ONE_SECOND)
+                .withPollInterval(Durations.ONE_SECOND)
+                .untilCallTo { functionToReturnTheResult() } matches { count -> count?.isNotEmpty()!! }
+
+        } catch (e: ConditionTimeoutException) {
             log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
-        } finally {
-            return result
+            emptyList()
+        }
+    }
+
+    fun <T> `wait for specific number of events`(numberOfEvents : Int, functionToReturnTheResult: () -> List<T>): List<T>? {
+        val timeToWait = Durations.TEN_SECONDS
+        return try {
+            await
+                .atMost(timeToWait)
+                .withPollDelay(Durations.ONE_SECOND)
+                .withPollInterval(Durations.ONE_SECOND)
+                .untilCallTo { functionToReturnTheResult() } matches { count -> count?.size == numberOfEvents }
+
+        } catch (e: ConditionTimeoutException) {
+            log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
+            emptyList()
         }
     }
 
     fun <T> `wait for values to be returned`(valuesToWaitFor: List<T>, functionToReturnTheResult: () -> List<T>): List<T>? {
-        var result: List<T>? = mutableListOf()
         val timeToWait = Durations.TEN_SECONDS
-        try {
-            result = await
-                        .atMost(timeToWait)
-                        .withPollDelay(Durations.ONE_SECOND)
-                        .withPollInterval(Durations.ONE_SECOND)
-                        .untilCallTo { functionToReturnTheResult() } matches { it!!.containsAll(valuesToWaitFor) }
+        return try {
+            await
+                .atMost(timeToWait)
+                .withPollDelay(Durations.ONE_SECOND)
+                .withPollInterval(Durations.ONE_SECOND)
+                .untilCallTo { functionToReturnTheResult() } matches { it!!.containsAll(valuesToWaitFor) }
+
         } catch (e: ConditionTimeoutException) {
             log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
-        } finally {
-            return result
+            emptyList()
         }
     }
 }
