@@ -196,6 +196,7 @@ services:
       UNLEASH_API_URL: "fake"
       DIGISOS_API_URL: "https://digisos/dummy/soknad"
       DIGISOS_INNSYN_API_URL: "https://digisos/dummy/innsyn"
+      MINE_SAKER_API_URL: "https://dummy/mine-saker"
     depends_on:
       - oidc-provider
       - handler
