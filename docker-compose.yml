@@ -380,6 +380,7 @@ services:
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
       INTERN_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
       INTERN_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
+      INTERN_INNBOKS_TOPIC: "aapen-brukernotifikasjon-nyInnboks-v1"
       INTERN_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
       DOKNOTIFIKASJON_TOPIC: "privat-dok-notifikasjon"
       DOKNOTIFIKASJON_STOP_TOPIC: "privat-dok-notifikasjon-stopp"
