@@ -46,7 +46,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, innboks, ProducerOperations.PRODUCE_INNBOKS)
 
         val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
-            `get events`<List<OppgaveDTO>>(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
         activeOppgaveEvents!!.`should not be empty`()
 
@@ -70,14 +70,14 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser brukernotifikasjon`(tokenAt4, oppgave1, ProducerOperations.PRODUCE_OPPGAVE)
         `produser brukernotifikasjon`(tokenAt4, oppgave2, ProducerOperations.PRODUCE_OPPGAVE)
 
-        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for specific number of events`(numberOfEvents = 2) {
-            `get events`<List<OppgaveDTO>>(tokenAt4, ApiOperations.FETCH_OPPGAVE)
+        val activeBeskjedEvents: List<BeskjedDTO>? = `wait for events`{
+            `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
+        }
+
+        val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
         activeOppgaveEvents!!.`should not be empty`()
-
-        val activeBeskjedEvents: List<BeskjedDTO>? = `wait for specific number of events`(numberOfEvents = 2) {
-            `get events`<List<BeskjedDTO>>(tokenAt4, ApiOperations.FETCH_BESKJED)
-        }
         activeBeskjedEvents!!.`should not be empty`()
 
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
@@ -106,7 +106,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
         val inactiveOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
-            `get events`<List<OppgaveDTO>>(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
+            `get events`(token, ApiOperations.FETCH_OPPGAVE_INACTIVE)
         }
         inactiveOppgaveEvents!!.`should not be empty`()
 
@@ -116,7 +116,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active beskjed-events`(token: TokenInfo) {
         val inactiveBeskjedEvents: List<BeskjedDTO>? = `wait for events` {
-            `get events`<List<BeskjedDTO>>(token, ApiOperations.FETCH_BESKJED_INACTIVE)
+            `get events`(token, ApiOperations.FETCH_BESKJED_INACTIVE)
         }
         inactiveBeskjedEvents!!.`should not be empty`()
 
@@ -126,7 +126,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `verify no active innboks-events`(token: TokenInfo) {
         val inactiveInnboksEvents: List<InnboksDTO>? = `wait for events` {
-            `get events`<List<InnboksDTO>>(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
+            `get events`(token, ApiOperations.FETCH_INNBOKS_INACTIVE)
         }
         inactiveInnboksEvents!!.`should not be empty`()
 

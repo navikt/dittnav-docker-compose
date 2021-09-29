@@ -42,21 +42,6 @@ open class UsesTheCommonDockerComposeContext {
         }
     }
 
-    fun <T> `wait for specific number of events`(numberOfEvents : Int, functionToReturnTheResult: () -> List<T>): List<T>? {
-        val timeToWait = Durations.TEN_SECONDS
-        return try {
-            await
-                .atMost(timeToWait)
-                .withPollDelay(Durations.ONE_SECOND)
-                .withPollInterval(Durations.ONE_SECOND)
-                .untilCallTo { functionToReturnTheResult() } matches { count -> count?.size == numberOfEvents }
-
-        } catch (e: ConditionTimeoutException) {
-            log.info("Fikk ikke svar fra ønsket funksjon i løpet av $timeToWait.")
-            emptyList()
-        }
-    }
-
     fun <T> `wait for values to be returned`(valuesToWaitFor: List<T>, functionToReturnTheResult: () -> List<T>): List<T>? {
         val timeToWait = Durations.TEN_SECONDS
         return try {
