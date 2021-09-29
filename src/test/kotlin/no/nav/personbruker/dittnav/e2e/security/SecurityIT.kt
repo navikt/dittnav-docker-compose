@@ -31,8 +31,8 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     @BeforeEach
     fun `hent token`() {
-        tokenAtLevel3 = tokenFetcher.fetchTokenForIdent("000", 3)
-        tokenAtLevel4 = tokenFetcher.fetchTokenForIdent("000", 4)
+        tokenAtLevel3 = tokenFetcher.fetchTokenForIdent("12345678901", 3)
+        tokenAtLevel4 = tokenFetcher.fetchTokenForIdent("23456789012", 4)
     }
 
     @Test
