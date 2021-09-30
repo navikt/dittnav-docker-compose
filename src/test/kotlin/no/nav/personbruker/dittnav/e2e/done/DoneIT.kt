@@ -115,7 +115,7 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
             `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_OPPGAVE)
         }
 
-        val doknotifikasjonStoppForInnboks = `wait for values to be returned`(doknotifikasjonStoppForOppgaveToMatch) {
+        val doknotifikasjonStoppForInnboks = `wait for values to be returned`(doknotifikasjonStoppForInnboksToMatch) {
             `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_INNBOKS)
         }
 
