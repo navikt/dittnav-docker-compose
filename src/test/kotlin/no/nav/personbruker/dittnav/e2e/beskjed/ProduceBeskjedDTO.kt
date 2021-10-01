@@ -6,5 +6,6 @@ data class ProduceBeskjedDTO(
         val tekst: String,
         val link: String = "http://dummylenke.no",
         val grupperingsid: String = "123",
-        val eksternVarsling: Boolean = false
+        val eksternVarsling: Boolean = false,
+        val prefererteKanaler: List<String> = emptyList()
 ) : BrukernotifikasjonDTO()

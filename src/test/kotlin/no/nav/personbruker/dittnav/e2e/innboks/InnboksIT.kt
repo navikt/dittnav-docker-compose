@@ -7,10 +7,13 @@ import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
 import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
+import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain all`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -50,6 +53,29 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
     }
 
+    @Test
+    fun `Skal bestille ekstern varsling for innboks`() {
+        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
+        val originalInnboks1 = ProduceInnboksDTO("Innboks med varsel 1", eksternVarsling = true)
+        val originalInnboks2 = ProduceInnboksDTO("Innboks med varsel 2", eksternVarsling = true)
+        `produce innboks-event at level`(originalInnboks1, tokenAt4)
+        `produce innboks-event at level`(originalInnboks2, tokenAt4)
+        val activeInnboks = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
+        }
+
+        val doknotifikasjonerToMatch = listOf(
+                DoknotifikasjonDTO("I-username-${activeInnboks!![0].eventId}"),
+                DoknotifikasjonDTO("I-username-${activeInnboks[1].eventId}")
+        )
+
+        val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
+            `get doknotifikasjoner`(VarselOperations.GET_DOKNOTIFIKASJON_INNBOKS)
+        }
+
+        doknotifikasjoner!! `should contain all` doknotifikasjonerToMatch
+    }
+
     private fun `produce innboks-event at level`(originalInnboksEvent: ProduceInnboksDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(
@@ -71,6 +97,13 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<InnboksDTO> {
         return runBlocking {
             val response = client.get<List<InnboksDTO>>(ServiceConfiguration.API, operation, token)
+            response
+        }
+    }
+
+    private fun `get doknotifikasjoner`(operation: VarselOperations): List<DoknotifikasjonDTO> {
+        return runBlocking {
+            val response = client.getWithoutAuth<List<DoknotifikasjonDTO>>(ServiceConfiguration.MOCKS, operation)
             response
         }
     }

@@ -64,11 +64,15 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         val beskjed2 = ProduceBeskjedDTO(tekst = "Beskjed 2", eksternVarsling = true)
         val oppgave1 = ProduceOppgaveDTO(tekst = "Oppgave 1", eksternVarsling = true)
         val oppgave2 = ProduceOppgaveDTO(tekst = "Oppgave 2", eksternVarsling = true)
+        val innboks1 = ProduceOppgaveDTO(tekst = "Oppgave 1", eksternVarsling = true)
+        val innboks2 = ProduceOppgaveDTO(tekst = "Oppgave 2", eksternVarsling = true)
 
         `produser brukernotifikasjon`(tokenAt4, beskjed1, ProducerOperations.PRODUCE_BESKJED)
         `produser brukernotifikasjon`(tokenAt4, beskjed2, ProducerOperations.PRODUCE_BESKJED)
         `produser brukernotifikasjon`(tokenAt4, oppgave1, ProducerOperations.PRODUCE_OPPGAVE)
         `produser brukernotifikasjon`(tokenAt4, oppgave2, ProducerOperations.PRODUCE_OPPGAVE)
+        `produser brukernotifikasjon`(tokenAt4, innboks1, ProducerOperations.PRODUCE_INNBOKS)
+        `produser brukernotifikasjon`(tokenAt4, innboks2, ProducerOperations.PRODUCE_INNBOKS)
 
         val activeBeskjedEvents: List<BeskjedDTO>? = `wait for events`{
             `get events`(tokenAt4, ApiOperations.FETCH_BESKJED)
@@ -77,20 +81,31 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         val activeOppgaveEvents: List<OppgaveDTO>? = `wait for events` {
             `get events`(tokenAt4, ApiOperations.FETCH_OPPGAVE)
         }
+
+        val activeInnboksEvents: List<InnboksDTO>? = `wait for events` {
+            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
+        }
         activeOppgaveEvents!!.`should not be empty`()
         activeBeskjedEvents!!.`should not be empty`()
+        activeInnboksEvents!!.`should not be empty`()
 
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
+
+        val doknotifikasjonStoppForBeskjedToMatch = listOf(
+                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[0].eventId}"),
+                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[1].eventId}")
+        )
 
         val doknotifikasjonStoppForOppgaveToMatch = listOf(
                 DoknotifikasjonStoppDTO("O-username-${activeOppgaveEvents[0].eventId}"),
                 DoknotifikasjonStoppDTO("O-username-${activeOppgaveEvents[1].eventId}")
         )
 
-        val doknotifikasjonStoppForBeskjedToMatch = listOf(
-                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[0].eventId}"),
-                DoknotifikasjonStoppDTO("B-username-${activeBeskjedEvents[1].eventId}")
+        val doknotifikasjonStoppForInnboksToMatch = listOf(
+                DoknotifikasjonStoppDTO("I-username-${activeInnboksEvents[0].eventId}"),
+                DoknotifikasjonStoppDTO("I-username-${activeInnboksEvents[1].eventId}")
         )
+
 
         val doknotifikasjonStoppForBeskjed = `wait for values to be returned`(doknotifikasjonStoppForBeskjedToMatch) {
             `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_BESKJED)
@@ -100,8 +115,13 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
             `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_OPPGAVE)
         }
 
+        val doknotifikasjonStoppForInnboks = `wait for values to be returned`(doknotifikasjonStoppForInnboksToMatch) {
+            `get doknotifikasjonstopp count`(VarselOperations.GET_DOKNOTIFIKASJONSTOPP_INNBOKS)
+        }
+
         doknotifikasjonStoppForBeskjed!! `should contain all` doknotifikasjonStoppForBeskjedToMatch
         doknotifikasjonStoppForOppgave!! `should contain all` doknotifikasjonStoppForOppgaveToMatch
+        doknotifikasjonStoppForInnboks!! `should contain all` doknotifikasjonStoppForInnboksToMatch
     }
 
     private fun `verify no active oppgave-events`(token: TokenInfo) {
