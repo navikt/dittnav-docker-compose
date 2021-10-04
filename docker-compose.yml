@@ -377,6 +377,7 @@ services:
       GROUP_ID: "dittnav_varselbestiller"
       POLL_BESKJED_TO_DOKNOTIFIKASJON: "true"
       POLL_OPPGAVE_TO_DOKNOTIFIKASJON: "true"
+      POLL_INNBOKS_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
       INTERN_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
