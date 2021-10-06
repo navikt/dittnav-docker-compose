@@ -187,7 +187,9 @@ services:
     mem_reservation: '580m'
     ports:
       - "8091:8080"
-    env_file: .env
+    env_file:
+      - .env
+      - .tokenx.exchange.env
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
@@ -201,6 +203,7 @@ services:
       - oidc-provider
       - handler
       - legacy
+      - tokendings-mocked
 
   legacy:
     container_name: legacy
@@ -292,6 +295,20 @@ services:
     depends_on:
       - oidc-provider
       - handler
+
+  tokendings-mocked:
+    container_name: tokendings-mocked
+    networks:
+      dittnav.docker-internal:
+        aliases:
+          - tokendings-mocked.dittnav.docker-internal
+    image: "ghcr.io/navikt/tms-tokendings-mocked/tms-tokendings-mocked:latest"
+    mem_limit: '768m'
+    mem_reservation: '580m'
+    ports:
+      - "9051:8080"
+    environment:
+      LOCAL_URL: "http://localhost:9051"
 
   dekoratoren:
     container_name: dekoratoren
