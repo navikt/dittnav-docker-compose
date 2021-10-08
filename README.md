@@ -4,7 +4,7 @@ Ende-til-ende-testene tester at avhengighetene starter og svarer, samt de vanlig
 brukernotifikasjoner og done-eventer.
 
 OBS per nå må vi autentisere oss mot githubs package registry for å hente stub-oidc-provider, dette gjør man ved:
-`docker login docker.pkg.github.com -u USERNAME -p TOKEN`
+`docker login ghcr.io -u USERNAME -p TOKEN`
 
 Brukernavn og token tilhører githubkontoen din (der tokenet må ha tilgang til read fra package registry)
 
