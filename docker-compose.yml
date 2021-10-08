@@ -198,7 +198,8 @@ services:
       UNLEASH_API_URL: "fake"
       DIGISOS_API_URL: "https://digisos/dummy/soknad"
       DIGISOS_INNSYN_API_URL: "https://digisos/dummy/innsyn"
-      MINE_SAKER_API_URL: "https://dummy/mine-saker"
+      MINE_SAKER_API_URL: "http://mocks.dittnav.docker-internal:8080/mine-saker-api"
+      MINE_SAKER_API_CLIENT_ID: "mine-saker-api-client-id"
     depends_on:
       - oidc-provider
       - handler
