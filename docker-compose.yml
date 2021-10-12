@@ -316,9 +316,9 @@ services:
       LOCAL_URL: "http://localhost:9051"
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive" ]
-      interval: 1s
-      timeout: 1s
-      retries: 5
+      interval: 2s
+      timeout: 2s
+      retries: 10
 
   dekoratoren:
     container_name: dekoratoren
