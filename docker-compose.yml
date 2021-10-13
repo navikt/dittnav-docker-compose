@@ -148,6 +148,7 @@ services:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive"]
       interval: 2s
       timeout: 2s
+      start_period: 30s
       retries: 10
 
   handler:
