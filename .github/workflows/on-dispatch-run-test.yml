@@ -17,7 +17,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.READ_PACKAGES_PAT }}
+          password: ${{ secrets.READER_TOKEN }}
       - name: Docker pull
         run: docker-compose pull
       - name: Run end-to-end-tests
