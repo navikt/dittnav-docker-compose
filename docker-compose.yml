@@ -367,7 +367,7 @@ services:
       NAVNO_URL: "www.nav.no"
       LOGIN_URL: "http://localhost:5000?redirect=http://localhost:3000"
       VTA_URL: "http://dummyVeientilarbeid.nav.no"
-      ER_DEV: "true"
+      IS_PROD: "false"
       INNLOGGINGSSTATUS_URL: "http://localhost:8095/innloggingsstatus"
       ARBEIDSSOKERREGISTRERING_URL: "http://dummyArbeidssokerregistrering.nav.no"
       TEST_SIDE_FEATURE_TOGGLE: "true"
