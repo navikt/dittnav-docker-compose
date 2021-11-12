@@ -14,7 +14,7 @@ class TokenFetcher(private val audience: String,
                    private val clientSecret: String,
                    private val oidcProviderBaseUrl: String) {
 
-    private val oidcProviderGuiUrl = "http://localhost:5000/callback"
+    private val oidcProviderGuiUrl = "http://localhost:50000/callback"
 
     private val client = buildHttpClient()
 
