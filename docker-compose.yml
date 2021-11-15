@@ -109,7 +109,7 @@ services:
           - oidc-provider-gui.dittnav.docker-internal
     image: "ghcr.io/navikt/pb-oidc-provider-gui/pb-oidc-provider-gui:latest"
     ports:
-      - "50000:3000"
+      - "50000:50000"
     depends_on:
       - oidc-provider
     environment:
