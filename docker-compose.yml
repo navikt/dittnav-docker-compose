@@ -123,7 +123,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
+    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:local"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -384,6 +384,7 @@ services:
       TIDSLINJE_URL: "http://dummyTidslinje.nav.no"
       TIDSLINJE_PRODUSENT: "produsent"
       VEIENTILARBEID_URL: "http://dummyVeientilarbeid.nav.no"
+      MINE_SAKER_URL: "https://dummy-minesaker.nav.no"
       IS_PROD: "false"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
