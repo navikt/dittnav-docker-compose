@@ -238,6 +238,7 @@ services:
       TJENESTER_URL: "https://dummyTjenester.nav.no"
       SAKSOVERSIKT_API_URL: "http://mocks.dittnav.docker-internal:8080/saksoversikt-api"
       TPS_PROXY_API_V1_NAVN_URL: "http://mocks.dittnav.docker-internal:8080/tpsproxy/"
+      MININNBOKS_URL: "http://dummyMinInnboks.nav.no"
       MININNBOKS_API_URL: "http://mocks.dittnav.docker-internal:8080/mininnboks-api"
       MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
       OPPFOLGING_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
