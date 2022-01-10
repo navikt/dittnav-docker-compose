@@ -406,7 +406,8 @@ services:
       - "8098:8080"
     env_file: .env
     environment:
-      DB_NAME: ${DB_NAME_VARSELBESTILLER}
+      DB_DATABASE: ${DB_NAME_VARSELBESTILLER}
+      DB_USERNAME: "${DB_NAME_VARSELBESTILLER}-user"
       SENSU_HOST: "stub"
       SENSU_PORT: "0"
       GROUP_ID: "dittnav_varselbestiller"
@@ -421,6 +422,8 @@ services:
       INTERN_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
       DOKNOTIFIKASJON_TOPIC: "privat-dok-notifikasjon"
       DOKNOTIFIKASJON_STOP_TOPIC: "privat-dok-notifikasjon-stopp"
+      # variabler for on-prem
+      DB_NAME: ${DB_NAME_VARSELBESTILLER}
     depends_on:
       - schema-registry
       - postgres
