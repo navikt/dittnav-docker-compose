@@ -67,8 +67,8 @@ internal class OppgaveIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-            DoknotifikasjonDTO("O-username-${activeOppgave!![0].eventId}"),
-            DoknotifikasjonDTO("O-username-${activeOppgave[1].eventId}")
+            DoknotifikasjonDTO("O-tms-event-test-producer-${activeOppgave!![0].eventId}"),
+            DoknotifikasjonDTO("O-tms-event-test-producer-${activeOppgave[1].eventId}")
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {

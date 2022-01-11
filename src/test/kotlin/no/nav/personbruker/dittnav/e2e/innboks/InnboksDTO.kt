@@ -3,7 +3,7 @@ package no.nav.personbruker.dittnav.e2e.innboks
 import java.time.ZonedDateTime
 
 data class InnboksDTO(
-        val uid: String?,
+        val uid: String,
         val eventTidspunkt: ZonedDateTime,
         val eventId: String,
         val tekst: String,

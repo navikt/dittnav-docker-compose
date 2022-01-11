@@ -15,7 +15,7 @@ enum class ServiceConfiguration(
     LEGACY("legacy_1", "person/dittnav-legacy-api", defaultExposedPort),
     HANDLER("handler_1", "", defaultExposedPort),
     AGGREGATOR("aggregator_1", "", defaultExposedPort),
-    PRODUCER("producer_1", "person/dittnav-event-test-producer", defaultExposedPort),
+    PRODUCER("producer_1", "tms-event-test-producer", defaultExposedPort),
     MOCKS("mocks_1", "", defaultExposedPort),
     DEKORATOREN("dekoratoren_1", "dekoratoren", 8088),
     TIDSLINJE("tidslinje_1", "person/dittnav-tidslinje-api", defaultExposedPort),
