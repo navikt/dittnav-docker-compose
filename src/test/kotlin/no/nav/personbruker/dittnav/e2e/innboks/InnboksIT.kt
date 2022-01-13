@@ -8,7 +8,6 @@ import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
 import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
 import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
-import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
@@ -55,27 +54,6 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
     }
 
     @Test
-    fun `Skal produsere done-event for innboks`() {
-        val expectedSikkerhetsnivaa = 4
-        val expectedText = "Innboks 3"
-        val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalInnboks = ProduceInnboksDTO(expectedText)
-
-        `produce innboks-event at level`(originalInnboks, tokenAt4)
-        val activeInnboksEvents = `wait for events` {
-            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS)
-        }
-        `verify innboks-event`(activeInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
-
-        val originalDone = ProduceDoneDTO(activeInnboksEvents[0].uid, activeInnboksEvents[0].eventId)
-        `produce done-event for innboks-event`(originalDone, tokenAt4)
-        val inactiveInnboksEvents = `wait for events` {
-            `get events`(tokenAt4, ApiOperations.FETCH_INNBOKS_INACTIVE)
-        }
-        `verify innboks-event`(inactiveInnboksEvents!![0], expectedSikkerhetsnivaa, expectedText)
-    }
-
-    @Test
     fun `Skal bestille ekstern varsling for innboks`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
         val originalInnboks1 = ProduceInnboksDTO("Innboks med varsel 1", eksternVarsling = true)
@@ -106,12 +84,6 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
                 originalInnboksEvent,
                 token
             )
-        }.status `should be equal to` HttpStatusCode.OK
-    }
-
-    private fun `produce done-event for innboks-event`(originalDone: ProduceDoneDTO, token: TokenInfo) {
-        runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.API, ApiOperations.PRODUCE_DONE, originalDone, token)
         }.status `should be equal to` HttpStatusCode.OK
     }
 

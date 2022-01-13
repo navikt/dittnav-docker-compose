@@ -164,18 +164,22 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-event-handler/dittnav-event-handler:latest"
+    image: "docker.io/navikt/handler:gcp3"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
       - "8092:8080"
-    env_file: .env
+    env_file:
+      - .azure.validate.env
+      - .tokenx.validate.env
+      - .env
     environment:
       DB_EVENTHANDLER_HOST: ${DB_HOST}
       DB_EVENTHANDLER_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
       DB_EVENTHANDLER_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}-user"
       DB_EVENTHANDLER_PASSWORD: ${DB_PASSWORD}
       DB_EVENTHANDLER_PORT: ${DB_PORT}
+      OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -279,7 +283,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "docker.io/navikt/tms-producer:gcp3"
+    image: "docker.io/navikt/tms-producer:gcp6"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
