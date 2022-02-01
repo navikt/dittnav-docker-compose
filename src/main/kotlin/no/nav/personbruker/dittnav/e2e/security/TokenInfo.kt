@@ -1,5 +1,8 @@
 package no.nav.personbruker.dittnav.e2e.security
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TokenInfo(
     val access_token: String,
     val expires_in: Int,

@@ -1,13 +1,18 @@
 package no.nav.personbruker.dittnav.e2e.tidslinje
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
+import no.nav.personbruker.dittnav.e2e.client.RestClient
+import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
+import no.nav.personbruker.dittnav.e2e.client.json
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
-import no.nav.personbruker.dittnav.e2e.debugging.*
+import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.TidslinjeContainerLogs
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
@@ -25,6 +30,8 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
     private val produsent = "produsent"
+
+    private val httpClient = RestClient(buildHttpClient(KotlinxSerializer(json(ignoreUnknownKeys = true))))
 
     @Test
     fun `Skal hente alle eventer som er gruppert sammen og er paa sikkerhetsnivaa 4`() {
@@ -107,7 +114,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private fun `produce event at level`(originalEvent: BrukernotifikasjonDTO, operation: ServiceOperation, token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
+            httpClient.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
         }.status `should be equal to` HttpStatusCode.OK
     }
 
@@ -116,7 +123,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
                                             parameters: Map<String, String>): List<Brukernotifikasjon> {
         return runBlocking {
             val response =
-                    client.get<List<Brukernotifikasjon>>(
+                    httpClient.get<List<Brukernotifikasjon>>(
                             ServiceConfiguration.TIDSLINJE,
                             operation,
                             token,

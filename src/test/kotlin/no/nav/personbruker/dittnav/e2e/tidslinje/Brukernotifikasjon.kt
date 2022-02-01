@@ -1,8 +1,9 @@
+
 package no.nav.personbruker.dittnav.e2e.tidslinje
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import kotlinx.serialization.Serializable
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Serializable
 data class Brukernotifikasjon(
         val type: String,
         val sikkerhetsnivaa: Int
