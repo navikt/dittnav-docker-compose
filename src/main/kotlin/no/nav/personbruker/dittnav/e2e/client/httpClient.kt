@@ -2,7 +2,7 @@ package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.HttpTimeout
+import io.ktor.client.features.*
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
 import io.ktor.client.features.json.JsonFeature
@@ -41,5 +41,6 @@ suspend inline fun <reified T> HttpClient.get(url: URL): T = withContext(Dispatc
     request<T> {
         url(url)
         method = HttpMethod.Get
+        expectSuccess = false
     }
 }
