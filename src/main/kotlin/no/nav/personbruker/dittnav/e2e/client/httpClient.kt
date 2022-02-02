@@ -2,23 +2,22 @@ package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.client.features.HttpTimeout
+import io.ktor.client.features.*
 import io.ktor.client.features.cookies.AcceptAllCookiesStorage
 import io.ktor.client.features.cookies.HttpCookies
-import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.DEFAULT
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logger
 import io.ktor.client.features.logging.Logging
-import io.ktor.client.request.request
-import io.ktor.client.request.url
-import io.ktor.http.HttpMethod
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
 
-fun buildHttpClient(): HttpClient {
+fun buildHttpClient(jsonSerializer: KotlinxSerializer = KotlinxSerializer(json())): HttpClient {
     return HttpClient(Apache) {
         install(HttpCookies) {
             keepAllCookiesFromPreviousRequests()
@@ -28,7 +27,7 @@ fun buildHttpClient(): HttpClient {
             level = LogLevel.NONE
         }
         install(JsonFeature) {
-            serializer = buildJsonSerializer()
+            serializer = jsonSerializer
         }
         install(HttpTimeout)
     }
@@ -42,5 +41,6 @@ suspend inline fun <reified T> HttpClient.get(url: URL): T = withContext(Dispatc
     request<T> {
         url(url)
         method = HttpMethod.Get
+        expectSuccess = false
     }
 }
