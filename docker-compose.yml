@@ -259,7 +259,7 @@ services:
       - "8095:8080"
     env_file: .env
     environment:
-      CORS_ALLOWED_ORIGINS: "*"
+      CORS_ALLOWED_ORIGINS: "localhost"
       OIDC_ISSUER: ${OIDC_ISSUER}
       OIDC_ACCEPTED_AUDIENCE: ${OIDC_ACCEPTED_AUDIENCE}
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
