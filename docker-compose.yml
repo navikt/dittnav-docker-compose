@@ -191,7 +191,7 @@ services:
       - "8091:8080"
     env_file:
       - .env
-      - .tokenx.exchange.env
+      - env/.tokenx.exchange.env
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
@@ -204,6 +204,7 @@ services:
       MINE_SAKER_API_CLIENT_ID: "mine-saker-api-client-id"
       PERSONALIA_API_URL: "http://mocks.dittnav.docker-internal:8080/tms-personalia-api"
       PERSONALIA_API_CLIENT_ID: "tms-personalia-api-client-id"
+      TOKEN_X_CLIENT_ID: "dittnav-api-client-id"
     depends_on:
       oidc-provider:
         condition: service_started
@@ -211,7 +212,7 @@ services:
         condition: service_started
       legacy:
         condition: service_started
-      tokendings-mocked:
+      auth-mock:
         condition: service_healthy
 
   legacy:
@@ -306,19 +307,20 @@ services:
       - oidc-provider
       - handler
 
-  tokendings-mocked:
-    container_name: tokendings-mocked
+  auth-mock:
+    container_name: auth-mock
     networks:
       dittnav.docker-internal:
         aliases:
-          - tokendings-mocked.dittnav.docker-internal
-    image: "ghcr.io/navikt/tms-tokendings-mocked/tms-tokendings-mocked:latest"
+          - auth-mock.dittnav.docker-internal
+    image: "ghcr.io/navikt/tms-auth-mock/tms-auth-mock:latest"
     mem_limit: '768m'
-    mem_reservation: '580m'
+    mem_reservation: '240m'
     ports:
       - "9051:8080"
+    env_file: env/.auth-mock.jwk.env
     environment:
-      LOCAL_URL: "http://localhost:9051"
+      LOCAL_URL: "http://auth-mock.dittnav.docker-internal:8080"
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive" ]
       interval: 5s
@@ -388,7 +390,6 @@ services:
       TIDSLINJE_PRODUSENT: "produsent"
       VEIENTILARBEID_URL: "http://dummyVeientilarbeid.nav.no"
       MINE_SAKER_URL: "https://dummy-minesaker.nav.no"
-      IS_PROD: "false"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
