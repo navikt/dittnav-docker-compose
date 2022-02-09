@@ -1,25 +1,23 @@
 plugins {
     kotlin("jvm") version Kotlin.version
+    kotlin("plugin.serialization") version Kotlin.version
 }
 
 group = "no.nav.personbruker.dittnav"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
 dependencies {
     implementation(Auth0.javajwt)
-    implementation(Jackson.dataTypeJsr310)
     implementation(Ktor.clientApache)
-    implementation(Ktor.clientJackson) {
-        exclude("org.jetbrains.kotlin", "kotlin-reflect")
-    }
     implementation(Ktor.clientJson)
     implementation(Ktor.clientLogging)
     implementation(Ktor.clientLoggingJvm)
+    implementation(Ktor.clientSerializationJvm)
+    implementation(Ktor.serialization)
     implementation(Logback.classic)
 
     testImplementation(Awaitility.awaitilityKotlin)
@@ -50,5 +48,6 @@ tasks {
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
             events("passed", "skipped", "failed")
         }
+        environment("TESTCONTAINERS_RYUK_DISABLED", "true")
     }
 }

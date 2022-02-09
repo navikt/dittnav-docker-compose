@@ -1,6 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.client
 
 import io.ktor.client.HttpClient
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -61,6 +62,7 @@ class RestClient(val httpClient: HttpClient) {
                 method = HttpMethod.Post
                 contentType(ContentType.Application.Json)
                 body = data
+                expectSuccess = false
             }
 
         } catch (e: Exception) {

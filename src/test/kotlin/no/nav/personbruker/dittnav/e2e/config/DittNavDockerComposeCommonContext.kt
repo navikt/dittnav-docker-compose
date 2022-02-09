@@ -17,6 +17,7 @@ object DittNavDockerComposeCommonContext {
         ServiceConfiguration.values().forEach { service ->
             withExposedService(service)
             withLocalCompose(true)
+            withOptions("--compatibility")
         }
         start()
     }

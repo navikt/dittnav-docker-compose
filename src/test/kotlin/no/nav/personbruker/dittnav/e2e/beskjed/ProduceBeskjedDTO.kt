@@ -1,7 +1,9 @@
 package no.nav.personbruker.dittnav.e2e.beskjed
 
+import kotlinx.serialization.Serializable
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 
+@Serializable
 data class ProduceBeskjedDTO(
         val tekst: String,
         val link: String = "http://dummylenke.no",

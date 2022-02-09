@@ -40,6 +40,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsAliveForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_ALIVE)
+        assertIsAliveForSingleService(ServiceConfiguration.AUTH_MOCK, BNBOperations.IS_ALIVE)
     }
 
     @Test
@@ -53,6 +54,7 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsReadyForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_READY)
+        assertIsReadyForSingleService(ServiceConfiguration.AUTH_MOCK, BNBOperations.IS_READY)
 
     }
 
