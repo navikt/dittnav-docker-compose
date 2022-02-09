@@ -281,7 +281,7 @@ services:
       - "8094:8080"
     env_file: .env
     environment:
-      CORS_ALLOWED_ORIGINS: "*"
+      CORS_ALLOWED_ORIGINS: "localhost"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
       - oidc-provider-gui
@@ -302,7 +302,7 @@ services:
     env_file: .env
     environment:
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      CORS_ALLOWED_ORIGINS: "*"
+      CORS_ALLOWED_ORIGINS: "localhost"
     depends_on:
       - oidc-provider
       - handler

@@ -20,5 +20,6 @@ enum class ServiceConfiguration(
     DEKORATOREN("dekoratoren_1", "dekoratoren", 8088),
     TIDSLINJE("tidslinje_1", "person/dittnav-tidslinje-api", defaultExposedPort),
     VARSELBESTILLER("varselbestiller_1", "", defaultExposedPort),
-    BRUKERNOTIFIKASJONBESTILLER("brukernotifikasjonbestiller_1", "", defaultExposedPort)
+    BRUKERNOTIFIKASJONBESTILLER("brukernotifikasjonbestiller_1", "", defaultExposedPort),
+    AUTH_MOCK("auth-mock_1", "", defaultExposedPort)
 }
