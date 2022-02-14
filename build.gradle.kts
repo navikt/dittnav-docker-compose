@@ -48,6 +48,5 @@ tasks {
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
             events("passed", "skipped", "failed")
         }
-        environment("TESTCONTAINERS_RYUK_DISABLED", "true")
     }
 }
