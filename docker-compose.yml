@@ -283,6 +283,7 @@ services:
     environment:
       CORS_ALLOWED_ORIGINS: "localhost"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      ENABLE_API: "true"
     depends_on:
       - oidc-provider-gui
       - postgres
