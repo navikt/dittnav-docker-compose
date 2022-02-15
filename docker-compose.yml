@@ -123,7 +123,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "docker.io/navikt/aggregator:gcp2"
+    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:20220214125909-4b8e319"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -164,14 +164,12 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "docker.io/navikt/handler:gcp3"
+    image: "ghcr.io/navikt/dittnav-event-handler/dittnav-event-handler:20220211122700-246d52c"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
       - "8092:8080"
     env_file:
-      - .azure.validate.env
-      - .tokenx.validate.env
       - .env
     environment:
       DB_EVENTHANDLER_HOST: ${DB_HOST}
@@ -194,7 +192,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - api.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-api/dittnav-api:latest"
+    image: "ghcr.io/navikt/dittnav-api/dittnav-api:20220209065032-5cf17c8"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -215,6 +213,7 @@ services:
       PERSONALIA_API_URL: "http://mocks.dittnav.docker-internal:8080/tms-personalia-api"
       PERSONALIA_API_CLIENT_ID: "tms-personalia-api-client-id"
       TOKEN_X_CLIENT_ID: "dittnav-api-client-id"
+      EVENTHANDLER_CLIENT_ID: "eventhandler-client-id"
     depends_on:
       oidc-provider:
         condition: service_started
@@ -284,14 +283,13 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "docker.io/navikt/tms-producer:gcp6"
+    image: "ghcr.io/navikt/tms-event-test-producer/tms-event-test-producer:latest"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
       - "8094:8080"
     env_file:
       - .env
-      - .tokenx.exchange.env
     environment:
       CORS_ALLOWED_ORIGINS: "localhost"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
@@ -419,7 +417,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - varselbestiller.dittnav.docker-internal
-    image: "docker.io/navikt/vb:3"
+    image: "ghcr.io/navikt/dittnav-varselbestiller/dittnav-varselbestiller:20220207144603-30f725d"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -454,7 +452,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - brukernotifikasjonbestiller.dittnav.docker-internal
-    image: "docker.io/navikt/bnb:gcp1"
+    image: "ghcr.io/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
