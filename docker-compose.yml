@@ -392,6 +392,7 @@ services:
       VEIENTILARBEID_URL: "http://dummyVeientilarbeid.nav.no"
       MINE_SAKER_URL: "https://dummy-minesaker.nav.no"
       INNBOKS_URL: "https://dummyInnboks.nav.no"
+      UTBETALINGSOVERSIKT_URL: "https://dummyUtbetalingsoversikt.nav.no"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"
