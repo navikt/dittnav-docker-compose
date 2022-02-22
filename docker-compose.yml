@@ -171,6 +171,8 @@ services:
       - "8092:8080"
     env_file:
       - .env
+      - env/.tokenx.validate.env
+      - env/.azure.validate.env
     environment:
       DB_EVENTHANDLER_HOST: ${DB_HOST}
       DB_EVENTHANDLER_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
@@ -178,6 +180,8 @@ services:
       DB_EVENTHANDLER_PASSWORD: ${DB_PASSWORD}
       DB_EVENTHANDLER_PORT: ${DB_PORT}
       OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
+      TOKEN_X_CLIENT_ID: "dittnav-event-handler-clientid"
+      AZURE_APP_CLIENT_ID: "dittnav-event-handler-clientid"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -213,7 +217,7 @@ services:
       PERSONALIA_API_URL: "http://mocks.dittnav.docker-internal:8080/tms-personalia-api"
       PERSONALIA_API_CLIENT_ID: "tms-personalia-api-client-id"
       TOKEN_X_CLIENT_ID: "dittnav-api-client-id"
-      EVENTHANDLER_CLIENT_ID: "eventhandler-client-id"
+      EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
     depends_on:
       oidc-provider:
         condition: service_started
@@ -283,13 +287,14 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "ghcr.io/navikt/tms-event-test-producer/tms-event-test-producer:latest"
+    image: "docker.io/navikt/producer:tms1"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
       - "8094:8080"
     env_file:
       - .env
+      - env/.tokenx.exchange.env
     environment:
       CORS_ALLOWED_ORIGINS: "localhost"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
@@ -299,7 +304,9 @@ services:
       OPEN_INPUT_STATUSOPPDATERING_TOPIC: "min-side.aapen-brukernotifikasjon-nyStatusoppdatering-v1"
       OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      EVENTHANDLER_CLIENT_ID: "eventhandler-client-id"
+      EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
+      ENABLE_API: "true"
+      TOKEN_X_CLIENT_ID: "tms-event-test-producer-clientid"
     depends_on:
       - oidc-provider-gui
       - postgres
@@ -330,7 +337,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - auth-mock.dittnav.docker-internal
-    image: "ghcr.io/navikt/tms-auth-mock/tms-auth-mock:latest"
+    image: "docker.io/navikt/mock:client4"
     mem_limit: '768m'
     mem_reservation: '240m'
     ports:
@@ -375,7 +382,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - frontend.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav/dittnav:latest"
+    image: "ghcr.io/navikt/dittnav/dittnav:20220221163116-8c57982"
     mem_limit: '768m'
     mem_reservation: '512m'
     ports:
@@ -407,6 +414,8 @@ services:
       TIDSLINJE_PRODUSENT: "produsent"
       VEIENTILARBEID_URL: "http://dummyVeientilarbeid.nav.no"
       MINE_SAKER_URL: "https://dummy-minesaker.nav.no"
+      INNBOKS_URL: "https://dummyInnboks.nav.no"
+      UTBETALINGSOVERSIKT_URL: "https://dummyUtbetalingsoversikt.nav.no"
       # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
       sensu_client_host: "localhost"
       sensu_client_port: "8080"

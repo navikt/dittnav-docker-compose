@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 import no.nav.personbruker.dittnav.e2e.config.DittNavDockerComposeCommonContext
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
-import no.nav.personbruker.dittnav.e2e.security.TokenInfo
+import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import org.slf4j.LoggerFactory
 import java.net.URL
 
@@ -20,11 +20,18 @@ class RestClient(val httpClient: HttpClient) {
 
     val log = LoggerFactory.getLogger(RestClient::class.java)
 
-    suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation): T = withContext(Dispatchers.IO) {
+    suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration,
+                                                  operation: ServiceOperation,
+                                                  parameters: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
-            httpClient.get<T>(completeUrlToHit)
-
+            httpClient.get<T> {
+                url(completeUrlToHit)
+                parameters.forEach{ (key, value) ->
+                    parameter(key, value)
+                }
+                expectSuccess = false
+            }
         } catch (e: Exception) {
             val msg = "Uventet feil skjedde mot $service, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
             log.error(msg)
@@ -34,14 +41,14 @@ class RestClient(val httpClient: HttpClient) {
 
     suspend inline fun <reified T> get(service: ServiceConfiguration,
                                        operation: ServiceOperation,
-                                       token: TokenInfo,
+                                       token: BearerToken,
                                        parameters: Map<String, String> = emptyMap()): T = withContext(Dispatchers.IO) {
         val completeUrlToHit = constructPathToHit(service, operation)
         return@withContext try {
             httpClient.request<T> {
                 url(completeUrlToHit)
                 method = HttpMethod.Get
-                header(HttpHeaders.Authorization, "Bearer ${token.id_token}")
+                header(HttpHeaders.Authorization, token.toString())
                 parameters.forEach { (key, value) ->
                     parameter(key, value)
                 }
@@ -72,13 +79,13 @@ class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO, tokenInfo: TokenInfo): T {
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO, token: BearerToken): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
                 url(completeUrlToHit)
                 method = HttpMethod.Post
-                header(HttpHeaders.Authorization, "Bearer ${tokenInfo.id_token}")
+                header(HttpHeaders.Authorization, token.toString())
                 contentType(ContentType.Application.Json)
                 body = data
             }

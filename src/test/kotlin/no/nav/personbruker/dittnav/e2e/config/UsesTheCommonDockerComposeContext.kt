@@ -16,10 +16,13 @@ import org.slf4j.LoggerFactory
 open class UsesTheCommonDockerComposeContext {
 
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
-    val client = RestClient(buildHttpClient())
+    private val httpClient = buildHttpClient()
+    val client = RestClient(httpClient)
 
     private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
     private val log = LoggerFactory.getLogger(UsesTheCommonDockerComposeContext::class.java)
+
+    val dittnavEventHandlerClientId = "dittnav-event-handler-clientid"
 
     val tokenFetcher = TokenFetcher(
             audience = "stubOidcClient",

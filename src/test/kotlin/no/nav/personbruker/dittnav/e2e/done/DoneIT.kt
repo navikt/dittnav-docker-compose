@@ -7,9 +7,7 @@ import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.client.BrukernotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
-import no.nav.personbruker.dittnav.e2e.debugging.ApiContainerLogs
-import no.nav.personbruker.dittnav.e2e.debugging.MocksContainerLogs
-import no.nav.personbruker.dittnav.e2e.debugging.ProducerContainerLogs
+import no.nav.personbruker.dittnav.e2e.debugging.*
 import no.nav.personbruker.dittnav.e2e.doknotifikasjonStopp.DoknotifikasjonStoppDTO
 import no.nav.personbruker.dittnav.e2e.innboks.InnboksDTO
 import no.nav.personbruker.dittnav.e2e.innboks.ProduceInnboksDTO
@@ -18,6 +16,7 @@ import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
 import no.nav.personbruker.dittnav.e2e.oppgave.OppgaveDTO
 import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
+import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be empty`
 import org.amshove.kluent.`should contain all`
@@ -28,7 +27,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(
     MocksContainerLogs::class,
     ApiContainerLogs::class,
-    ProducerContainerLogs::class
+    ProducerContainerLogs::class,
+    HandlerContainerLogs::class,
+    VarselbestillerContainerLogs::class
 )
 class DoneIT: UsesTheCommonDockerComposeContext() {
 
@@ -156,19 +157,19 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private fun `produser brukernotifikasjon`(token: TokenInfo, brukernotifikasjon: BrukernotifikasjonDTO, producerOperation: ProducerOperations) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, token)
+            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, producerOperation, brukernotifikasjon, BearerToken(token.id_token))
         }
     }
 
     private fun `produser done-eventer for alle brukernotifikasjoner`(token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_DONE_ALL, ProduceDoneDTO(), token)
+            client.post<HttpResponse>(ServiceConfiguration.PRODUCER, ProducerOperations.PRODUCE_DONE_ALL, ProduceDoneDTO(), BearerToken(token.id_token))
         }
     }
 
     private inline fun <reified T> `get events`(token: TokenInfo, apiOperation: ApiOperations): T {
         return runBlocking {
-            val response = client.get<T>(ServiceConfiguration.API, apiOperation, token)
+            val response = client.get<T>(ServiceConfiguration.API, apiOperation, BearerToken(token.id_token))
             response
         }
     }
