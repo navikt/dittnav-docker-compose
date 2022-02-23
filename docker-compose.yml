@@ -207,7 +207,8 @@ services:
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      CORS_ALLOWED_ORIGINS: "localhost"
+      CORS_ALLOWED_ORIGINS: "localhost:3000"
+      CORS_ALLOWED_SCHEMES: "http"
       INNLOGGINGSSTATUS_URL: "http://dummy.io"
       UNLEASH_API_URL: "fake"
       DIGISOS_API_URL: "https://digisos/dummy/soknad"
@@ -273,7 +274,8 @@ services:
       - "8095:8080"
     env_file: .env
     environment:
-      CORS_ALLOWED_ORIGINS: "localhost"
+      CORS_ALLOWED_ORIGINS: "localhost:3000"
+      CORS_ALLOWED_SCHEMES: "http"
       OIDC_ISSUER: ${OIDC_ISSUER}
       OIDC_ACCEPTED_AUDIENCE: ${OIDC_ACCEPTED_AUDIENCE}
       OIDC_JWKS_URI: "http://oidc-provider.dittnav.docker-internal:9000/certs"
@@ -296,7 +298,8 @@ services:
       - .env
       - env/.tokenx.exchange.env
     environment:
-      CORS_ALLOWED_ORIGINS: "localhost"
+      CORS_ALLOWED_ORIGINS: "localhost:3000"
+      CORS_ALLOWED_SCHEMES: "http"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
       OPEN_INPUT_BESKJED_TOPIC: "min-side.aapen-brukernotifikasjon-nyBeskjed-v1"
       OPEN_INPUT_OPPGAVE_TOPIC: "min-side.aapen-brukernotifikasjon-nyOppgave-v1"
@@ -305,8 +308,8 @@ services:
       OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
       EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
-      ENABLE_API: "true"
       TOKEN_X_CLIENT_ID: "tms-event-test-producer-clientid"
+      ENABLE_API: "true"
     depends_on:
       - oidc-provider-gui
       - postgres
@@ -369,7 +372,7 @@ services:
       APP_BASE_PATH: "/dekoratoren"
       API_XP_MENY_URL: 'https://www-q1.nav.no/_/service/no.nav.navno/menu'
       API_XP_SOK_URL: 'https://www-q1.nav.no/_/service/navno.nav.no.search/search2/sok'
-      API_INNLOGGINGSLINJE_URL: 'http://mocks.dittnav.docker-internal:8080/innloggingslinje-api/auth'
+      API_INNLOGGINGSLINJE_URL: 'http://localhost:8095/innloggingsstatus'
       API_VARSELINNBOKS_URL: 'http://mocks.dittnav.docker-internal:8080/person/varselinnboks'
       MINSIDE_ARBEIDSGIVER_URL: 'https://arbeidsgiver-q.nav.no/min-side-arbeidsgiver/'
       DITT_NAV_URL: 'http://localhost:3000/person/dittnav/'
