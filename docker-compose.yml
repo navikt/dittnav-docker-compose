@@ -289,7 +289,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "docker.io/navikt/producer:tms1"
+    image: "ghcr.io/navikt/tms-event-test-producer/tms-event-test-producer:latest"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
