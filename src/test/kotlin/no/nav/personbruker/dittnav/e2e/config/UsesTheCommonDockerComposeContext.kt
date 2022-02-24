@@ -21,6 +21,8 @@ open class UsesTheCommonDockerComposeContext {
     private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
     private val log = LoggerFactory.getLogger(UsesTheCommonDockerComposeContext::class.java)
 
+    val dittnavEventHandlerClientId = "dittnav-event-handler-clientid"
+
     val tokenFetcher = TokenFetcher(
             audience = "stubOidcClient",
             clientSecret = "secretsarehardtokeep",

@@ -17,8 +17,10 @@ import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import no.nav.personbruker.dittnav.e2e.operations.TidslinjeOperations
 import no.nav.personbruker.dittnav.e2e.oppgave.ProduceOppgaveDTO
+import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -26,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith
     ProducerContainerLogs::class,
     TidslinjeContainerLogs::class
 )
+@Disabled("Applikasjonen støtter ikke TokenX-tokens. Event-handler krever dette, og så lenge tidslinje-api ikke har denne støtten vil ikke denne testen fungere.")
 class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
@@ -114,7 +117,7 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
 
     private fun `produce event at level`(originalEvent: BrukernotifikasjonDTO, operation: ServiceOperation, token: TokenInfo) {
         runBlocking {
-            httpClient.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, token)
+            httpClient.post<HttpResponse>(ServiceConfiguration.PRODUCER, operation, originalEvent, BearerToken(token.id_token))
         }.status `should be equal to` HttpStatusCode.OK
     }
 
@@ -126,10 +129,9 @@ class TidslinjeIT : UsesTheCommonDockerComposeContext() {
                     httpClient.get<List<Brukernotifikasjon>>(
                             ServiceConfiguration.TIDSLINJE,
                             operation,
-                            token,
+                            BearerToken(token.id_token),
                             parameters)
             response
         }
     }
-
 }

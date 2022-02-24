@@ -13,6 +13,7 @@ import no.nav.personbruker.dittnav.e2e.done.ProduceDoneDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
+import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain all`
@@ -113,20 +114,20 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
                 ServiceConfiguration.PRODUCER,
                 ProducerOperations.PRODUCE_BESKJED,
                 originalBeskjed,
-                token
+                BearerToken(token.id_token)
             )
         }.status `should be equal to` HttpStatusCode.OK
     }
 
     private fun `produce done-event for beskjed`(originalDone: ProduceDoneDTO, token: TokenInfo) {
         runBlocking {
-            client.post<HttpResponse>(ServiceConfiguration.API, ApiOperations.PRODUCE_DONE, originalDone, token)
+            client.post<HttpResponse>(ServiceConfiguration.API, ApiOperations.PRODUCE_DONE, originalDone, BearerToken(token.id_token))
         }.status `should be equal to` HttpStatusCode.OK
     }
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<BeskjedDTO> {
         return runBlocking {
-            val response = client.get<List<BeskjedDTO>>(ServiceConfiguration.API, operation, token)
+            val response = client.get<List<BeskjedDTO>>(ServiceConfiguration.API, operation, BearerToken(token.id_token))
             response
         }
     }
