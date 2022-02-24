@@ -43,17 +43,17 @@ class TokenFetcher(private val audience: String,
     }
 
     fun exchangeToken(clientId: String, audience: String, tokenInfo: TokenInfo): TokenXToken = runBlocking {
-        val clientAssertion = getClientAssertion(clientId, audience)
+        val clientAssertion = getSignedAssertion(clientId, audience)
 
         val urlParameters = ParametersBuilder().apply {
             append("client_assertion", clientAssertion)
             append("subject_token", tokenInfo.id_token)
             append("audience", audience)
         }.build()
-        return@runBlocking exhange(TextContent(urlParameters.formUrlEncode(), ContentType.Application.FormUrlEncoded))
+        return@runBlocking fetchExchangedToken(TextContent(urlParameters.formUrlEncode(), ContentType.Application.FormUrlEncoded))
     }
 
-    private suspend fun getClientAssertion(clientId: String, audience: String): String {
+    private suspend fun getSignedAssertion(clientId: String, audience: String): String {
         val completeUrlToHit = "$authMockUrl/tokendings/clientassertion"
         return client.request {
             url(completeUrlToHit)
@@ -64,7 +64,7 @@ class TokenFetcher(private val audience: String,
         }
     }
 
-    private suspend fun exhange(content: TextContent): TokenXToken {
+    private suspend fun fetchExchangedToken(content: TextContent): TokenXToken {
         val completeUrlToHit = "$authMockUrl/tokendings/token"
         return try {
             client.request{

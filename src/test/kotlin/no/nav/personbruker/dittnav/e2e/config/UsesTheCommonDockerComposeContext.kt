@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory
 open class UsesTheCommonDockerComposeContext {
 
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
-    private val httpClient = buildHttpClient()
-    val client = RestClient(httpClient)
+    val client = RestClient(buildHttpClient())
 
     private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
     private val log = LoggerFactory.getLogger(UsesTheCommonDockerComposeContext::class.java)
