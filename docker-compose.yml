@@ -340,7 +340,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - auth-mock.dittnav.docker-internal
-    image: "docker.io/navikt/mock:client4"
+    image: "ghcr.io/navikt/tms-auth-mock/tms-auth-mock:latest"
     mem_limit: '768m'
     mem_reservation: '240m'
     ports:
