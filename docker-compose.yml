@@ -385,7 +385,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - frontend.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav/dittnav:20220221163116-8c57982"
+    image: "ghcr.io/navikt/dittnav/dittnav:latest"
     mem_limit: '768m'
     mem_reservation: '512m'
     ports:
