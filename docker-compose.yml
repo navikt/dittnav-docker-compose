@@ -18,18 +18,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DATABASES: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}, ${DB_NAME_VARSELBESTILLER}, ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}"
 
-  db-datapopulator:
-    container_name: db-datapopulator
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - db-datapopulator.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-docker-compose/db-datapopulator:latest"
-    env_file: .env
-    depends_on:
-      aggregator:
-        condition: service_healthy
-
   zookeeper:
     container_name: zookeeper
     networks:
