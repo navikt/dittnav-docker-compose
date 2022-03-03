@@ -1,7 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.security
 
 import io.ktor.client.statement.*
-import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.PartialContent
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith
     HandlerContainerLogs::class,
     LegacyContainerLogs::class,
     ProducerContainerLogs::class,
-    TidslinjeContainerLogs::class,
     AuthMockContainerLogs::class
 )
 internal class SecurityIT : UsesTheCommonDockerComposeContext() {
@@ -73,20 +71,6 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
             assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel4)
         }
     }
-
-    @Test
-    @Disabled("Applikasjonen støtter ikke TokenX-tokens. Event-handler krever dette, og så lenge tidslinje-api ikke har denne støtten vil ikke denne testen fungere.")
-    fun `Tidslinje skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val tidslinje = ServiceConfiguration.TIDSLINJE
-        val operation = TidslinjeOperations.TIDSLINJE
-        val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
-        runBlocking {
-            assertThatTheRequestWasDenied(tidslinje, operation)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters)
-        }
-    }
-
 
     @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {

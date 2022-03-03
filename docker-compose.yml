@@ -303,25 +303,6 @@ services:
       - postgres
       - schema-registry
 
-  tidslinje:
-    container_name: tidslinje
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - tidslinje.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
-    mem_limit: '768m'
-    mem_reservation: '580m'
-    ports:
-      - "8099:8080"
-    env_file: .env
-    environment:
-      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      CORS_ALLOWED_ORIGINS: "localhost"
-    depends_on:
-      - oidc-provider
-      - handler
-
   auth-mock:
     container_name: auth-mock
     networks:

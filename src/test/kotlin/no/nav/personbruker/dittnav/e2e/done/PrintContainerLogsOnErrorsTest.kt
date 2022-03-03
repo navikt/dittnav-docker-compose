@@ -24,7 +24,6 @@ class PrintContainerLogsOnErrorsTest {
         OidcProviderContainerLogs().service `should be equal to` ServiceConfiguration.OIDC_PROVIDER
         OidcProviderGuiContainerLogs().service `should be equal to` ServiceConfiguration.OIDC_PROVIDER_GUI
         ProducerContainerLogs().service `should be equal to` ServiceConfiguration.PRODUCER
-        TidslinjeContainerLogs().service `should be equal to` ServiceConfiguration.TIDSLINJE
         VarselbestillerContainerLogs().service `should be equal to` ServiceConfiguration.VARSELBESTILLER
     }
 
