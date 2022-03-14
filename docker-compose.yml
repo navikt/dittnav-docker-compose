@@ -111,7 +111,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - aggregator.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:20220214125909-4b8e319"
+    image: "ghcr.io/navikt/dittnav-event-aggregator/dittnav-event-aggregator:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:
@@ -152,7 +152,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - handler.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-event-handler/dittnav-event-handler:20220211122700-246d52c"
+    image: "ghcr.io/navikt/dittnav-event-handler/dittnav-event-handler:latest"
     mem_limit: '768m'
     mem_reservation: '384m'
     ports:
@@ -184,7 +184,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - api.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-api/dittnav-api:20220209065032-5cf17c8"
+    image: "ghcr.io/navikt/dittnav-api/dittnav-api:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -194,7 +194,7 @@ services:
       - env/.tokenx.exchange.env
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
-      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
       CORS_ALLOWED_ORIGINS: "localhost:3000"
       CORS_ALLOWED_SCHEMES: "http"
       INNLOGGINGSSTATUS_URL: "http://dummy.io"
@@ -294,7 +294,7 @@ services:
       OPEN_INPUT_INNBOKS_TOPIC: "min-side.aapen-brukernotifikasjon-nyInnboks-v1"
       OPEN_INPUT_STATUSOPPDATERING_TOPIC: "min-side.aapen-brukernotifikasjon-nyStatusoppdatering-v1"
       OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
-      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
       EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
       TOKEN_X_CLIENT_ID: "tms-event-test-producer-clientid"
       ENABLE_API: "true"
@@ -398,7 +398,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - varselbestiller.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-varselbestiller/dittnav-varselbestiller:20220207144603-30f725d"
+    image: "ghcr.io/navikt/dittnav-varselbestiller/dittnav-varselbestiller:latest"
     mem_limit: '1200m'
     mem_reservation: '1024m'
     ports:

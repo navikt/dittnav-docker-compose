@@ -13,7 +13,7 @@ enum class ServiceConfiguration(
     FRONTEND("frontend_1", "person/dittnav", defaultExposedPort),
     API("api_1", "person/dittnav-api", defaultExposedPort),
     LEGACY("legacy_1", "person/dittnav-legacy-api", defaultExposedPort),
-    HANDLER("handler_1", "", defaultExposedPort),
+    HANDLER("handler_1", "dittnav-event-handler", defaultExposedPort),
     AGGREGATOR("aggregator_1", "", defaultExposedPort),
     PRODUCER("producer_1", "tms-event-test-producer", defaultExposedPort),
     MOCKS("mocks_1", "", defaultExposedPort),
