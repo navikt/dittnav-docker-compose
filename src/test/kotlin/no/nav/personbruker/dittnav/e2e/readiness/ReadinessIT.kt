@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith
     AggregatorContainerLogs::class,
     ProducerContainerLogs::class,
     FrontendContainerLogs::class,
-    TidslinjeContainerLogs::class,
     VarselbestillerContainerLogs::class,
     BrukernotifikasjonbestillerContainerLogs::class,
     DekoratorenContainerLogs::class,
@@ -37,10 +36,9 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsAliveForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_ALIVE)
-        assertIsAliveForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_ALIVE)
-        assertIsAliveForSingleService(ServiceConfiguration.AUTH_MOCK, BNBOperations.IS_ALIVE)
+        assertIsAliveForSingleService(ServiceConfiguration.AUTH_MOCK, AuthMockOperations.IS_ALIVE)
     }
 
     @Test
@@ -51,11 +49,9 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertIsReadyForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.IS_READY)
-        assertIsReadyForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.IS_READY)
-        assertIsReadyForSingleService(ServiceConfiguration.AUTH_MOCK, BNBOperations.IS_READY)
-
+        assertIsReadyForSingleService(ServiceConfiguration.AUTH_MOCK, AuthMockOperations.IS_READY)
     }
 
     @Test
@@ -65,7 +61,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertSelftestForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
-        assertSelftestForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.SELFTEST)
     }
@@ -77,7 +72,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertMetricsForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.METRICS)
-        assertMetricsForSingleService(ServiceConfiguration.TIDSLINJE, TidslinjeOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.METRICS)
     }

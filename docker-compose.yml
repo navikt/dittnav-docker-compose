@@ -18,18 +18,6 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DATABASES: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}, ${DB_NAME_VARSELBESTILLER}, ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}"
 
-  db-datapopulator:
-    container_name: db-datapopulator
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - db-datapopulator.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-docker-compose/db-datapopulator:latest"
-    env_file: .env
-    depends_on:
-      aggregator:
-        condition: service_healthy
-
   zookeeper:
     container_name: zookeeper
     networks:
@@ -139,6 +127,12 @@ services:
       POLL_INNBOKS: "true"
       POLL_STATUSOPPDATERING: "true"
       POLL_DONE: "true"
+      INTERN_BESKJED_TOPIC: "min-side.privat-brukernotifikasjon-beskjed-v1"
+      INTERN_OPPGAVE_TOPIC: "min-side.privat-brukernotifikasjon-oppgave-v1"
+      INTERN_INNBOKS_TOPIC: "min-side.privat-brukernotifikasjon-innboks-v1"
+      INTERN_STATUSOPPDATERING_TOPIC: "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
+      INTERN_DONE_TOPIC: "min-side.privat-brukernotifikasjon-done-v1"
+      INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -163,13 +157,19 @@ services:
     mem_reservation: '384m'
     ports:
       - "8092:8080"
-    env_file: .env
+    env_file:
+      - .env
+      - env/.tokenx.validate.env
+      - env/.azure.validate.env
     environment:
       DB_EVENTHANDLER_HOST: ${DB_HOST}
       DB_EVENTHANDLER_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
       DB_EVENTHANDLER_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJON_CACHE}-user"
       DB_EVENTHANDLER_PASSWORD: ${DB_PASSWORD}
       DB_EVENTHANDLER_PORT: ${DB_PORT}
+      OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
+      TOKEN_X_CLIENT_ID: "dittnav-event-handler-clientid"
+      AZURE_APP_CLIENT_ID: "dittnav-event-handler-clientid"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
@@ -194,7 +194,7 @@ services:
       - env/.tokenx.exchange.env
     environment:
       LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
-      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
       CORS_ALLOWED_ORIGINS: "localhost:3000"
       CORS_ALLOWED_SCHEMES: "http"
       INNLOGGINGSSTATUS_URL: "http://dummy.io"
@@ -206,6 +206,7 @@ services:
       PERSONALIA_API_URL: "http://mocks.dittnav.docker-internal:8080/tms-personalia-api"
       PERSONALIA_API_CLIENT_ID: "tms-personalia-api-client-id"
       TOKEN_X_CLIENT_ID: "dittnav-api-client-id"
+      EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
     depends_on:
       oidc-provider:
         condition: service_started
@@ -276,40 +277,31 @@ services:
       dittnav.docker-internal:
         aliases:
           - producer.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-event-test-producer/dittnav-event-test-producer:latest"
+    image: "ghcr.io/navikt/tms-event-test-producer/tms-event-test-producer:latest"
     mem_limit: '512m'
     mem_reservation: '256m'
     ports:
       - "8094:8080"
-    env_file: .env
+    env_file:
+      - .env
+      - env/.tokenx.exchange.env
     environment:
       CORS_ALLOWED_ORIGINS: "localhost:3000"
       CORS_ALLOWED_SCHEMES: "http"
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      OPEN_INPUT_BESKJED_TOPIC: "min-side.aapen-brukernotifikasjon-nyBeskjed-v1"
+      OPEN_INPUT_OPPGAVE_TOPIC: "min-side.aapen-brukernotifikasjon-nyOppgave-v1"
+      OPEN_INPUT_INNBOKS_TOPIC: "min-side.aapen-brukernotifikasjon-nyInnboks-v1"
+      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "min-side.aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+      OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
+      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
+      EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
+      TOKEN_X_CLIENT_ID: "tms-event-test-producer-clientid"
       ENABLE_API: "true"
     depends_on:
       - oidc-provider-gui
       - postgres
       - schema-registry
-
-  tidslinje:
-    container_name: tidslinje
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - tidslinje.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-tidslinje-api/dittnav-tidslinje-api:latest"
-    mem_limit: '768m'
-    mem_reservation: '580m'
-    ports:
-      - "8099:8080"
-    env_file: .env
-    environment:
-      EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      CORS_ALLOWED_ORIGINS: "localhost"
-    depends_on:
-      - oidc-provider
-      - handler
 
   auth-mock:
     container_name: auth-mock
@@ -373,7 +365,7 @@ services:
       NAIS_NAMESPACE: "localhost"
       DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
       TJENESTER_URL: "http://dummyTjenester.nav.no"
-      EVENT_TEST_PRODUCER_URL: "http://localhost:8094/person/dittnav-event-test-producer"
+      EVENT_TEST_PRODUCER_URL: "http://localhost:8094/tms-event-test-producer"
       NAVNO_URL: "www.nav.no"
       LOGIN_URL: "http://localhost:50000?redirect=http://localhost:3000"
       VTA_URL: "http://dummyVeientilarbeid.nav.no"
@@ -423,10 +415,10 @@ services:
       POLL_INNBOKS_TO_DOKNOTIFIKASJON: "true"
       POLL_DONE_TO_DOKNOTIFIKASJON_STOPP: "true"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
-      INTERN_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
-      INTERN_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
-      INTERN_INNBOKS_TOPIC: "aapen-brukernotifikasjon-nyInnboks-v1"
-      INTERN_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
+      INTERN_BESKJED_TOPIC: "min-side.privat-brukernotifikasjon-beskjed-v1"
+      INTERN_OPPGAVE_TOPIC: "min-side.privat-brukernotifikasjon-oppgave-v1"
+      INTERN_INNBOKS_TOPIC: "min-side.privat-brukernotifikasjon-innboks-v1"
+      INTERN_DONE_TOPIC: "min-side.privat-brukernotifikasjon-done-v1"
       DOKNOTIFIKASJON_TOPIC: "privat-dok-notifikasjon"
       DOKNOTIFIKASJON_STOP_TOPIC: "privat-dok-notifikasjon-stopp"
       # variabler for on-prem
@@ -441,7 +433,7 @@ services:
       dittnav.docker-internal:
         aliases:
           - brukernotifikasjonbestiller.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:20210823115250-9c85306"
+    image: "ghcr.io/navikt/dittnav-brukernotifikasjonbestiller/dittnav-brukernotifikasjonbestiller:latest"
     mem_limit: '768m'
     mem_reservation: '580m'
     ports:
@@ -454,6 +446,11 @@ services:
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080"
       DB_DATABASE: ${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}
       DB_USERNAME: "${DB_NAME_BRUKERNOTIFIKASJONBESTILLER}-user"
+      POLL_BESKJED_INPUT: "true"
+      POLL_OPPGAVE_INPUT: "true"
+      POLL_INNBOKS_INPUT: "true"
+      POLL_STATUSOPPDATERING_INPUT: "true"
+      POLL_DONE_INPUT: "true"
       POLL_BESKJED: "true"
       POLL_OPPGAVE: "true"
       POLL_INNBOKS: "true"
@@ -464,12 +461,18 @@ services:
       INTERN_INNBOKS_TOPIC: "min-side.privat-brukernotifikasjon-innboks-v1"
       INTERN_STATUSOPPDATERING_TOPIC: "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
       INTERN_DONE_TOPIC: "min-side.privat-brukernotifikasjon-done-v1"
-      OPEN_INPUT_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
-      OPEN_INPUT_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
-      OPEN_INPUT_INNBOKS_TOPIC: "aapen-brukernotifikasjon-nyInnboks-v1"
-      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
-      OPEN_INPUT_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
+      OPEN_INPUT_BESKJED_TOPIC: "min-side.aapen-brukernotifikasjon-nyBeskjed-v1"
+      OPEN_INPUT_OPPGAVE_TOPIC: "min-side.aapen-brukernotifikasjon-nyOppgave-v1"
+      OPEN_INPUT_INNBOKS_TOPIC: "min-side.aapen-brukernotifikasjon-nyInnboks-v1"
+      OPEN_INPUT_STATUSOPPDATERING_TOPIC: "min-side.aapen-brukernotifikasjon-nyStatusoppdatering-v1"
+      OPEN_INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
+      LEGACY_BESKJED_TOPIC: "aapen-brukernotifikasjon-nyBeskjed-v1"
+      LEGACY_DONE_TOPIC: "aapen-brukernotifikasjon-done-v1"
+      LEGACY_INNBOKS_TOPIC: "aapen-brukernotifikasjon-nyInnboks-v1"
+      LEGACY_OPPGAVE_TOPIC: "aapen-brukernotifikasjon-nyOppgave-v1"
+      LEGACY_STATUSOPPDATERING_TOPIC: "aapen-brukernotifikasjon-nyStatusoppdatering-v1"
       FEILRESPONS_TOPIC: "min-side.aapen-brukernotifikasjon-feilrespons-v1"
+      SERVICEUSER_MAPPING: "username|min-side:dittnav-event-test-producer"
     depends_on:
       - schema-registry
       - postgres

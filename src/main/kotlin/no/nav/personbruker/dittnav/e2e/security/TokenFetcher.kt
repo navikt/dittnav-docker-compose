@@ -4,9 +4,11 @@ import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import kotlinx.coroutines.runBlocking
 import no.nav.personbruker.dittnav.e2e.client.buildHttpClient
 import no.nav.personbruker.dittnav.e2e.client.get
+import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
 
@@ -14,7 +16,10 @@ class TokenFetcher(private val audience: String,
                    private val clientSecret: String,
                    private val oidcProviderBaseUrl: String) {
 
+    private val log = LoggerFactory.getLogger(TokenFetcher::class.java)
+
     private val oidcProviderGuiUrl = "http://localhost:50000/callback"
+    private val authMockUrl = "http://localhost:9051"
 
     private val client = buildHttpClient()
 
@@ -34,6 +39,44 @@ class TokenFetcher(private val audience: String,
             fetcherException.addContext("ident", ident)
             fetcherException.addContext("sikkerhetsnivaa", sikkerhetsnivaa)
             throw fetcherException
+        }
+    }
+
+    fun exchangeToken(clientId: String, audience: String, tokenInfo: TokenInfo): TokenXToken = runBlocking {
+        val clientAssertion = getSignedAssertion(clientId, audience)
+
+        val urlParameters = ParametersBuilder().apply {
+            append("client_assertion", clientAssertion)
+            append("subject_token", tokenInfo.id_token)
+            append("audience", audience)
+        }.build()
+        return@runBlocking fetchExchangedToken(TextContent(urlParameters.formUrlEncode(), ContentType.Application.FormUrlEncoded))
+    }
+
+    private suspend fun getSignedAssertion(clientId: String, audience: String): String {
+        val completeUrlToHit = "$authMockUrl/tokendings/clientassertion"
+        return client.request {
+            url(completeUrlToHit)
+            method = HttpMethod.Get
+            expectSuccess = false
+            parameter("clientId", clientId)
+            parameter("audience", audience)
+        }
+    }
+
+    private suspend fun fetchExchangedToken(content: TextContent): TokenXToken {
+        val completeUrlToHit = "$authMockUrl/tokendings/token"
+        return try {
+            client.request{
+                url(completeUrlToHit)
+                method = HttpMethod.Post
+                expectSuccess = false
+                body = content
+            }
+        } catch (e: Exception) {
+            val msg = "Uventet feil skjedde mot auth-mock, klarte ikke å gjenomføre et kallet mot $completeUrlToHit"
+            log.error(msg)
+            throw e
         }
     }
 

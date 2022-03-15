@@ -11,6 +11,7 @@ import no.nav.personbruker.dittnav.e2e.doknotifikasjon.DoknotifikasjonDTO
 import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
 import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
 import no.nav.personbruker.dittnav.e2e.operations.VarselOperations
+import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import no.nav.personbruker.dittnav.e2e.security.TokenInfo
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain all`
@@ -65,8 +66,8 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-                DoknotifikasjonDTO("I-username-${activeInnboks!![0].eventId}"),
-                DoknotifikasjonDTO("I-username-${activeInnboks[1].eventId}")
+                DoknotifikasjonDTO("I-tms-event-test-producer-${activeInnboks!![0].eventId}"),
+                DoknotifikasjonDTO("I-tms-event-test-producer-${activeInnboks[1].eventId}")
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
@@ -82,7 +83,7 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
                 ServiceConfiguration.PRODUCER,
                 ProducerOperations.PRODUCE_INNBOKS,
                 originalInnboksEvent,
-                token
+                BearerToken(token.id_token)
             )
         }.status `should be equal to` HttpStatusCode.OK
     }
@@ -96,7 +97,7 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
 
     private fun `get events`(token: TokenInfo, operation: ApiOperations): List<InnboksDTO> {
         return runBlocking {
-            val response = client.get<List<InnboksDTO>>(ServiceConfiguration.API, operation, token)
+            val response = client.get<List<InnboksDTO>>(ServiceConfiguration.API, operation, BearerToken(token.id_token))
             response
         }
     }

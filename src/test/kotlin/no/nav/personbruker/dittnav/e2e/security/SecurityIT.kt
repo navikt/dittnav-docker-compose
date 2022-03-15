@@ -1,7 +1,7 @@
 package no.nav.personbruker.dittnav.e2e.security
 
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.HttpStatusCode.Companion.PartialContent
 import io.ktor.http.HttpStatusCode.Companion.Unauthorized
@@ -14,6 +14,7 @@ import no.nav.personbruker.dittnav.e2e.operations.*
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be in`
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -22,12 +23,13 @@ import org.junit.jupiter.api.extension.ExtendWith
     HandlerContainerLogs::class,
     LegacyContainerLogs::class,
     ProducerContainerLogs::class,
-    TidslinjeContainerLogs::class
+    AuthMockContainerLogs::class
 )
 internal class SecurityIT : UsesTheCommonDockerComposeContext() {
 
     private lateinit var tokenAtLevel3: TokenInfo
     private lateinit var tokenAtLevel4: TokenInfo
+
 
     @BeforeEach
     fun `hent token`() {
@@ -51,9 +53,11 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
         val handler = ServiceConfiguration.HANDLER
         val operation = HandlerOperations.FETCH_BESKJED
         runBlocking {
+            val exchangedTokenAtLevel3 = tokenFetcher.exchangeToken(dittnavEventHandlerClientId, dittnavEventHandlerClientId, tokenAtLevel3)
+            val exchangedTokenAtLevel4 = tokenFetcher.exchangeToken(dittnavEventHandlerClientId, dittnavEventHandlerClientId, tokenAtLevel4)
             assertThatTheRequestWasDenied(handler, operation)
-            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(handler, operation, tokenAtLevel4)
+            assertThatTheRequestWasAccepted(handler, operation, exchangedTokenAtLevel3, definitionOfAccepted = listOf(OK))
+            assertThatTheRequestWasAccepted(handler, operation, exchangedTokenAtLevel4)
         }
     }
 
@@ -69,18 +73,6 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
     }
 
     @Test
-    fun `Tidslinje skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val tidslinje = ServiceConfiguration.TIDSLINJE
-        val operation = TidslinjeOperations.TIDSLINJE
-        val getParameters = mapOf("grupperingsid" to "1234", "produsent" to "produsent")
-        runBlocking {
-            assertThatTheRequestWasDenied(tidslinje, operation)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel3, getParameters)
-            assertThatTheRequestWasAccepted(tidslinje, operation, tokenAtLevel4, getParameters)
-        }
-    }
-
-    @Test
     fun `Producer skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
         val data = ProduceBeskjedDTO(tekst = "Sjekker sikkherhet for producer")
         val producer = ServiceConfiguration.PRODUCER
@@ -89,10 +81,10 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
             val unauthResponse = client.postWithoutAuth<HttpResponse>(producer, operation, data)
             unauthResponse.status `should be equal to` Unauthorized
 
-            val authResponse3 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel3)
+            val authResponse3 = client.post<HttpResponse>(producer, operation, data, BearerToken(tokenAtLevel3.id_token))
             authResponse3.status `should be equal to` OK
 
-            val authResponse4 = client.post<HttpResponse>(producer, operation, data, tokenAtLevel4)
+            val authResponse4 = client.post<HttpResponse>(producer, operation, data, BearerToken(tokenAtLevel4.id_token))
             authResponse4.status `should be equal to` OK
         }
     }
@@ -107,10 +99,16 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
                                                         tokenInfo: TokenInfo,
                                                         parameters: Map<String, String> = emptyMap(),
                                                         definitionOfAccepted: List<HttpStatusCode> = listOf(OK)) {
-        val authResponse = client.get<HttpResponse>(service, operation, tokenInfo, parameters)
-
-
+        val authResponse = client.get<HttpResponse>(service, operation, BearerToken(tokenInfo.id_token), parameters)
         authResponse.status `should be in` definitionOfAccepted
     }
 
+    private suspend fun assertThatTheRequestWasAccepted(service: ServiceConfiguration,
+                                                        operation: ServiceOperation,
+                                                        tokenXToken: TokenXToken,
+                                                        parameters: Map<String, String> = emptyMap(),
+                                                        definitionOfAccepted: List<HttpStatusCode> = listOf(OK)) {
+        val authResponse = client.get<HttpResponse>(service, operation, BearerToken(tokenXToken.accessToken), parameters)
+        authResponse.status `should be in` definitionOfAccepted
+    }
 }
