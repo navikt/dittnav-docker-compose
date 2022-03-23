@@ -11,7 +11,7 @@ enum class ServiceConfiguration(
     OIDC_PROVIDER("oidc-provider_1", "", 9000),
     OIDC_PROVIDER_GUI("oidc-provider-gui_1", "", 50000),
     FRONTEND("frontend_1", "person/dittnav", defaultExposedPort),
-    API("api_1", "person/dittnav-api", defaultExposedPort),
+    API("api_1", "dittnav-api", defaultExposedPort),
     LEGACY("legacy_1", "person/dittnav-legacy-api", defaultExposedPort),
     HANDLER("handler_1", "dittnav-event-handler", defaultExposedPort),
     AGGREGATOR("aggregator_1", "", defaultExposedPort),
