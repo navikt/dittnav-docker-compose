@@ -193,7 +193,6 @@ services:
       - .env
       - env/.tokenx.exchange.env
     environment:
-      LEGACY_API_URL: "http://legacy.dittnav.docker-internal:8080/person/dittnav-legacy-api"
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
       CORS_ALLOWED_ORIGINS: "localhost:3000"
       CORS_ALLOWED_SCHEMES: "http"
@@ -218,44 +217,8 @@ services:
         condition: service_started
       handler:
         condition: service_started
-      legacy:
-        condition: service_started
       auth-mock:
         condition: service_healthy
-
-  legacy:
-    container_name: legacy
-    networks:
-      dittnav.docker-internal:
-        aliases:
-          - legacy.dittnav.docker-internal
-    image: "ghcr.io/navikt/dittnav-legacy-api/dittnav-legacy-api:latest"
-    mem_limit: '2gb'
-    mem_reservation: '2gb'
-    ports:
-      - "8090:8080"
-    environment:
-      NAIS_APP_NAME: "dittnav-legacy-api"
-      NAIS_NAMESPACE: "localhost"
-      AAD_B2C_DISCOVERY_URL: ${OIDC_DISCOVERY_URL}
-      AAD_B2C_CLIENTID_USERNAME: ${OIDC_ACCEPTED_AUDIENCE}
-      EXTERNAL_USERS_AZUREAD_B2C_EXPECTED_AUDIENCE: ${OIDC_ISSUER}
-      LOGINSERVICE_IDPORTEN_DISCOVERY_URL: "http://oidc-provider.dittnav.docker-internal:9000/.well-known/openid-configuration"
-      LOGINSERVICE_IDPORTEN_AUDIENCE: "stubOidcClient"
-      DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_USERNAME: "dummyApiKey"
-      DITTNAV_LEGACY_API_TPS_PROXY_API_APIKEY_PASSWORD: "dummyApiPassword"
-      TJENESTER_URL: "https://dummyTjenester.nav.no"
-      SAKSOVERSIKT_API_URL: "http://mocks.dittnav.docker-internal:8080/saksoversikt-api"
-      TPS_PROXY_API_V1_NAVN_URL: "http://mocks.dittnav.docker-internal:8080/tpsproxy/"
-      MININNBOKS_URL: "http://dummyMinInnboks.nav.no"
-      MININNBOKS_API_URL: "http://mocks.dittnav.docker-internal:8080/mininnboks-api"
-      MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
-      OPPFOLGING_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
-      VARSELINNBOKS_URL: "http://mocks.dittnav.docker-internal:8080/person/varselinnboks"
-      CORS_ALLOWED_ORIGINS: ".nav.no,.oera-q.local"
-      # Dette er et lite hack for å slippe at loggen oversvømmes av meldinger om at sensu-hosten ikke finnes.
-      sensu_client_host: "localhost"
-      sensu_client_port: "8080"
 
   mocks:
     container_name: mocks

@@ -19,7 +19,6 @@ class PrintContainerLogsOnErrorsTest {
         DekoratorenContainerLogs().service `should be equal to` ServiceConfiguration.DEKORATOREN
         FrontendContainerLogs().service `should be equal to` ServiceConfiguration.FRONTEND
         HandlerContainerLogs().service `should be equal to` ServiceConfiguration.HANDLER
-        LegacyContainerLogs().service `should be equal to` ServiceConfiguration.LEGACY
         MocksContainerLogs().service `should be equal to` ServiceConfiguration.MOCKS
         OidcProviderContainerLogs().service `should be equal to` ServiceConfiguration.OIDC_PROVIDER
         OidcProviderGuiContainerLogs().service `should be equal to` ServiceConfiguration.OIDC_PROVIDER_GUI
