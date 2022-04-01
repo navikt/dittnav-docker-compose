@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(
     ApiContainerLogs::class,
-    LegacyContainerLogs::class,
     HandlerContainerLogs::class,
     AggregatorContainerLogs::class,
     ProducerContainerLogs::class,
@@ -31,7 +30,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Servicer skal tilby isAlive`() {
         assertIsAliveForSingleService(ServiceConfiguration.API, ApiOperations.IS_ALIVE)
-        assertIsAliveForSingleService(ServiceConfiguration.LEGACY, LegacyOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.IS_ALIVE)
         assertIsAliveForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_ALIVE)
@@ -44,7 +42,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Servicer skal tilby isReady`() {
         assertIsReadyForSingleService(ServiceConfiguration.API, ApiOperations.IS_READY)
-        assertIsReadyForSingleService(ServiceConfiguration.LEGACY, LegacyOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.IS_READY)
         assertIsReadyForSingleService(ServiceConfiguration.PRODUCER, ProducerOperations.IS_READY)
@@ -57,7 +54,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Servicer skal tilby selftest`() {
         assertSelftestForSingleService(ServiceConfiguration.API, ApiOperations.SELFTEST)
-        assertSelftestForSingleService(ServiceConfiguration.LEGACY, LegacyOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
@@ -68,7 +64,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Servicer skal tilby metrikker`() {
         assertMetricsForSingleService(ServiceConfiguration.API, ApiOperations.METRICS)
-        assertMetricsForSingleService(ServiceConfiguration.LEGACY, LegacyOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.METRICS)
         assertMetricsForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.METRICS)

@@ -10,18 +10,19 @@ import no.nav.personbruker.dittnav.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.personbruker.dittnav.e2e.config.ServiceConfiguration
 import no.nav.personbruker.dittnav.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.personbruker.dittnav.e2e.debugging.*
-import no.nav.personbruker.dittnav.e2e.operations.*
+import no.nav.personbruker.dittnav.e2e.operations.ApiOperations
+import no.nav.personbruker.dittnav.e2e.operations.HandlerOperations
+import no.nav.personbruker.dittnav.e2e.operations.ProducerOperations
+import no.nav.personbruker.dittnav.e2e.operations.ServiceOperation
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be in`
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(
     ApiContainerLogs::class,
     HandlerContainerLogs::class,
-    LegacyContainerLogs::class,
     ProducerContainerLogs::class,
     AuthMockContainerLogs::class
 )
@@ -58,17 +59,6 @@ internal class SecurityIT : UsesTheCommonDockerComposeContext() {
             assertThatTheRequestWasDenied(handler, operation)
             assertThatTheRequestWasAccepted(handler, operation, exchangedTokenAtLevel3, definitionOfAccepted = listOf(OK))
             assertThatTheRequestWasAccepted(handler, operation, exchangedTokenAtLevel4)
-        }
-    }
-
-    @Test
-    fun `Legacy skal ha sikkerhet aktivert, og akseptere innlogging fra baade nivaa 3 og 4`() {
-        val legacy = ServiceConfiguration.LEGACY
-        val operation = LegacyOperations.MELDEKORT_INFO
-        runBlocking {
-            assertThatTheRequestWasDenied(legacy, operation)
-            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel3)
-            assertThatTheRequestWasAccepted(legacy, operation, tokenAtLevel4)
         }
     }
 
