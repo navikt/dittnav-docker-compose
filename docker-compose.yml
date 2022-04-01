@@ -196,6 +196,7 @@ services:
       EVENT_HANDLER_URL: "http://handler.dittnav.docker-internal:8080/dittnav-event-handler"
       CORS_ALLOWED_ORIGINS: "localhost:3000"
       CORS_ALLOWED_SCHEMES: "http"
+      CORS_ALLOWED_HEADERS: "fake"
       INNLOGGINGSSTATUS_URL: "http://dummy.io"
       UNLEASH_API_URL: "fake"
       DIGISOS_API_URL: "https://digisos/dummy/soknad"
