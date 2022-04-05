@@ -333,7 +333,7 @@ services:
       NAIS_APP_NAME: "dittnav"
       NAV_DEKORATOREN_URL: "http://dekoratoren.dittnav.docker-internal:8088"
       NAIS_NAMESPACE: "localhost"
-      DITTNAV_API_URL: "http://localhost:8091/person/dittnav-api"
+      DITTNAV_API_URL: "http://localhost:8091/dittnav-api"
       TJENESTER_URL: "http://dummyTjenester.nav.no"
       EVENT_TEST_PRODUCER_URL: "http://localhost:8094/tms-event-test-producer"
       NAVNO_URL: "www.nav.no"
