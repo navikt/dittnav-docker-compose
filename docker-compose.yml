@@ -201,6 +201,7 @@ services:
       UNLEASH_API_URL: "fake"
       DIGISOS_API_URL: "https://digisos/dummy/soknad"
       DIGISOS_INNSYN_API_URL: "https://digisos/dummy/innsyn"
+      MINE_SAKER_URL: "https://dummy-minesaker.nav.no"
       MINE_SAKER_API_URL: "http://mocks.dittnav.docker-internal:8080/mine-saker-api"
       MINE_SAKER_API_CLIENT_ID: "mine-saker-api-client-id"
       PERSONALIA_API_URL: "http://mocks.dittnav.docker-internal:8080/tms-personalia-api"
@@ -211,8 +212,6 @@ services:
       MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
       OPPFOLGING_API_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
       INNLOGGINGSINFO_URL: "http://dummyInnloggingsinfo.nav.no"
-      SAKSOVERSIKT_API_URL: "http://mocks.dittnav.docker-internal:8080/saksoversikt-api"
-      SAKSOVERSIKT_URL: "http://dummySaksoversikt.nav.no"
     depends_on:
       oidc-provider:
         condition: service_started
