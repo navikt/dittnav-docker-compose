@@ -70,7 +70,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
         `verify beskjed`(activeBeskjeder!![0], expectedSikkerhetsnivaa, expectedText)
 
-        val originalDone = ProduceDoneDTO(activeBeskjeder[0].uid, activeBeskjeder[0].eventId)
+        val originalDone = ProduceDoneDTO(activeBeskjeder[0].eventId)
         `produce done-event for beskjed`(originalDone, tokenAt4)
         val inactiveBeskjeder = `wait for events` {
             `get events`(tokenAt4, ApiOperations.FETCH_BESKJED_INACTIVE)

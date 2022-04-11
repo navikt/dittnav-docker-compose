@@ -8,7 +8,6 @@ import java.time.ZonedDateTime
 
 @Serializable
 data class OppgaveDTO(
-        val uid: String?,
         val eventTidspunkt: ZonedDateTime,
         val eventId: String,
         val tekst: String,

@@ -9,7 +9,6 @@ import java.time.ZonedDateTime
 
 @Serializable
 data class BeskjedDTO(
-        val uid: String,
         val eventTidspunkt: ZonedDateTime,
         val eventId: String,
         val tekst: String,
