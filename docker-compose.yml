@@ -177,6 +177,7 @@ services:
       - oidc-provider-gui
       - postgres
       - aggregator
+      - auth-mock
 
   api:
     container_name: api
