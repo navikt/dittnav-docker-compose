@@ -211,6 +211,7 @@ services:
       EVENTHANDLER_CLIENT_ID: "dittnav-event-handler-clientid"
       MININNBOKS_API_URL: "http://mocks.dittnav.docker-internal:8080/mininnboks-api"
       MELDEKORT_API_URL: "http://mocks.dittnav.docker-internal:8080/meldekort-api"
+      MELDEKORT_CLIENT_ID: "meldekort-client-id"
       OPPFOLGING_API_URL: "http://mocks.dittnav.docker-internal:8080/oppfolging"
       INNLOGGINGSINFO_URL: "http://dummyInnloggingsinfo.nav.no"
     depends_on:
