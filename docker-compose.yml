@@ -172,6 +172,8 @@ services:
       AZURE_APP_CLIENT_ID: "dittnav-event-handler-clientid"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      FILTER_OLD_EVENTS: false
+      FILTER_THRESHOLD_DAYS: 0
     depends_on:
       - schema-registry
       - oidc-provider-gui
