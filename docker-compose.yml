@@ -133,6 +133,8 @@ services:
       INTERN_STATUSOPPDATERING_TOPIC: "min-side.privat-brukernotifikasjon-statusoppdatering-v1"
       INTERN_DONE_TOPIC: "min-side.privat-brukernotifikasjon-done-v1"
       INPUT_DONE_TOPIC: "min-side.aapen-brukernotifikasjon-done-v1"
+      GROUP_ID_DOKNOTIFIKASJON_STATUS: "doknot-status"
+      DOKNOTIFIKASJON_STATUS_TOPIC: "stub"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
     depends_on:
