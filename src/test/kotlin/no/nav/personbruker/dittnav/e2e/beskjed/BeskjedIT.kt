@@ -90,8 +90,8 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-            DoknotifikasjonDTO("B-tms-event-test-producer-${activeBeskjed!![0].eventId}"),
-            DoknotifikasjonDTO("B-tms-event-test-producer-${activeBeskjed[1].eventId}")
+            DoknotifikasjonDTO(activeBeskjed!![0].eventId),
+            DoknotifikasjonDTO(activeBeskjed[1].eventId)
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {
