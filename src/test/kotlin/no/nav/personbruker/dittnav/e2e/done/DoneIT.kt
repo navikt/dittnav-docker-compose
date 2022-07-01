@@ -93,18 +93,18 @@ class DoneIT: UsesTheCommonDockerComposeContext() {
         `produser done-eventer for alle brukernotifikasjoner`(tokenAt4)
 
         val doknotifikasjonStoppForBeskjedToMatch = listOf(
-                DoknotifikasjonStoppDTO("B-tms-event-test-producer-${activeBeskjedEvents[0].eventId}"),
-                DoknotifikasjonStoppDTO("B-tms-event-test-producer-${activeBeskjedEvents[1].eventId}")
+                DoknotifikasjonStoppDTO(activeBeskjedEvents[0].eventId),
+                DoknotifikasjonStoppDTO(activeBeskjedEvents[1].eventId)
         )
 
         val doknotifikasjonStoppForOppgaveToMatch = listOf(
-                DoknotifikasjonStoppDTO("O-tms-event-test-producer-${activeOppgaveEvents[0].eventId}"),
-                DoknotifikasjonStoppDTO("O-tms-event-test-producer-${activeOppgaveEvents[1].eventId}")
+                DoknotifikasjonStoppDTO(activeOppgaveEvents[0].eventId),
+                DoknotifikasjonStoppDTO(activeOppgaveEvents[1].eventId)
         )
 
         val doknotifikasjonStoppForInnboksToMatch = listOf(
-                DoknotifikasjonStoppDTO("I-tms-event-test-producer-${activeInnboksEvents[0].eventId}"),
-                DoknotifikasjonStoppDTO("I-tms-event-test-producer-${activeInnboksEvents[1].eventId}")
+                DoknotifikasjonStoppDTO(activeInnboksEvents[0].eventId),
+                DoknotifikasjonStoppDTO(activeInnboksEvents[1].eventId)
         )
 
 

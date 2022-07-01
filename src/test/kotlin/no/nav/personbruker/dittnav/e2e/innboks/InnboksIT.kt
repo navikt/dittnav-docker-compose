@@ -66,8 +66,8 @@ class InnboksIT : UsesTheCommonDockerComposeContext() {
         }
 
         val doknotifikasjonerToMatch = listOf(
-                DoknotifikasjonDTO("I-tms-event-test-producer-${activeInnboks!![0].eventId}"),
-                DoknotifikasjonDTO("I-tms-event-test-producer-${activeInnboks[1].eventId}")
+                DoknotifikasjonDTO(activeInnboks!![0].eventId),
+                DoknotifikasjonDTO(activeInnboks[1].eventId)
         )
 
         val doknotifikasjoner = `wait for values to be returned`(doknotifikasjonerToMatch) {

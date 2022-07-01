@@ -56,7 +56,6 @@ internal class ReadinessIT : UsesTheCommonDockerComposeContext() {
         assertSelftestForSingleService(ServiceConfiguration.API, ApiOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.HANDLER, HandlerOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.AGGREGATOR, AggregatorOperations.SELFTEST)
-        assertSelftestForSingleService(ServiceConfiguration.FRONTEND, FrontendOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.VARSELBESTILLER, VarselOperations.SELFTEST)
         assertSelftestForSingleService(ServiceConfiguration.BRUKERNOTIFIKASJONBESTILLER, BNBOperations.SELFTEST)
     }
