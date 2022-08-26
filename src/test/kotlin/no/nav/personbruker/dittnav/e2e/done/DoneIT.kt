@@ -31,7 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith
     HandlerContainerLogs::class,
     VarselbestillerContainerLogs::class
 )
-class DoneIT: UsesTheCommonDockerComposeContext() {
+internal class DoneIT: UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
 

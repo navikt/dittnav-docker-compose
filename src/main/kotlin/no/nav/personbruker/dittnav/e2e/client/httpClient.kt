@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
 
-fun buildHttpClient(jsonSerializer: KotlinxSerializer = KotlinxSerializer(json())): HttpClient {
+internal fun buildHttpClient(jsonSerializer: KotlinxSerializer = KotlinxSerializer(json())): HttpClient {
     return HttpClient(Apache) {
         install(HttpCookies) {
             keepAllCookiesFromPreviousRequests()
@@ -37,7 +37,7 @@ private fun HttpCookies.Config.keepAllCookiesFromPreviousRequests() {
     storage = AcceptAllCookiesStorage()
 }
 
-suspend inline fun <reified T> HttpClient.get(url: URL): T = withContext(Dispatchers.IO) {
+internal suspend inline fun <reified T> HttpClient.get(url: URL): T = withContext(Dispatchers.IO) {
     request<T> {
         url(url)
         method = HttpMethod.Get

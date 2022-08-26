@@ -1,6 +1,6 @@
 package no.nav.personbruker.dittnav.e2e.security
 
-data class BearerToken(
+internal data class BearerToken(
         val token: String
 ) {
 

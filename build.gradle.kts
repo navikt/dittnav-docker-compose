@@ -35,10 +35,10 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "13"
+        kotlinOptions.jvmTarget = "17"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "13"
+        kotlinOptions.jvmTarget = "17"
     }
 
     withType<Test> {

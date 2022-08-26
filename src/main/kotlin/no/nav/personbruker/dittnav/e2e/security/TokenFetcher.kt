@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.*
 
-class TokenFetcher(private val audience: String,
+internal class TokenFetcher(private val audience: String,
                    private val clientSecret: String,
                    private val oidcProviderBaseUrl: String) {
 
@@ -145,6 +145,6 @@ class TokenFetcher(private val audience: String,
     }
 }
 
-fun String.base64Encode(): String {
+internal fun String.base64Encode(): String {
     return Base64.getEncoder().encodeToString(toByteArray())
 }
