@@ -9,7 +9,7 @@ import kotlinx.serialization.encoding.Encoder
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
+internal class ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
 
     override fun deserialize(decoder: Decoder): ZonedDateTime {
         val value = decoder.decodeString()
