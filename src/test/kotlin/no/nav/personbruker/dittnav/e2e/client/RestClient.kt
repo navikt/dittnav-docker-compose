@@ -16,7 +16,7 @@ import no.nav.personbruker.dittnav.e2e.security.BearerToken
 import org.slf4j.LoggerFactory
 import java.net.URL
 
-class RestClient(val httpClient: HttpClient) {
+internal class RestClient(val httpClient: HttpClient) {
 
     val log = LoggerFactory.getLogger(RestClient::class.java)
 

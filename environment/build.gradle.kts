@@ -11,3 +11,15 @@ kotlinDslPluginOptions {
 repositories {
     mavenCentral()
 }
+
+publishing {
+    repositories{
+        mavenLocal()
+    }
+
+    publications {
+        create<MavenPublication>("local") {
+            from(components["java"])
+        }
+    }
+}

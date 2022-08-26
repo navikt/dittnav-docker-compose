@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith
     ApiContainerLogs::class,
     ProducerContainerLogs::class
 )
-class InnboksIT : UsesTheCommonDockerComposeContext() {
+internal class InnboksIT : UsesTheCommonDockerComposeContext() {
 
     private val ident = "12345678901"
 

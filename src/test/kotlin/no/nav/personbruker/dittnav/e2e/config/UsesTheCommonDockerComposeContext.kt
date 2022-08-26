@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
  *
  * Trenger denne klassen fordi det ikke er mulig å arve fra en Singleton (DittNavDockerComposeCommonContext).
  */
-open class UsesTheCommonDockerComposeContext {
+internal open class UsesTheCommonDockerComposeContext {
 
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
     val client = RestClient(buildHttpClient())
