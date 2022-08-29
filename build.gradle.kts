@@ -48,6 +48,10 @@ tasks {
             events("passed", "skipped", "failed")
         }
     }
+
+    jar {
+        exclude("no/nav/tms/docker/compose/e2e")
+    }
 }
 
 

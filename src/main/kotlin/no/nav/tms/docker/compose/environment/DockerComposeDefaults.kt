@@ -91,30 +91,40 @@ object DockerComposeDefaults {
 
 class CommonConfig {
     companion object COMMON: DockerComposeAppConfig {
+        override fun getAppName() = "generic environment"
+
         override fun getEnvironment() = commonEnvironment
     }
 }
 
 class AggregatorConfig {
     companion object AGGREGATOR: DockerComposeAppConfig {
+        override fun getAppName() = "dittnav-event-aggregator"
+
         override fun getEnvironment() = commonEnvironment + kafkaEnvironment + aggregatorEnvironment
     }
 }
 
 class HandlerConfig {
     companion object HANDLER: DockerComposeAppConfig {
+        override fun getAppName() = "dittnav-event-handler"
+
         override fun getEnvironment() = commonEnvironment + kafkaEnvironment + handlerEnvironment
     }
 }
 
 class BrukernotifikasjonbestillerConfig {
     companion object BRUKERNOTIFIKASJONBESTILLER: DockerComposeAppConfig {
+        override fun getAppName() = "dittnav-brukernotifikasjonbestiller"
+
         override fun getEnvironment() = commonEnvironment + kafkaEnvironment + brukernotifikasjonbestillerEnvironment
     }
 }
 
 class VarselbestillerConfig {
     companion object VARSELBESTILLER: DockerComposeAppConfig {
+        override fun getAppName() = "dittnav-varselbestiller"
+
         override fun getEnvironment() = commonEnvironment + kafkaEnvironment + varselbestillerEnvironment
     }
 }
