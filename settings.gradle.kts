@@ -8,4 +8,3 @@
  */
 
 rootProject.name = "dittnav-docker-compose"
-include("environment")
