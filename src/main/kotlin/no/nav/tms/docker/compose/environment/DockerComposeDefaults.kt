@@ -4,7 +4,6 @@ import no.nav.tms.docker.compose.environment.DockerComposeDefaults.aggregatorEnv
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.brukernotifikasjonbestillerEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.commonEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.handlerEnvironment
-import no.nav.tms.docker.compose.environment.DockerComposeDefaults.kafkaEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.varselbestillerEnvironment
 
 object DockerComposeDefaults {
@@ -29,12 +28,6 @@ object DockerComposeDefaults {
             "SERVICEUSER_PASSWORD" to "password",
             "GROUP_ID" to "dittnav_events",
 
-            "DB_HOST" to "localhost:5432",
-            "DB_PORT" to "5432",
-            "DB_USERNAME" to "testuser",
-            "DB_PASSWORD" to "testpassword",
-            "DB_MOUNT_PATH" to "notUsedOnLocalhost",
-
             "SENSU_HOST" to "stub",
             "SENSU_PORT" to "0",
             "PRODUCER_ALIASES" to "",
@@ -43,10 +36,8 @@ object DockerComposeDefaults {
             "INFLUXDB_DATABASE_NAME" to "",
             "INFLUXDB_USER" to "",
             "INFLUXDB_PASSWORD" to "",
-            "INFLUXDB_RETENTION_POLICY" to ""
-    )
+            "INFLUXDB_RETENTION_POLICY" to "",
 
-    val kafkaEnvironment = mapOf(
             "KAFKA_BOOTSTRAP_SERVERS" to "localhost:29092",
 
             "KAFKA_BROKERS" to "localhost:29092",
@@ -64,7 +55,12 @@ object DockerComposeDefaults {
             "OPEN_INPUT_DONE_TOPIC" to "min-side.aapen-brukernotifikasjon-done-v1",
             "INPUT_DONE_TOPIC" to "min-side.aapen-brukernotifikasjon-done-v1",
 
-            "DOKNOTIFIKASJON_STATUS_TOPIC" to "teamdokumenthandtering.aapen-dok-notifikasjon-status"
+            "DOKNOTIFIKASJON_STATUS_TOPIC" to "teamdokumenthandtering.aapen-dok-notifikasjon-status",
+
+            "DB_HOST" to "localhost:5432",
+            "DB_PORT" to "5432",
+            "DB_USERNAME" to "testuser",
+            "DB_PASSWORD" to "testpassword"
     )
 
     val aggregatorEnvironment = mapOf(
@@ -77,11 +73,16 @@ object DockerComposeDefaults {
     )
 
     val handlerEnvironment = mapOf(
-            "DB_DATABASE" to "brukernotifikasjon-cache"
+            "DB_EVENTHANDLER_DATABASE" to "brukernotifikasjon-cache",
+            "DB_EVENTHANDLER_HOST" to "localhost:5432",
+            "DB_EVENTHANDLER_USERNAME" to "testuser",
+            "DB_EVENTHANDLER_PASSWORD" to "testpassword",
+            "DB_EVENTHANDLER_PORT" to "5432"
     )
 
     val brukernotifikasjonbestillerEnvironment = mapOf(
-            "DB_DATABASE" to "brukernotifikasjonbestiller"
+            "DB_DATABASE" to "brukernotifikasjonbestiller",
+            "FEILRESPONS_TOPIC" to "min-side.aapen-brukernotifikasjon-feilrespons-v1"
     )
 
     val varselbestillerEnvironment = mapOf(
@@ -101,7 +102,7 @@ class AggregatorConfig {
     companion object AGGREGATOR: DockerComposeAppConfig {
         override fun getAppName() = "dittnav-event-aggregator"
 
-        override fun getEnvironment() = commonEnvironment + kafkaEnvironment + aggregatorEnvironment
+        override fun getEnvironment() = commonEnvironment + aggregatorEnvironment
     }
 }
 
@@ -109,7 +110,7 @@ class HandlerConfig {
     companion object HANDLER: DockerComposeAppConfig {
         override fun getAppName() = "dittnav-event-handler"
 
-        override fun getEnvironment() = commonEnvironment + kafkaEnvironment + handlerEnvironment
+        override fun getEnvironment() = commonEnvironment + handlerEnvironment
     }
 }
 
@@ -117,7 +118,7 @@ class BrukernotifikasjonbestillerConfig {
     companion object BRUKERNOTIFIKASJONBESTILLER: DockerComposeAppConfig {
         override fun getAppName() = "dittnav-brukernotifikasjonbestiller"
 
-        override fun getEnvironment() = commonEnvironment + kafkaEnvironment + brukernotifikasjonbestillerEnvironment
+        override fun getEnvironment() = commonEnvironment + brukernotifikasjonbestillerEnvironment
     }
 }
 
@@ -125,6 +126,6 @@ class VarselbestillerConfig {
     companion object VARSELBESTILLER: DockerComposeAppConfig {
         override fun getAppName() = "dittnav-varselbestiller"
 
-        override fun getEnvironment() = commonEnvironment + kafkaEnvironment + varselbestillerEnvironment
+        override fun getEnvironment() = commonEnvironment + varselbestillerEnvironment
     }
 }
