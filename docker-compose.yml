@@ -137,6 +137,8 @@ services:
       DOKNOTIFIKASJON_STATUS_TOPIC: "stub"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      RAPID_TOPIC: "rapid-topic"
+      RAPID_ENABLED: "false"
     depends_on:
       - schema-registry
       - postgres

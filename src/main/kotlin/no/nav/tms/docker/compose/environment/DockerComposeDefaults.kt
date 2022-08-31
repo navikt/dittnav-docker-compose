@@ -1,6 +1,7 @@
 package no.nav.tms.docker.compose.environment
 
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.aggregatorEnvironment
+import no.nav.tms.docker.compose.environment.DockerComposeDefaults.apiEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.brukernotifikasjonbestillerEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.commonEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.handlerEnvironment
@@ -9,13 +10,17 @@ import no.nav.tms.docker.compose.environment.DockerComposeDefaults.varselbestill
 object DockerComposeDefaults {
 
     val commonEnvironment : Map<String, String> = mapOf(
-            "CORS_ALLOWED_ORIGINS" to "localhost:9002",
+            "CORS_ALLOWED_ORIGINS" to "*",
 
             "NAIS_CLUSTER_NAME" to "dev-gcp",
             "NAIS_NAMESPACE" to "min-side",
 
             "EVENT_HANDLER_URL" to "http://localhost:8092",
             "INNLOGGINGSSTATUS_URL" to "http://localhost:9081/person/innloggingsstatus",
+
+            "MINE_SAKER_URL" to "http://stub",
+            "MINE_SAKER_API_URL" to "http://localhost:8095/mine-saker-api",
+            "MINE_SAKER_API_CLIENT_ID" to "mine-saker-dummy-client-id",
 
             "OIDC_ISSUER" to "http://localhost:9000",
             "OIDC_DISCOVERY_URL" to "http://localhost:9000/.well-known/openid-configuration",
@@ -73,6 +78,20 @@ object DockerComposeDefaults {
             "TOKEN_X_WELL_KNOWN_URL" to "http://localhost:9051/tokendings/.well-known/oauth-authorization-server"
     )
 
+    val apiEnvironment = mapOf(
+            "UNLEASH_API_URL" to "http://stub",
+
+            "DIGISOS_API_URL" to "http://stub",
+            "DIGISOS_INNSYN_API_URL" to "https://stub",
+
+            "PERSONALIA_API_URL" to "http://localhost:8095/tms-personalia-api",
+            "PERSONALIA_API_CLIENT_ID" to "tms-personalia-api-client-id",
+            "EVENTHANDLER_CLIENT_ID" to "dittnav-event-handler-clientid",
+            "MELDEKORT_API_URL" to "http://mocks.dittnav.docker-internal:8080/meldekort-api",
+            "MELDEKORT_CLIENT_ID" to "meldekort-client-id",
+            "OPPFOLGING_API_URL" to "http://localhost:8095/oppfolging",
+    )
+
     val aggregatorEnvironment = mapOf(
             "DB_DATABASE" to "brukernotifikasjon-cache",
             "RAPID_ENABLED" to "false",
@@ -108,6 +127,14 @@ class CommonConfig {
         override fun getAppName() = "generic environment"
 
         override fun getEnvironment() = commonEnvironment
+    }
+}
+
+class ApiConfig {
+    companion object API: DockerComposeAppConfig {
+        override fun getAppName() = "dittnav-api"
+
+        override fun getEnvironment() = commonEnvironment + apiEnvironment
     }
 }
 
