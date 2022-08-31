@@ -289,7 +289,8 @@ services:
       - "9051:8080"
     env_file: env/.auth-mock.jwk.env
     environment:
-      LOCAL_URL: "http://auth-mock.dittnav.docker-internal:8080"
+      LOCAL_URL: "http://localhost:9051"
+      INTERNAL_DOCKER_URL: "http://auth-mock.dittnav.docker-internal:8080"
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive" ]
       interval: 5s
