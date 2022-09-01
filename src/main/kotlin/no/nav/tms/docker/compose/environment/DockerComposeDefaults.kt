@@ -11,6 +11,7 @@ object DockerComposeDefaults {
 
     val commonEnvironment : Map<String, String> = mapOf(
             "CORS_ALLOWED_ORIGINS" to "*",
+            "CORS_ALLOWED_HEADERS" to "*",
 
             "NAIS_CLUSTER_NAME" to "dev-gcp",
             "NAIS_NAMESPACE" to "min-side",
