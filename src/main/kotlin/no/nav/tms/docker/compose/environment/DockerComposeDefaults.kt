@@ -91,6 +91,8 @@ object DockerComposeDefaults {
             "MELDEKORT_API_URL" to "http://mocks.dittnav.docker-internal:8080/meldekort-api",
             "MELDEKORT_CLIENT_ID" to "meldekort-client-id",
             "OPPFOLGING_API_URL" to "http://localhost:8095/oppfolging",
+
+            "TOKEN_X_CLIENT_ID" to "dittnav-api-client-id"
     )
 
     val aggregatorEnvironment = mapOf(
