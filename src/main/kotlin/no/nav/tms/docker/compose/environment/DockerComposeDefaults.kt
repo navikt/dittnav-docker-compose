@@ -10,7 +10,6 @@ import no.nav.tms.docker.compose.environment.DockerComposeDefaults.varselbestill
 object DockerComposeDefaults {
 
     val commonEnvironment : Map<String, String> = mapOf(
-            "CORS_ALLOWED_ORIGINS" to "*",
             "CORS_ALLOWED_HEADERS" to "*",
 
             "NAIS_CLUSTER_NAME" to "dev-gcp",
@@ -80,6 +79,8 @@ object DockerComposeDefaults {
     )
 
     val apiEnvironment = mapOf(
+            "CORS_ALLOWED_ORIGINS" to "localhost:3000",
+
             "UNLEASH_API_URL" to "http://stub",
 
             "DIGISOS_API_URL" to "http://stub",
