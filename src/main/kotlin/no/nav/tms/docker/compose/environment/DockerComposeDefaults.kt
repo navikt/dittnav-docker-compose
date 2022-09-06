@@ -5,6 +5,7 @@ import no.nav.tms.docker.compose.environment.DockerComposeDefaults.apiEnvironmen
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.brukernotifikasjonbestillerEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.commonEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.handlerEnvironment
+import no.nav.tms.docker.compose.environment.DockerComposeDefaults.testProducerEnvironment
 import no.nav.tms.docker.compose.environment.DockerComposeDefaults.varselbestillerEnvironment
 
 object DockerComposeDefaults {
@@ -15,7 +16,7 @@ object DockerComposeDefaults {
             "NAIS_CLUSTER_NAME" to "dev-gcp",
             "NAIS_NAMESPACE" to "min-side",
 
-            "EVENT_HANDLER_URL" to "http://localhost:8092",
+            "EVENT_HANDLER_URL" to "http://localhost:8092/dittnav-event-handler",
             "INNLOGGINGSSTATUS_URL" to "http://localhost:9081/person/innloggingsstatus",
 
             "MINE_SAKER_URL" to "http://stub",
@@ -124,6 +125,15 @@ object DockerComposeDefaults {
     val varselbestillerEnvironment = mapOf(
             "DB_DATABASE" to "dittnav-varselbestiller"
     )
+
+    val testProducerEnvironment = mapOf(
+            "CORS_ALLOWED_ORIGINS" to "localhost:3000",
+            "CORS_ALLOWED_SCHEMES" to "http",
+
+            "EVENTHANDLER_CLIENT_ID" to "dittnav-event-handler-clientid",
+            "TOKEN_X_CLIENT_ID" to "tms-event-test-producer-clientid",
+            "ENABLE_API" to "true"
+    )
 }
 
 class CommonConfig {
@@ -171,5 +181,13 @@ class VarselbestillerConfig {
         override fun getAppName() = "dittnav-varselbestiller"
 
         override fun getEnvironment() = commonEnvironment + varselbestillerEnvironment
+    }
+}
+
+class TestProducerConfig {
+    companion object TEST_PRODUCER: DockerComposeAppConfig {
+        override fun getAppName() = "tms-event-test-producer"
+
+        override fun getEnvironment() = commonEnvironment + testProducerEnvironment
     }
 }
