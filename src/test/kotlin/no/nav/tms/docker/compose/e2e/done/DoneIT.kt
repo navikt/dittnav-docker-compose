@@ -2,6 +2,7 @@ package no.nav.tms.docker.compose.e2e.done
 
 import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
+import no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO
 import no.nav.tms.docker.compose.e2e.config.ServiceConfiguration
 import no.nav.tms.docker.compose.e2e.config.UsesTheCommonDockerComposeContext
 import no.nav.tms.docker.compose.e2e.debugging.*
@@ -35,7 +36,7 @@ internal class DoneIT: UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal produsere done-eventer for alle brukernotifikasjoner`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        val beskjed = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(tekst = "Beskjed 1")
+        val beskjed = ProduceBeskjedDTO(tekst = "Beskjed 1")
         val oppgave = ProduceOppgaveDTO(tekst = "Oppgave 1")
         val innboks = ProduceInnboksDTO(tekst = "Innboks 1")
 
@@ -58,8 +59,8 @@ internal class DoneIT: UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal avbestille ekstern varsling for brukernotifikasjon ved mottak av done-event`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        val beskjed1 = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(tekst = "Beskjed 1", eksternVarsling = true)
-        val beskjed2 = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(tekst = "Beskjed 2", eksternVarsling = true)
+        val beskjed1 = ProduceBeskjedDTO(tekst = "Beskjed 1", eksternVarsling = true)
+        val beskjed2 = ProduceBeskjedDTO(tekst = "Beskjed 2", eksternVarsling = true)
         val oppgave1 = ProduceOppgaveDTO(tekst = "Oppgave 1", eksternVarsling = true)
         val oppgave2 = ProduceOppgaveDTO(tekst = "Oppgave 2", eksternVarsling = true)
         val innboks1 = ProduceOppgaveDTO(tekst = "Oppgave 1", eksternVarsling = true)

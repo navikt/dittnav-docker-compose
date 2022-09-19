@@ -15,7 +15,7 @@ import java.net.URL
 
 internal class RestClient(val httpClient: HttpClient) {
 
-    val log = LoggerFactory.getLogger(no.nav.tms.docker.compose.e2e.client.RestClient::class.java)
+    val log = LoggerFactory.getLogger(RestClient::class.java)
 
     suspend inline fun <reified T> getWithoutAuth(service: ServiceConfiguration,
                                                   operation: ServiceOperation,
@@ -58,7 +58,7 @@ internal class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: no.nav.tms.docker.compose.e2e.client.BrukernotifikasjonDTO): T {
+    suspend inline fun <reified T> postWithoutAuth(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {
@@ -76,7 +76,7 @@ internal class RestClient(val httpClient: HttpClient) {
         }
     }
 
-    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: no.nav.tms.docker.compose.e2e.client.BrukernotifikasjonDTO, token: BearerToken): T {
+    suspend inline fun <reified T> post(service: ServiceConfiguration, operation: ServiceOperation, data: BrukernotifikasjonDTO, token: BearerToken): T {
         val completeUrlToHit = constructPathToHit(service, operation)
         return try {
             httpClient.post {

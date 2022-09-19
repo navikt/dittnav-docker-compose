@@ -34,7 +34,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 3
         val expectedText = "Beskjed 1"
         val tokenAt3 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt3)
         val activeBeskjeder = `wait for events` {
@@ -48,7 +48,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 2"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         val activeBeskjeder = `wait for events` {
@@ -62,7 +62,7 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         val expectedSikkerhetsnivaa = 4
         val expectedText = "Beskjed 3"
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, expectedSikkerhetsnivaa)
-        val originalBeskjed = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO(expectedText)
+        val originalBeskjed = ProduceBeskjedDTO(expectedText)
 
         `produce beskjed at level`(originalBeskjed, tokenAt4)
         val activeBeskjeder = `wait for events` {
@@ -81,8 +81,8 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
     @Test
     fun `Skal bestille ekstern varsling for beskjeder`() {
         val tokenAt4 = tokenFetcher.fetchTokenForIdent(ident, sikkerhetsnivaa = 4)
-        val originalBeskjed1 = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO("Beskjed med varsel 1", eksternVarsling = true)
-        val originalBeskjed2 = no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO("Beskjed med varsel 2", eksternVarsling = true)
+        val originalBeskjed1 = ProduceBeskjedDTO("Beskjed med varsel 1", eksternVarsling = true)
+        val originalBeskjed2 = ProduceBeskjedDTO("Beskjed med varsel 2", eksternVarsling = true)
         `produce beskjed at level`(originalBeskjed1, tokenAt4)
         `produce beskjed at level`(originalBeskjed2, tokenAt4)
         val activeBeskjed = `wait for events` {
@@ -101,14 +101,14 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         doknotifikasjoner!! `should contain all` doknotifikasjonerToMatch
     }
 
-    private fun `verify beskjed`(beskjed: no.nav.tms.docker.compose.e2e.beskjed.BeskjedDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {
+    private fun `verify beskjed`(beskjed: BeskjedDTO, expectedSikkerhetsnivaa: Int, expectedText: String) {
         runBlocking {
             beskjed.sikkerhetsnivaa `should be equal to` expectedSikkerhetsnivaa
             beskjed.tekst `should be equal to` expectedText
         }
     }
 
-    private fun `produce beskjed at level`(originalBeskjed: no.nav.tms.docker.compose.e2e.beskjed.ProduceBeskjedDTO, token: TokenInfo) {
+    private fun `produce beskjed at level`(originalBeskjed: ProduceBeskjedDTO, token: TokenInfo) {
         runBlocking {
             client.post<HttpResponse>(
                 ServiceConfiguration.PRODUCER,
@@ -125,9 +125,9 @@ internal class BeskjedIT : UsesTheCommonDockerComposeContext() {
         }.status `should be equal to` HttpStatusCode.OK
     }
 
-    private fun `get events`(token: TokenInfo, operation: ApiOperations): List<no.nav.tms.docker.compose.e2e.beskjed.BeskjedDTO> {
+    private fun `get events`(token: TokenInfo, operation: ApiOperations): List<BeskjedDTO> {
         return runBlocking {
-            val response = client.get<List<no.nav.tms.docker.compose.e2e.beskjed.BeskjedDTO>>(ServiceConfiguration.API, operation, BearerToken(token.id_token))
+            val response = client.get<List<BeskjedDTO>>(ServiceConfiguration.API, operation, BearerToken(token.id_token))
             response
         }
     }

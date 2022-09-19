@@ -1,5 +1,6 @@
 package no.nav.tms.docker.compose.e2e.config
 
+import no.nav.tms.docker.compose.e2e.client.RestClient
 import no.nav.tms.docker.compose.e2e.client.buildHttpClient
 import no.nav.tms.docker.compose.e2e.security.TokenFetcher
 import org.awaitility.Durations
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory
 internal open class UsesTheCommonDockerComposeContext {
 
     val dockerComposeContext = DittNavDockerComposeCommonContext.instance
-    val client = no.nav.tms.docker.compose.e2e.client.RestClient(buildHttpClient())
+    val client = RestClient(buildHttpClient())
 
     private val oidcproviderURL = dockerComposeContext.getBaseUrl(ServiceConfiguration.OIDC_PROVIDER).toString()
     private val log = LoggerFactory.getLogger(UsesTheCommonDockerComposeContext::class.java)
