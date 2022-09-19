@@ -12,7 +12,7 @@ services:
       - "postgres-data:/var/lib/postgresql/data"
       - "./db-initscripts:/docker-entrypoint-initdb.d"
     ports:
-      - "5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -137,6 +137,8 @@ services:
       DOKNOTIFIKASJON_STATUS_TOPIC: "stub"
       # variabler for on-prem
       DB_NAME: ${DB_NAME_BRUKERNOTIFIKASJON_CACHE}
+      RAPID_TOPIC: "rapid-topic"
+      RAPID_ENABLED: "false"
     depends_on:
       - schema-registry
       - postgres
@@ -289,7 +291,8 @@ services:
       - "9051:8080"
     env_file: env/.auth-mock.jwk.env
     environment:
-      LOCAL_URL: "http://auth-mock.dittnav.docker-internal:8080"
+      LOCAL_URL: "http://localhost:9051"
+      INTERNAL_DOCKER_URL: "http://auth-mock.dittnav.docker-internal:8080"
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 http://localhost:8080/internal/isAlive" ]
       interval: 5s

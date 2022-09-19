@@ -1,10 +1,8 @@
 plugins {
+    `maven-publish`
     kotlin("jvm") version Kotlin.version
     kotlin("plugin.serialization") version Kotlin.version
 }
-
-group = "no.nav.personbruker.dittnav"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -18,7 +16,8 @@ dependencies {
     implementation(Ktor.clientLoggingJvm)
     implementation(Ktor.clientSerializationJvm)
     implementation(Ktor.serialization)
-    implementation(Logback.classic)
+
+    api("dev.gradleplugins:gradle-api:7.5")
 
     testImplementation(Awaitility.awaitilityKotlin)
     testImplementation(Junit.api)
@@ -35,10 +34,10 @@ dependencies {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "13"
+        kotlinOptions.jvmTarget = "17"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "13"
+        kotlinOptions.jvmTarget = "17"
     }
 
     withType<Test> {
@@ -47,6 +46,23 @@ tasks {
             showStandardStreams = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
             events("passed", "skipped", "failed")
+        }
+    }
+
+    jar {
+        exclude("no/nav/tms/docker/compose/e2e")
+    }
+}
+
+
+publishing {
+    repositories{
+        mavenLocal()
+    }
+
+    publications {
+        create<MavenPublication>("local") {
+            from(components["java"])
         }
     }
 }
