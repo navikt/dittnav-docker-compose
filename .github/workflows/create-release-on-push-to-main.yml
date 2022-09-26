@@ -18,8 +18,8 @@ jobs:
         with:
           java-version: '17.x'
 
-      - name: Kompiler og kjør tester
-        run: ./gradlew clean build
+      - name: Kompiler og og bygg prosjekt
+        run: ./gradlew clean assemble
 
       - name: Set release tag
         run: |
