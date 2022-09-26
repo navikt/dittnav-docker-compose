@@ -103,7 +103,11 @@ object DockerComposeDefaults {
             "RAPID_TOPIC" to "min-side.brukervarsel-v1",
             "GROUP_ID_DOKNOTIFIKASJON_STATUS" to "tms-1",
             "ARCHIVING_ENABLED" to "true",
-            "ARCHIVING_THRESHOLD" to "365"
+            "ARCHIVING_THRESHOLD" to "365",
+            "POLL_BESKJED" to "true",
+            "POLL_OPPGAVE" to "true",
+            "POLL_INNBOKS" to "true",
+            "POLL_DONE" to "true"
     )
 
     val handlerEnvironment = mapOf(
@@ -119,7 +123,12 @@ object DockerComposeDefaults {
 
     val brukernotifikasjonbestillerEnvironment = mapOf(
             "DB_DATABASE" to "brukernotifikasjonbestiller",
-            "FEILRESPONS_TOPIC" to "min-side.aapen-brukernotifikasjon-feilrespons-v1"
+            "FEILRESPONS_TOPIC" to "min-side.aapen-brukernotifikasjon-feilrespons-v1",
+
+            "POLL_BESKJED_INPUT" to "true",
+            "POLL_OPPGAVE_INPUT" to "true",
+            "POLL_INNBOKS_INPUT" to "true",
+            "POLL_DONE_INPUT" to "true"
     )
 
     val varselbestillerEnvironment = mapOf(
